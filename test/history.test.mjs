@@ -166,3 +166,30 @@ test("a release carries the history of the organizations it mentions", () => {
   assert.ok(payload.work.some((w) => w.name === "EDS (now DXC Technology)"));
   assert.ok(payload.work.some((w) => w.name === "PricewaterhouseCoopers (now PwC)"));
 });
+
+// ---------- regressions from the PR #3 review ----------
+
+test("an undated job uses the employer's display name, not a dated legal name", () => {
+  const p = history();
+  const job = p.work.find((w) => w.id === "buchanan-job");
+  delete job.startDate; delete job.endDate; job.organization = "eds";
+  const row = convert(p, loadMapping("jsonresume"), { on: TODAY }).output.work.find((w) => w.position === "Network Engineer");
+  assert.equal(row.name, "EDS (now DXC Technology)");
+});
+
+test("schema.org names a current employer as it is now", () => {
+  const p = history();
+  const job = p.work.find((w) => w.id === "eds-job");
+  job.current = true; job.confidence = "high"; delete job.endDate;
+  delete job.positions.at(-1).endDate; job.positions.at(-1).current = true;
+  const names = convert(p, loadMapping("schemaorg"), { on: "2012-01-01" }).output.mainEntity.worksFor.map((o) => o.name);
+  assert.deepEqual(names, ["HP Enterprise Services"]);
+});
+
+test("job-level figures appear once, on the latest position", () => {
+  const p = history();
+  p.work[0].metrics = [{ id: "clients-served", label: "state agencies served", value: 4 }];
+  const rows = convert(p, loadMapping("jsonresume"), { on: TODAY }).output.work
+    .filter((w) => (w.highlights ?? []).some((h) => h.includes("state agencies served")));
+  assert.deepEqual(rows.map((r) => r.position), ["Solutions Architect"]);
+});

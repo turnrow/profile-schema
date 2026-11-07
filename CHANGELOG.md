@@ -29,7 +29,7 @@ Backwards compatible: 2.0.0 and 2.1.0 files remain valid.
 - Releases carry the history (events, parents, successors) of the organizations they mention, so names resolve the same way for the recipient.
 - JSON Resume, schema.org and timeline outputs list one entry per position. LinkedIn groups positions under the company, with "Company at the time", the company to search LinkedIn for, and "Changes while there".
 - `convert` and the CLI take an `on` date, so "now" names are reproducible.
-- 17 new tests (75 total).
+- 20 new tests (78 total).
 
 ## 2.1.0 (2026-11-07): audiences, employer releases and write-back
 

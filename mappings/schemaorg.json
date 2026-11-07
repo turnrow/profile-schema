@@ -136,10 +136,9 @@
         "$map": {
           "@type": "Organization",
           "name": {
-            "$fn": "orgNameAt",
+            "$fn": "orgNow",
             "args": [
-              "$.organization",
-              "$.startDate"
+              "$.organization"
             ]
           },
           "url": {

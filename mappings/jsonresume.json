@@ -135,13 +135,7 @@
                 "$"
               ]
             },
-            {
-              "$fn": "metricText",
-              "args": [
-                "$.work.metrics",
-                "$.work"
-              ]
-            }
+            "$.jobMetrics"
           ]
         }
       }
