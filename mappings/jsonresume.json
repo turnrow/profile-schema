@@ -1,0 +1,443 @@
+{
+  "target": "jsonresume",
+  "description": "JSON Resume (schema 1.7.x, jsonresume.org). Approved entries visible to the public or a network, with high or medium confidence. Qualified dates (about, before, between) are left out because JSON Resume can only state exact dates.",
+  "include": {
+    "visibility": [
+      "public",
+      "network"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high",
+      "medium"
+    ]
+  },
+  "output": {
+    "$schema": "https://raw.githubusercontent.com/jsonresume/jsonresume.org/master/packages/schema/schema.json",
+    "basics": {
+      "name": "$.person.name",
+      "label": {
+        "$fn": "text",
+        "args": [
+          "$.person.headline"
+        ]
+      },
+      "image": "$.person.image.url",
+      "email": {
+        "$fn": "visible",
+        "args": [
+          "$.person.contact.email",
+          "$.person.contact.emailVisibility"
+        ]
+      },
+      "phone": {
+        "$fn": "visible",
+        "args": [
+          "$.person.contact.phone",
+          "$.person.contact.phoneVisibility"
+        ]
+      },
+      "url": "$.person.contact.website",
+      "summary": {
+        "$fn": "text",
+        "args": [
+          "$.person.summary"
+        ]
+      },
+      "location": {
+        "city": {
+          "$fn": "place",
+          "args": [
+            "$.person.location",
+            "locality"
+          ]
+        },
+        "region": {
+          "$fn": "place",
+          "args": [
+            "$.person.location",
+            "region"
+          ]
+        },
+        "countryCode": {
+          "$fn": "place",
+          "args": [
+            "$.person.location",
+            "countryCode"
+          ]
+        }
+      },
+      "profiles": {
+        "$each": "$$.person.profiles",
+        "$map": {
+          "network": "$.network",
+          "username": "$.username",
+          "url": "$.url"
+        }
+      }
+    },
+    "work": {
+      "$each": "$$.work",
+      "$sort": "-startDate",
+      "$map": {
+        "name": {
+          "$fn": "org",
+          "args": [
+            "$.organization"
+          ]
+        },
+        "position": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "url": {
+          "$fn": "org",
+          "args": [
+            "$.organization",
+            "url"
+          ]
+        },
+        "location": {
+          "$fn": "place",
+          "args": [
+            "$.location"
+          ]
+        },
+        "startDate": {
+          "$fn": "isoExact",
+          "args": [
+            "$.startDate"
+          ]
+        },
+        "endDate": {
+          "$if": "$.current",
+          "$then": null,
+          "$else": {
+            "$fn": "isoExact",
+            "args": [
+              "$.endDate"
+            ]
+          }
+        },
+        "summary": {
+          "$fn": "text",
+          "args": [
+            "$.summary"
+          ]
+        },
+        "highlights": {
+          "$fn": "metricText",
+          "args": [
+            "$.metrics",
+            "$"
+          ]
+        }
+      }
+    },
+    "volunteer": {
+      "$each": "$$.service",
+      "$sort": "-startDate",
+      "$map": {
+        "organization": {
+          "$fn": "org",
+          "args": [
+            "$.organization"
+          ]
+        },
+        "position": {
+          "$fn": "coalesce",
+          "args": [
+            {
+              "$fn": "text",
+              "args": [
+                "$.role"
+              ]
+            },
+            "$.rank"
+          ]
+        },
+        "startDate": {
+          "$fn": "isoExact",
+          "args": [
+            "$.startDate"
+          ]
+        },
+        "endDate": {
+          "$fn": "isoExact",
+          "args": [
+            "$.endDate"
+          ]
+        },
+        "summary": {
+          "$fn": "text",
+          "args": [
+            "$.summary"
+          ]
+        },
+        "highlights": "$.highlights"
+      }
+    },
+    "education": {
+      "$each": "$$.education",
+      "$map": {
+        "institution": {
+          "$fn": "org",
+          "args": [
+            "$.institution"
+          ]
+        },
+        "url": {
+          "$fn": "org",
+          "args": [
+            "$.institution",
+            "url"
+          ]
+        },
+        "area": {
+          "$fn": "text",
+          "args": [
+            "$.area"
+          ]
+        },
+        "studyType": "$.credential",
+        "startDate": {
+          "$fn": "isoExact",
+          "args": [
+            "$.startDate"
+          ]
+        },
+        "endDate": {
+          "$fn": "isoExact",
+          "args": [
+            "$.endDate"
+          ]
+        },
+        "score": "$.score"
+      }
+    },
+    "awards": {
+      "$each": "$$.awards",
+      "$map": {
+        "title": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "date": {
+          "$fn": "isoExact",
+          "args": [
+            "$.date"
+          ]
+        },
+        "awarder": {
+          "$fn": "org",
+          "args": [
+            "$.awarder"
+          ]
+        },
+        "summary": {
+          "$fn": "text",
+          "args": [
+            "$.summary"
+          ]
+        }
+      }
+    },
+    "certificates": {
+      "$each": "$$.credentials",
+      "$where": {
+        "active": [
+          true,
+          null
+        ]
+      },
+      "$map": {
+        "name": {
+          "$fn": "concat",
+          "args": [
+            {
+              "$fn": "text",
+              "args": [
+                "$.name"
+              ]
+            },
+            {
+              "$if": "$.ratings",
+              "$then": {
+                "$fn": "concat",
+                "args": [
+                  " (",
+                  {
+                    "$fn": "join",
+                    "args": [
+                      "$.ratings"
+                    ]
+                  },
+                  ")"
+                ]
+              }
+            }
+          ]
+        },
+        "issuer": {
+          "$fn": "org",
+          "args": [
+            "$.issuer"
+          ]
+        },
+        "date": {
+          "$fn": "isoExact",
+          "args": [
+            "$.issued"
+          ]
+        },
+        "url": "$.url"
+      }
+    },
+    "publications": {
+      "$each": "$$.publications",
+      "$map": {
+        "name": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "publisher": {
+          "$fn": "org",
+          "args": [
+            "$.publisher"
+          ]
+        },
+        "releaseDate": {
+          "$fn": "isoExact",
+          "args": [
+            "$.date"
+          ]
+        },
+        "url": "$.url",
+        "summary": {
+          "$fn": "text",
+          "args": [
+            "$.summary"
+          ]
+        }
+      }
+    },
+    "skills": {
+      "$each": "$$.skills",
+      "$sort": "-pinned,-priority",
+      "$map": {
+        "name": {
+          "$fn": "text",
+          "args": [
+            "$.name"
+          ]
+        },
+        "level": "$.level",
+        "keywords": "$.keywords"
+      }
+    },
+    "languages": {
+      "$each": "$$.languages",
+      "$map": {
+        "language": {
+          "$fn": "text",
+          "args": [
+            "$.name"
+          ]
+        },
+        "fluency": "$.fluency"
+      }
+    },
+    "interests": {
+      "$each": "$$.interests",
+      "$map": {
+        "name": {
+          "$fn": "text",
+          "args": [
+            "$.name"
+          ]
+        },
+        "keywords": "$.keywords"
+      }
+    },
+    "references": {
+      "$each": "$$.references",
+      "$where": {
+        "consentToPublish": true
+      },
+      "$map": {
+        "name": "$.name",
+        "reference": {
+          "$fn": "text",
+          "args": [
+            "$.quote"
+          ]
+        }
+      }
+    },
+    "projects": {
+      "$each": "$$.projects",
+      "$sort": "-startDate",
+      "$map": {
+        "name": {
+          "$fn": "text",
+          "args": [
+            "$.name"
+          ]
+        },
+        "description": {
+          "$fn": "text",
+          "args": [
+            "$.summary"
+          ]
+        },
+        "highlights": {
+          "$fn": "metricText",
+          "args": [
+            "$.metrics",
+            "$"
+          ]
+        },
+        "roles": [
+          {
+            "$fn": "text",
+            "args": [
+              "$.role"
+            ]
+          }
+        ],
+        "entity": {
+          "$fn": "org",
+          "args": [
+            "$.organization"
+          ]
+        },
+        "startDate": {
+          "$fn": "isoExact",
+          "args": [
+            "$.startDate"
+          ]
+        },
+        "endDate": {
+          "$fn": "isoExact",
+          "args": [
+            "$.endDate"
+          ]
+        },
+        "url": "$.url"
+      }
+    },
+    "meta": {
+      "canonical": "$.meta.canonicalUrl",
+      "version": "$.schemaVersion",
+      "lastModified": "$.meta.updated"
+    }
+  }
+}

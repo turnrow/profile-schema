@@ -1,3 +1,33 @@
+# Changelog
+
+## 2.0.0 (2026-11-07): Turnrow Profile Schema
+
+First public release of this fork. The repository no longer defines the JSON Resume schema: it defines the Turnrow Profile, a superset with an evidence model, and treats JSON Resume as one of several output formats.
+
+### Added
+- `schema/profile.schema.json` (JSON Schema draft 2020-12), with:
+  - `visibility`, `status`, `confidence`, `priority`, `citations`, `claims`, `openQuestion`, `lock`, `attribution` and per-target overrides on every entry
+  - structured `metrics` that can be confirmed or disputed on their own
+  - fuzzy dates (about, before, after, estimated, between)
+  - multiple name forms; a `places` registry with coordinates and Wikidata/GeoNames ids
+  - `timeline` events; `service` for military, scouting, volunteer and board work
+  - content `rules` (forbidden phrases and patterns, negative assertions)
+  - `sources` with evidence quality; profile bundles with checksums
+  - localized text; required image alt text
+- `lib/validate.mjs`: cross-reference, claim, consent and bundle checks on top of the schema.
+- `lib/convert.mjs` and `mappings/`: declarative conversion to JSON Resume, schema.org JSON-LD, a LinkedIn paste sheet, a short bio and a timeline, with rule enforcement.
+- `lib/import-jsonresume.mjs`: import an existing JSON Resume as a draft profile.
+- `bin/profile.mjs`: `validate`, `open`, `convert` and `import` commands.
+- A fictional sample profile and its generated outputs; a `node --test` suite; CI on Node 20 and 22.
+
+### Changed
+- The JSON Resume schema files moved to `upstream/jsonresume/` and were refreshed to JSON Resume 1.7.1 from the jsonresume.org monorepo. They are unmodified and serve as the compatibility target for export and import.
+- Removed the upstream semantic-release and npm publish workflows. The package is marked private until there is a decision to publish.
+
+---
+
+# Upstream history (JSON Resume)
+
 <a id="1.0.0"></a>
 ## [WIP], Version 1.0.0
 

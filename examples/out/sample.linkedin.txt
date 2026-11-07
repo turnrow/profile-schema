@@ -1,0 +1,77 @@
+Headline: Founder & CEO, Tidewater Trails | Marine biologist | 30 years building coastal travel
+Location: New York, NY
+Industry: Travel Arrangements
+About: I started on research boats and ended up building the places those boats sail to. Tidewater Trails is what I learned along the way: trips planned around the people taking them.
+Experience:
+  - (1)
+    Title: Founder & CEO
+    Employment type: Full-time
+    Company: Tidewater Trails
+    Dates: Mar 2024 – Present
+    Location: New York, NY
+    Location type: Hybrid
+    Description: Building a trip-planning service for coastal and marine travel.
+    Skills:
+      - Entrepreneurship
+      - Travel & Tourism
+  - (2)
+    Title: Director of Development
+    Employment type: Full-time
+    Company: Harborline Resorts
+    Dates: Jun 2009 – Dec 2023
+    Location: Cartagena, Colombia
+    Location type: On-site
+    Description: Led development of three waterfront resorts from site selection through opening.
+  - (3)
+    Title: Research Biologist
+    Employment type: Full-time
+    Company: Coastal Ecology Lab
+    Dates: c. 1996 – May 2009
+    Location: Azores, Portugal
+    Description: Field research on reef recovery; led survey dives and small-boat operations.
+Volunteering / service:
+  - (1)
+    Role: Board member
+    Organization: Open Trails Foundation
+    Dates: 2020 – Present
+  - (2)
+    Role: Boat crew member
+    Organization: Coast Guard Auxiliary (fictional unit)
+    Dates: 1990/91 – 1995
+    Description: Search-and-rescue boat crew on weekends.
+Education:
+  - (1)
+    School: State University (fictional)
+    Degree: BS
+    Field of study: Marine Biology
+    Dates: 1987 – 1991
+  - (2)
+    School: State University (fictional)
+    Field of study: Coastal Management
+    Dates: 1993 – 1995
+Licenses & certifications:
+  - (1)
+    Name: Master Mariner licence (100 GT) – Near Coastal, Auxiliary Sail
+    Issuing organization: Example Maritime Authority
+    Issue date: Apr 2005
+  - (2)
+    Name: Divemaster
+    Issuing organization: Example Diving Association
+    Issue date: before 1998
+Honors & awards:
+  - (1)
+    Title: Waterfront Project of the Year
+    Issuer: The Harbor Gazette
+    Date: Oct 2019
+Skills (first 3 pinned):
+  - Entrepreneurship
+  - Travel & Tourism
+  - Resort Development
+  - Marine Biology
+Featured:
+  - (1)
+    Title: Tidewater Trails
+    Link or file: https://example.com
+  - (2)
+    Title: Harbor Gazette profile (PDF)
+    Link or file: https://example.com/press/gazette-2019.pdf

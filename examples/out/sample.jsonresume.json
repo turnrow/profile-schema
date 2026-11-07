@@ -1,0 +1,158 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/jsonresume.org/master/packages/schema/schema.json",
+  "basics": {
+    "name": "Ines Calloway",
+    "label": "Founder & CEO, Tidewater Trails | Marine biologist | 30 years building coastal travel",
+    "image": "https://example.com/images/ines-calloway.jpg",
+    "email": "ines@example.com",
+    "url": "https://example.com",
+    "summary": "I started on research boats and ended up building the places those boats sail to. Tidewater Trails is what I learned along the way: trips planned around the people taking them.",
+    "location": {
+      "city": "New York",
+      "region": "NY",
+      "countryCode": "US"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "url": "https://www.linkedin.com/in/example-ines-calloway/"
+      },
+      {
+        "network": "ORCID",
+        "url": "https://orcid.org/0000-0000-0000-0000"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Tidewater Trails",
+      "position": "Founder & CEO",
+      "url": "https://example.com",
+      "location": "New York, NY",
+      "startDate": "2024-03",
+      "summary": "Building a trip-planning service for coastal and marine travel."
+    },
+    {
+      "name": "Harborline Resorts",
+      "position": "Director of Development",
+      "location": "Cartagena, Colombia",
+      "startDate": "2009-06",
+      "endDate": "2023-12",
+      "summary": "Led development of three waterfront resorts from site selection through opening.",
+      "highlights": [
+        "3 resorts opened",
+        "~$240M development portfolio"
+      ]
+    },
+    {
+      "name": "Coastal Ecology Lab",
+      "position": "Research Biologist",
+      "location": "Azores, Portugal",
+      "endDate": "2009-05",
+      "summary": "Field research on reef recovery; led survey dives and small-boat operations."
+    }
+  ],
+  "volunteer": [
+    {
+      "organization": "Open Trails Foundation",
+      "position": "Board member",
+      "startDate": "2020"
+    },
+    {
+      "organization": "Coast Guard Auxiliary (fictional unit)",
+      "position": "Boat crew member",
+      "endDate": "1995",
+      "summary": "Search-and-rescue boat crew on weekends."
+    }
+  ],
+  "education": [
+    {
+      "institution": "State University (fictional)",
+      "area": "Marine Biology",
+      "studyType": "BS",
+      "startDate": "1987",
+      "endDate": "1991"
+    },
+    {
+      "institution": "State University (fictional)",
+      "area": "Coastal Management",
+      "startDate": "1993",
+      "endDate": "1995"
+    }
+  ],
+  "awards": [
+    {
+      "title": "Waterfront Project of the Year",
+      "date": "2019-10",
+      "awarder": "The Harbor Gazette"
+    }
+  ],
+  "certificates": [
+    {
+      "name": "Master Mariner licence (100 GT) (Near Coastal, Auxiliary Sail)",
+      "issuer": "Example Maritime Authority",
+      "date": "2005-04"
+    },
+    {
+      "name": "Divemaster",
+      "issuer": "Example Diving Association"
+    }
+  ],
+  "publications": [
+    {
+      "name": "The biologist who builds harbors",
+      "publisher": "The Harbor Gazette",
+      "releaseDate": "2019-10-12",
+      "url": "https://example.com/press/gazette-2019"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Entrepreneurship"
+    },
+    {
+      "name": "Travel & Tourism"
+    },
+    {
+      "name": "Resort Development"
+    },
+    {
+      "name": "Marine Biology"
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "native"
+    },
+    {
+      "language": "Spanish",
+      "fluency": "native"
+    },
+    {
+      "language": "Portuguese",
+      "fluency": "professionalWorking"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Offshore sailing"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Cartagena waterfront resort and marina",
+      "roles": [
+        "Development lead"
+      ],
+      "entity": "Harborline Resorts",
+      "startDate": "2015",
+      "endDate": "2019"
+    }
+  ],
+  "meta": {
+    "canonical": "https://example.com/team/ines-calloway",
+    "version": "2.0.0",
+    "lastModified": "2026-11-07T22:00:00Z"
+  }
+}

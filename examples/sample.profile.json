@@ -1,0 +1,238 @@
+{
+  "$schema": "../schema/profile.schema.json",
+  "schemaVersion": "2.0.0",
+  "meta": {
+    "defaultLocale": "en-US",
+    "locales": ["en-US", "es"],
+    "updated": "2026-11-07T22:00:00Z",
+    "canonicalUrl": "https://example.com/team/ines-calloway",
+    "owner": "Ines Calloway",
+    "subjectConsent": { "given": true, "on": "2026-11-01", "note": "Fictional sample." },
+    "notes": "FICTIONAL SAMPLE. Ines Calloway, Tidewater Trails and every organization, event and figure here are invented to show the schema's features. Real places are used only as places."
+  },
+  "person": {
+    "name": "Ines Calloway",
+    "names": [
+      { "type": "preferred", "full": "Ines Calloway", "given": "Ines", "family": "Calloway" },
+      { "type": "legal", "full": "Inés María Calloway Ortega", "given": "Inés María", "family": "Calloway Ortega", "lang": "es", "visibility": "private" },
+      { "type": "nickname", "full": "Nes", "visibility": "network" }
+    ],
+    "headline": {
+      "en-US": "Founder & CEO, Tidewater Trails | Marine biologist | 30 years building coastal travel",
+      "es": "Fundadora y directora ejecutiva, Tidewater Trails | Bióloga marina | 30 años creando viajes costeros"
+    },
+    "jobTitle": { "en-US": "Founder & CEO, Tidewater Trails", "es": "Fundadora y directora ejecutiva, Tidewater Trails" },
+    "shortBio": {
+      "en-US": "Marine biologist turned resort developer who has spent three decades building coastal places people travel to, and now builds the trips themselves.",
+      "es": "Bióloga marina convertida en promotora turística que ha pasado tres décadas creando lugares costeros a los que la gente viaja, y que ahora diseña los propios viajes."
+    },
+    "summary": "I started on research boats and ended up building the places those boats sail to. Tidewater Trails is what I learned along the way: trips planned around the people taking them.",
+    "image": { "url": "https://example.com/images/ines-calloway.jpg", "alt": "Ines Calloway smiling on a dock, wearing a navy jacket, with sailboats behind her" },
+    "location": "new-york",
+    "contact": { "email": "ines@example.com", "emailVisibility": "network", "phone": "+1-555-0100", "phoneVisibility": "private", "website": "https://example.com" },
+    "profiles": [
+      { "network": "LinkedIn", "url": "https://www.linkedin.com/in/example-ines-calloway/" },
+      { "network": "ORCID", "url": "https://orcid.org/0000-0000-0000-0000" }
+    ],
+    "industry": "Travel Arrangements"
+  },
+  "organizations": {
+    "tidewater": { "name": "Tidewater Trails", "kind": "company", "url": "https://example.com", "location": "new-york" },
+    "harborline": { "name": "Harborline Resorts", "kind": "company", "alternateName": ["Harborline Hospitality Group"] },
+    "coastal-lab": { "name": { "en-US": "Coastal Ecology Lab", "es": "Laboratorio de Ecología Costera" }, "kind": "nonprofit" },
+    "state-u": { "name": "State University (fictional)", "kind": "school" },
+    "dive-assoc": { "name": "Example Diving Association", "kind": "association" },
+    "maritime-auth": { "name": "Example Maritime Authority", "kind": "government" },
+    "coast-guard-aux": { "name": "Coast Guard Auxiliary (fictional unit)", "kind": "military" },
+    "trails-foundation": { "name": "Open Trails Foundation", "kind": "nonprofit" },
+    "harbor-gazette": { "name": "The Harbor Gazette", "kind": "company" }
+  },
+  "places": {
+    "new-york": { "label": "New York, NY", "locality": "New York", "region": "NY", "countryCode": "US", "geo": { "lat": 40.7128, "lon": -74.006 }, "ids": { "wikidata": "Q60" } },
+    "paris": { "label": "Paris, France", "locality": "Paris", "countryCode": "FR", "geo": { "lat": 48.8566, "lon": 2.3522 }, "ids": { "wikidata": "Q90" } },
+    "lisbon": { "label": "Lisbon, Portugal", "locality": "Lisbon", "countryCode": "PT", "geo": { "lat": 38.7223, "lon": -9.1393 } },
+    "azores": { "label": "Azores, Portugal", "region": "Azores", "countryCode": "PT", "geo": { "lat": 37.7412, "lon": -25.6756 } },
+    "cartagena": { "label": "Cartagena, Colombia", "locality": "Cartagena", "countryCode": "CO", "geo": { "lat": 10.391, "lon": -75.4794 } }
+  },
+
+  "work": [
+    {
+      "id": "tidewater-ceo", "status": "approved", "confidence": "high", "priority": 100,
+      "organization": "tidewater", "title": "Founder & CEO", "employmentType": "founder", "workplaceType": "hybrid",
+      "startDate": "2024-03", "current": true, "location": "new-york",
+      "summary": { "en-US": "Building a trip-planning service for coastal and marine travel.", "es": "Creando un servicio de planificación de viajes costeros y marinos." },
+      "skills": ["entrepreneurship", "travel"],
+      "citations": [ { "source": "incorporation", "quality": "primary" } ],
+      "lock": { "by": "Ines Calloway", "on": "2026-11-01" }
+    },
+    {
+      "id": "harborline-director", "status": "approved", "confidence": "high", "priority": 95,
+      "organization": "harborline", "title": "Director of Development", "employmentType": "fullTime", "workplaceType": "onSite",
+      "startDate": "2009-06", "endDate": "2023-12", "location": "cartagena",
+      "summary": "Led development of three waterfront resorts from site selection through opening.",
+      "metrics": [
+        { "id": "resorts-opened", "label": "resorts opened", "value": 3, "citations": [ { "source": "cv" }, { "source": "gazette-2019", "quality": "published" } ] },
+        { "id": "portfolio-value", "label": "development portfolio", "value": "$240M", "qualifier": "approx", "citations": [ { "source": "cv" } ] },
+        {
+          "id": "marina-slips", "label": "marina slips", "value": 120, "status": "disputed",
+          "openQuestion": "CV says 120 slips; the 2019 Gazette article says 140. Which is right?",
+          "claims": [
+            { "field": "value", "value": 120, "citations": [ { "source": "cv", "locator": "p2" } ] },
+            { "field": "value", "value": 140, "citations": [ { "source": "gazette-2019", "quality": "published" } ] }
+          ]
+        }
+      ],
+      "claims": [
+        { "field": "title", "value": "Director of Development", "accepted": true, "rationale": "Offer letter title.", "citations": [ { "source": "offer-letter", "quality": "primary" } ] },
+        { "field": "title", "value": "VP Development", "citations": [ { "source": "gazette-2019", "quality": "published" } ] }
+      ],
+      "citations": [ { "source": "offer-letter", "quality": "primary" }, { "source": "cv", "locator": "p1" } ]
+    },
+    {
+      "id": "coastal-lab-researcher", "status": "approved", "confidence": "medium", "priority": 60,
+      "organization": "coastal-lab", "title": { "en-US": "Research Biologist", "es": "Bióloga investigadora" }, "employmentType": "fullTime",
+      "startDate": { "value": "1996", "qualifier": "about" }, "endDate": "2009-05", "location": "azores",
+      "summary": "Field research on reef recovery; led survey dives and small-boat operations.",
+      "citations": [ { "source": "cv", "locator": "p3" } ]
+    },
+    {
+      "id": "consulting-gap", "status": "pending", "confidence": "low",
+      "organization": { "name": "Independent consultant", "kind": "self" }, "title": "Hospitality consultant",
+      "startDate": "2024-01", "endDate": "2024-02",
+      "openQuestion": "Was this paid work worth listing, or just the gap before founding?"
+    }
+  ],
+
+  "service": [
+    {
+      "id": "coast-guard-aux", "kind": "reserve", "status": "approved", "confidence": "medium", "priority": 55,
+      "organization": "coast-guard-aux", "role": "Boat crew member", "startDate": { "between": ["1990", "1991"] }, "endDate": "1995",
+      "summary": "Search-and-rescue boat crew on weekends.",
+      "citations": [ { "source": "interview-2026", "locator": "12:40" } ]
+    },
+    {
+      "id": "trails-board", "kind": "board", "status": "approved", "confidence": "high", "visibility": "network",
+      "organization": "trails-foundation", "role": "Board member", "startDate": "2020", "current": true,
+      "citations": [ { "source": "board-minutes", "quality": "primary" } ]
+    }
+  ],
+
+  "education": [
+    {
+      "id": "state-u-bs", "status": "approved", "confidence": "high",
+      "institution": "state-u", "kind": "degree", "credential": "BS", "area": "Marine Biology", "completed": true,
+      "startDate": "1987", "endDate": "1991",
+      "citations": [ { "source": "diploma", "quality": "primary" } ]
+    },
+    {
+      "id": "state-u-ms", "status": "approved", "confidence": "medium", "visibility": "network",
+      "institution": "state-u", "kind": "coursework", "area": "Coastal Management", "completed": false,
+      "startDate": "1993", "endDate": "1995",
+      "summary": "Completed the coursework; left before the thesis to join the lab full time.",
+      "citations": [ { "source": "interview-2026" } ]
+    }
+  ],
+
+  "credentials": [
+    {
+      "id": "captain-license", "status": "approved", "confidence": "high", "priority": 85,
+      "name": { "en-US": "Master Mariner licence (100 GT)", "es": "Licencia de capitán (100 GT)" }, "kind": "license", "issuer": "maritime-auth",
+      "ratings": ["Near Coastal", "Auxiliary Sail"], "issued": "2005-04", "expires": "2030-04", "active": true,
+      "credentialId": "EX-12345", "credentialIdVisibility": "private",
+      "citations": [ { "source": "licence-scan", "quality": "primary" } ]
+    },
+    {
+      "id": "divemaster", "status": "approved", "confidence": "medium", "priority": 60,
+      "name": "Divemaster", "kind": "certification", "issuer": "dive-assoc", "issued": { "value": "1998", "qualifier": "before" },
+      "metrics": [ { "id": "logged-dives", "label": "logged dives", "value": 1500, "qualifier": "atLeast" } ],
+      "citations": [ { "source": "cv" } ]
+    },
+    {
+      "id": "old-pilot-cert", "status": "retired", "visibility": "private",
+      "name": "Private pilot certificate", "kind": "license", "active": false,
+      "summary": "Lapsed in 2001; kept as history, never shown."
+    }
+  ],
+
+  "awards": [
+    { "id": "harbor-award", "status": "approved", "confidence": "high", "priority": 70, "title": "Waterfront Project of the Year", "awarder": "harbor-gazette", "date": "2019-10", "relatedTo": "harborline-director", "citations": [ { "source": "gazette-2019", "quality": "published" } ] }
+  ],
+
+  "projects": [
+    {
+      "id": "cartagena-marina", "status": "approved", "confidence": "high",
+      "name": "Cartagena waterfront resort and marina", "role": "Development lead", "organization": "harborline", "location": "cartagena",
+      "value": { "amount": 95000000, "currency": "USD" }, "outcome": "delivered", "startDate": "2015", "endDate": "2019",
+      "citations": [ { "source": "gazette-2019", "quality": "published" } ]
+    }
+  ],
+
+  "publications": [
+    { "id": "gazette-profile", "status": "approved", "confidence": "high", "kind": "pressCoverage", "aboutPerson": true, "title": "The biologist who builds harbors", "publisher": "harbor-gazette", "date": "2019-10-12", "url": "https://example.com/press/gazette-2019", "citations": [ { "source": "gazette-2019", "quality": "published" } ] }
+  ],
+
+  "timeline": [
+    {
+      "id": "atlantic-crossing", "type": "voyage", "status": "approved", "confidence": "medium", "priority": 90,
+      "title": { "en-US": "Sailed from Lisbon to the Azores", "es": "Navegó de Lisboa a las Azores" },
+      "startDate": "1995-06", "endDate": "1995-07", "places": ["lisbon", "azores"],
+      "summary": "Crewed a 40-foot research sloop to join the lab, her first ocean passage.",
+      "metrics": [ { "id": "sea-miles", "label": "sea miles", "value": 900, "qualifier": "approx" } ],
+      "relatedTo": ["coastal-lab-researcher"],
+      "citations": [ { "source": "interview-2026", "locator": "05:10" } ]
+    },
+    {
+      "id": "paris-year", "type": "residence", "status": "approved", "confidence": "medium", "priority": 40,
+      "title": "A year in Paris studying hotel management in the evenings", "startDate": { "value": "2008", "qualifier": "about" }, "places": ["paris"],
+      "citations": [ { "source": "interview-2026" } ]
+    },
+    {
+      "id": "founding", "type": "founding", "status": "approved", "confidence": "high", "priority": 85,
+      "title": "Founded Tidewater Trails", "startDate": "2024-03", "places": ["new-york"], "relatedTo": ["tidewater-ceo"],
+      "citations": [ { "source": "incorporation", "quality": "primary" } ]
+    }
+  ],
+
+  "media": [
+    { "id": "website", "status": "approved", "confidence": "high", "title": "Tidewater Trails", "url": "https://example.com", "featured": true },
+    { "id": "gazette-pdf", "status": "approved", "confidence": "high", "visibility": "network", "title": "Harbor Gazette profile (PDF)", "url": "https://example.com/press/gazette-2019.pdf", "mediaType": "application/pdf", "featured": true }
+  ],
+
+  "skills": [
+    { "id": "entrepreneurship", "status": "approved", "confidence": "high", "name": "Entrepreneurship", "category": "management", "pinned": true, "priority": 90 },
+    { "id": "travel", "status": "approved", "confidence": "high", "name": { "en-US": "Travel & Tourism", "es": "Viajes y turismo" }, "category": "domain", "pinned": true, "priority": 90 },
+    { "id": "resort-development", "status": "approved", "confidence": "high", "name": "Resort Development", "category": "domain", "pinned": true, "priority": 90 },
+    { "id": "marine-biology", "status": "approved", "confidence": "high", "name": "Marine Biology", "category": "domain", "priority": 70, "years": 13 }
+  ],
+
+  "languages": [
+    { "id": "lang-en", "status": "approved", "confidence": "high", "language": "en", "name": "English", "fluency": "native", "cefr": "C2" },
+    { "id": "lang-es", "status": "approved", "confidence": "high", "language": "es", "name": { "en-US": "Spanish", "es": "Español" }, "fluency": "native", "cefr": "C2" },
+    { "id": "lang-pt", "status": "approved", "confidence": "medium", "language": "pt", "name": "Portuguese", "fluency": "professionalWorking", "cefr": "B2" }
+  ],
+
+  "interests": [
+    { "id": "sailing", "status": "approved", "confidence": "high", "name": "Offshore sailing", "metrics": [ { "id": "countries", "label": "countries visited", "value": 41 } ] }
+  ],
+
+  "references": [
+    { "id": "ref-mentor", "status": "approved", "visibility": "private", "name": "A. Example", "relationship": "Former lab director", "organization": "coastal-lab", "quote": "The calmest person on any boat.", "consentToPublish": false }
+  ],
+
+  "rules": [
+    { "id": "no-safe", "kind": "forbiddenPhrase", "phrases": ["safe", "guaranteed safe", "risk-free"], "reason": "Travel copy never promises safety; say 'safer' or describe the checks." },
+    { "id": "no-phd", "kind": "notTrue", "statement": "Does not hold a doctorate.", "phrases": ["PhD", "Ph.D.", "Dr. Calloway"], "reason": "She completed coursework only; no degree was conferred." },
+    { "id": "no-ms-degree", "kind": "forbiddenPattern", "pattern": "\\bM\\.?S\\.?\\b|master'?s degree", "appliesTo": ["public", "network"], "reason": "The master's coursework was not completed." }
+  ],
+
+  "sources": {
+    "cv": { "title": "Ines Calloway CV, 2024", "kind": "cv", "date": "2024-01", "author": "Ines Calloway", "defaultQuality": "selfReported" },
+    "offer-letter": { "title": "Harborline offer letter", "kind": "document", "date": "2009-05", "defaultQuality": "primary" },
+    "gazette-2019": { "title": "The Harbor Gazette, profile article", "kind": "article", "date": "2019-10-12", "defaultQuality": "published", "media": "gazette-pdf" },
+    "incorporation": { "title": "Certificate of incorporation, Tidewater Trails", "kind": "certificate", "date": "2024-03", "defaultQuality": "primary" },
+    "diploma": { "title": "BS diploma", "kind": "certificate", "date": "1991", "defaultQuality": "primary" },
+    "licence-scan": { "title": "Master Mariner licence (scan)", "kind": "certificate", "date": "2025-04", "defaultQuality": "primary" },
+    "board-minutes": { "title": "Open Trails Foundation board minutes", "kind": "record", "date": "2020", "defaultQuality": "primary" },
+    "interview-2026": { "title": "Bio interview recording", "kind": "interview", "date": "2026-10-15", "defaultQuality": "selfReported" }
+  }
+}

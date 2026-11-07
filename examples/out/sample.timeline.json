@@ -1,0 +1,92 @@
+{
+  "person": "Ines Calloway",
+  "events": [
+    {
+      "id": "atlantic-crossing",
+      "type": "voyage",
+      "title": "Sailed from Lisbon to the Azores",
+      "when": "Jun 1995 – Jul 1995",
+      "start": "1995-06",
+      "summary": "Crewed a 40-foot research sloop to join the lab, her first ocean passage.",
+      "facts": [
+        "~900 sea miles"
+      ],
+      "places": [
+        {
+          "name": "Lisbon, Portugal",
+          "geo": {
+            "lat": 38.7223,
+            "lon": -9.1393
+          }
+        },
+        {
+          "name": "Azores, Portugal",
+          "geo": {
+            "lat": 37.7412,
+            "lon": -25.6756
+          }
+        }
+      ]
+    },
+    {
+      "id": "paris-year",
+      "type": "residence",
+      "title": "A year in Paris studying hotel management in the evenings",
+      "when": "c. 2008",
+      "start": "2008",
+      "places": [
+        {
+          "name": "Paris, France",
+          "geo": {
+            "lat": 48.8566,
+            "lon": 2.3522
+          },
+          "sameAs": "https://www.wikidata.org/entity/Q90"
+        }
+      ]
+    },
+    {
+      "id": "founding",
+      "type": "founding",
+      "title": "Founded Tidewater Trails",
+      "when": "Mar 2024",
+      "start": "2024-03",
+      "places": [
+        {
+          "name": "New York, NY",
+          "geo": {
+            "lat": 40.7128,
+            "lon": -74.006
+          },
+          "sameAs": "https://www.wikidata.org/entity/Q60"
+        }
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "id": "coastal-lab-researcher",
+      "title": "Research Biologist",
+      "organization": "Coastal Ecology Lab",
+      "when": "c. 1996 – May 2009",
+      "start": "1996",
+      "place": "Azores, Portugal"
+    },
+    {
+      "id": "harborline-director",
+      "title": "Director of Development",
+      "organization": "Harborline Resorts",
+      "when": "Jun 2009 – Dec 2023",
+      "start": "2009-06",
+      "place": "Cartagena, Colombia"
+    },
+    {
+      "id": "tidewater-ceo",
+      "title": "Founder & CEO",
+      "organization": "Tidewater Trails",
+      "when": "Mar 2024 – Present",
+      "start": "2024-03",
+      "place": "New York, NY"
+    }
+  ]
+}
