@@ -1,6 +1,6 @@
 {
   "name": "@turnrow/profile-schema",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "One JSON source of truth for a person's professional record, with sources, competing claims, confidence, review status and per-field visibility, rendered to JSON Resume, schema.org JSON-LD, LinkedIn and more.",
   "private": true,
   "type": "module",
@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "test": "node --test test/*.test.mjs",
-    "validate:examples": "node bin/profile.mjs validate examples/sample.profile.json"
+    "validate:examples": "node bin/profile.mjs validate examples/sample.profile.json && node bin/profile.mjs validate examples/employee.profile.json"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,16 @@
   "bugs": {
     "url": "https://github.com/turnrow/profile-schema/issues"
   },
-  "keywords": ["json-schema", "resume", "json-resume", "schema-org", "json-ld", "gedcom", "profile", "linkedin"],
+  "keywords": [
+    "json-schema",
+    "resume",
+    "json-resume",
+    "schema-org",
+    "json-ld",
+    "gedcom",
+    "profile",
+    "linkedin"
+  ],
   "license": "MIT",
   "author": "Turnrow Solutions Group LLC",
   "dependencies": {

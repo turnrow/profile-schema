@@ -1,5 +1,30 @@
 # Changelog
 
+## 2.1.0 (2026-11-07): audiences, employer releases and write-back
+
+Backwards compatible: 2.0.0 files remain valid.
+
+### Added
+- **Audiences** (`audiences`): named recipients that qualify by relationship, so "my current employer" follows you from job to job and lapses when you leave. Each audience has:
+  - a purpose;
+  - grants for person-level fields and sections;
+  - a baseline visibility (`baseVisibility`);
+  - accepted verification methods, kept separately for releasing and for write-back;
+  - an expiry;
+  - field authority rules for write-back.
+- Entries can name audiences (`audiences: [...]`) to share something otherwise private with one recipient only.
+- `organizations[].domains`, used to recognise a requester.
+- `work[].employerRecord`: the employer's own record of the job (official title, department, division, cost centre, employee number, position, manager, work location, status, hire date). It is released only to an audience bound to that job.
+- **Releases** (`releases`, `lib/release.mjs`, `turnrow-profile release`): builds an audience-scoped payload in any mapping's format, with a consent receipt (recipient, purpose, what was shared, expiry, SHA-256 of the payload) and a record for the profile's release log.
+- **SCIM 2.0 mapping** (`mappings/scim.json`): the core User, the Enterprise User extension, and a `urn:turnrow:…:profile:2.0:User` extension (pronouns, preferred title, skills, languages and more), for employee directories and identity providers.
+- **Write-back** (`lib/writeback.mjs`, `turnrow-profile writeback`): an employer's SCIM User becomes claims cited to its system of record (primary evidence).
+  - Employer-authoritative fields are accepted; the previous value is kept as an unaccepted claim.
+  - On a locked job, existing values are kept and the employer's value is flagged for review (empty fields can still be filled). Subject-authoritative fields are always flagged for review.
+  - Changes to person-level fields are returned as suggestions and never applied.
+- `lib/audience.mjs`: resolves audiences on a date, checks requesters against policy (method and domain, including subdomains) and looks up field authority. An email address alone can never authorize write-back.
+- Validator checks for audience, release and employer-record consistency.
+- `examples/employee.profile.json` (fictional) with a sample SCIM write-back and outputs; 18 new tests (54 total).
+
 ## 2.0.0 (2026-11-07): Turnrow Profile Schema
 
 First public release of this fork. The repository no longer defines the JSON Resume schema: it defines the Turnrow Profile, a superset with an evidence model, and treats JSON Resume as one of several output formats.

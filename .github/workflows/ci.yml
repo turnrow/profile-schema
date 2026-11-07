@@ -22,12 +22,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - name: Validate the sample profile
-        run: node bin/profile.mjs validate examples/sample.profile.json
+      - name: Validate the example profiles
+        run: npm run validate:examples
       - name: Example outputs are up to date
         run: |
           for m in jsonresume schemaorg linkedin brief timeline; do
             ext=json; [ "$m" = linkedin ] && ext=txt
             node bin/profile.mjs convert examples/sample.profile.json "$m" --out "examples/out/sample.$m.$ext"
           done
-          git diff --exit-code -- examples/out ':!examples/out/imported-from-jsonresume.profile.json'
+          git diff --exit-code -- examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'

@@ -5,10 +5,13 @@
 //   turnrow-profile convert  <profile.json | bundle-folder> <mapping-name | mapping.json> [--locale xx] [--out file] [--allow-rule-violations]
 //   turnrow-profile import   <resume.json> [--locale xx] [--out file]
 //   turnrow-profile open     <profile.json | bundle-folder>      list items waiting on confirmation
+//   turnrow-profile release  <profile> <audience> [--format scim] --domain acme.com --method oidc [--application name]
+//                            [--out payload.json] [--receipt receipt.json] [--record]   (--record appends to profile.releases)
+//   turnrow-profile writeback <profile> <audience> <scim-user.json> --domain acme.com --method oidc [--out updated.json]
 
 import { readFileSync, writeFileSync, existsSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError } from "../index.mjs";
+import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack } from "../index.mjs";
 
 const argv = process.argv.slice(2);
 const takeFlag = (name) => { const i = argv.indexOf(name); if (i < 0) return undefined; const v = argv[i + 1]; argv.splice(i, 2); return v; };
@@ -16,6 +19,14 @@ const takeBool = (name) => { const i = argv.indexOf(name); if (i < 0) return fal
 const locale = takeFlag("--locale");
 const out = takeFlag("--out");
 const allow = takeBool("--allow-rule-violations");
+const format = takeFlag("--format") ?? "scim";
+const domain = takeFlag("--domain");
+const method = takeFlag("--method");
+const application = takeFlag("--application");
+const receiptOut = takeFlag("--receipt");
+const recordIt = takeBool("--record");
+const on = takeFlag("--on");
+const requester = domain || method ? { domain, method, application } : undefined;
 const [command, ...rest] = argv;
 
 function loadProfile(path) {
@@ -27,7 +38,7 @@ function loadProfile(path) {
 }
 function emit(text) { if (out) writeFileSync(out, text); else process.stdout.write(text); }
 function usage(code = 2) {
-  console.error("usage: turnrow-profile <validate|convert|import|open> … (see README)");
+  console.error("usage: turnrow-profile <validate|open|convert|import|release|writeback> … (see README)");
   process.exit(code);
 }
 
@@ -65,6 +76,36 @@ try {
       if (!rest[0]) usage();
       const resume = JSON.parse(readFileSync(rest[0], "utf8"));
       emit(JSON.stringify(fromJsonResume(resume, { locale }), null, 2) + "\n");
+      break;
+    }
+    case "release": {
+      if (!rest[0] || !rest[1]) usage();
+      if (!requester?.domain || !requester?.method) { console.error("release needs --domain and --method (what your application verified)"); process.exit(2); }
+      const { profile, bundleDir } = loadProfile(rest[0]);
+      const v = validateProfile(profile, { bundleDir });
+      if (!v.valid) { console.error("Profile is not valid; run validate first.\n  " + v.errors.join("\n  ")); process.exit(1); }
+      const mapping = format.endsWith(".json") ? JSON.parse(readFileSync(format, "utf8")) : loadMapping(format);
+      const r = buildRelease(profile, rest[1], mapping, { requester, on, locale });
+      emit(r.text);
+      if (receiptOut) writeFileSync(receiptOut, JSON.stringify(r.receipt, null, 2) + "\n");
+      if (recordIt) {
+        profile.releases = [...(profile.releases ?? []), r.record];
+        writeFileSync(rest[0], JSON.stringify(profile, null, 2) + "\n");
+        console.error(`Recorded ${r.record.id} in ${rest[0]}`);
+      }
+      break;
+    }
+    case "writeback": {
+      if (!rest[0] || !rest[1] || !rest[2]) usage();
+      if (!requester?.domain || !requester?.method) { console.error("writeback needs --domain and --method (what your application verified)"); process.exit(2); }
+      const { profile } = loadProfile(rest[0]);
+      const scim = JSON.parse(readFileSync(rest[2], "utf8"));
+      const r = applyWriteBack(profile, rest[1], scim, { requester, on });
+      for (const c of r.changes) if (c.action !== "unchanged") console.error(`${c.action.padEnd(11)} ${c.field}: ${JSON.stringify(c.from)} → ${JSON.stringify(c.to)}`);
+      for (const sgg of r.suggestions) console.error(`suggestion  ${sgg.field}: ${JSON.stringify(sgg.current)} → ${JSON.stringify(sgg.value)} (yours to decide)`);
+      const after = validateProfile(r.profile);
+      if (!after.valid) { console.error("Write-back produced an invalid profile:\n  " + after.errors.join("\n  ")); process.exit(1); }
+      emit(JSON.stringify(r.profile, null, 2) + "\n");
       break;
     }
     default:

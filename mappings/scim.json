@@ -1,0 +1,259 @@
+{
+  "target": "scim",
+  "description": "SCIM 2.0 User (RFC 7643) with the Enterprise User extension, for employee directories and identity providers. Use through a release (buildRelease or `release`), which scopes the profile to one audience; on its own it only sees the subject's public data.",
+  "include": {
+    "visibility": [
+      "public"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high",
+      "medium"
+    ]
+  },
+  "output": {
+    "schemas": [
+      "urn:ietf:params:scim:schemas:core:2.0:User",
+      "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",
+      "urn:turnrow:params:scim:schemas:extension:profile:2.0:User"
+    ],
+    "externalId": "$$._release.work.employerRecord.employeeNumber",
+    "userName": {
+      "$fn": "coalesce",
+      "args": [
+        {
+          "$fn": "visible",
+          "args": [
+            "$.person.contact.email",
+            "$.person.contact.emailVisibility"
+          ]
+        },
+        "$$._release.work.employerRecord.employeeNumber"
+      ]
+    },
+    "name": {
+      "formatted": {
+        "$fn": "coalesce",
+        "args": [
+          {
+            "$fn": "name",
+            "args": [
+              "preferred",
+              "full"
+            ]
+          },
+          "$.person.name"
+        ]
+      },
+      "givenName": {
+        "$fn": "name",
+        "args": [
+          "preferred",
+          "given"
+        ]
+      },
+      "familyName": {
+        "$fn": "name",
+        "args": [
+          "preferred",
+          "family"
+        ]
+      }
+    },
+    "displayName": {
+      "$fn": "coalesce",
+      "args": [
+        {
+          "$fn": "name",
+          "args": [
+            "preferred",
+            "full"
+          ]
+        },
+        "$.person.name"
+      ]
+    },
+    "nickName": {
+      "$fn": "name",
+      "args": [
+        "nickname"
+      ]
+    },
+    "title": {
+      "$fn": "coalesce",
+      "args": [
+        {
+          "$fn": "text",
+          "args": [
+            "$$._release.work.employerRecord.officialTitle"
+          ]
+        },
+        {
+          "$fn": "text",
+          "args": [
+            "$$._release.work.title"
+          ]
+        }
+      ]
+    },
+    "preferredLanguage": "$.meta.defaultLocale",
+    "locale": {
+      "$fn": "locale",
+      "args": []
+    },
+    "emails": {
+      "$if": {
+        "$fn": "visible",
+        "args": [
+          "$.person.contact.email",
+          "$.person.contact.emailVisibility"
+        ]
+      },
+      "$then": [
+        {
+          "value": "$.person.contact.email",
+          "type": "work",
+          "primary": true
+        }
+      ]
+    },
+    "phoneNumbers": {
+      "$if": {
+        "$fn": "visible",
+        "args": [
+          "$.person.contact.phone",
+          "$.person.contact.phoneVisibility"
+        ]
+      },
+      "$then": [
+        {
+          "value": "$.person.contact.phone",
+          "type": "work"
+        }
+      ]
+    },
+    "photos": {
+      "$if": "$.person.image.url",
+      "$then": [
+        {
+          "value": "$.person.image.url",
+          "type": "photo"
+        }
+      ]
+    },
+    "active": {
+      "$if": "$$._release.work",
+      "$then": true
+    },
+    "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": {
+      "employeeNumber": "$$._release.work.employerRecord.employeeNumber",
+      "costCenter": "$$._release.work.employerRecord.costCenter",
+      "organization": {
+        "$fn": "org",
+        "args": [
+          "$$._release.work.organization"
+        ]
+      },
+      "division": "$$._release.work.employerRecord.division",
+      "department": "$$._release.work.employerRecord.department",
+      "manager": {
+        "value": "$$._release.work.employerRecord.managerId",
+        "displayName": "$$._release.work.employerRecord.managerName"
+      }
+    },
+    "urn:turnrow:params:scim:schemas:extension:profile:2.0:User": {
+      "pronouns": "$.person.pronouns",
+      "preferredTitle": {
+        "$fn": "text",
+        "args": [
+          "$$._release.work.title"
+        ]
+      },
+      "headline": {
+        "$fn": "text",
+        "args": [
+          "$.person.headline"
+        ]
+      },
+      "shortBio": {
+        "$fn": "text",
+        "args": [
+          "$.person.shortBio"
+        ]
+      },
+      "imageAlt": {
+        "$fn": "text",
+        "args": [
+          "$.person.image.alt"
+        ]
+      },
+      "workLocation": {
+        "$fn": "coalesce",
+        "args": [
+          "$$._release.work.employerRecord.workLocation",
+          {
+            "$fn": "place",
+            "args": [
+              "$$._release.work.location"
+            ]
+          }
+        ]
+      },
+      "skills": {
+        "$each": "$$.skills",
+        "$sort": "-pinned,-priority",
+        "$map": {
+          "$fn": "text",
+          "args": [
+            "$.name"
+          ]
+        }
+      },
+      "languages": {
+        "$each": "$$.languages",
+        "$map": {
+          "tag": "$.language",
+          "name": {
+            "$fn": "text",
+            "args": [
+              "$.name"
+            ]
+          },
+          "fluency": "$.fluency"
+        }
+      },
+      "credentials": {
+        "$each": "$$.credentials",
+        "$where": {
+          "active": [
+            true,
+            null
+          ]
+        },
+        "$map": {
+          "name": {
+            "$fn": "text",
+            "args": [
+              "$.name"
+            ]
+          },
+          "issuer": {
+            "$fn": "org",
+            "args": [
+              "$.issuer"
+            ]
+          }
+        }
+      },
+      "profiles": {
+        "$each": "$$.person.profiles",
+        "$map": {
+          "network": "$.network",
+          "url": "$.url"
+        }
+      }
+    }
+  }
+}
