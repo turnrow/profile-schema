@@ -47,6 +47,60 @@ The sample is a **fictional** person built to exercise every feature. Its output
 | Military, scouting, volunteer and board work | `service`, its own section, so each output decides where it goes. | |
 | Study that didn't end in a degree | `education.completed: false`, so no output implies a degree. | |
 
+## Audiences: share different things with different recipients
+
+Public, network and private cover the open web, signed-in views and nothing. Real recipients are narrower: your employer's directory, a recruiter, a client, a past employer verifying dates. **Audiences** name them and grant each one exactly what it should see.
+
+```json
+"audiences": {
+  "current-employer": {
+    "kind": "employer",
+    "relation": "current",
+    "purpose": "employeeDirectory",
+    "person": ["name", "preferredName", "pronouns", "image", "email", "jobTitle", "shortBio"],
+    "sections": ["skills", "languages", "credentials"],
+    "baseVisibility": ["public", "network"],
+    "verification": { "methods": ["oidc", "saml", "dnsTxt"], "writeBackMethods": ["oidc"] },
+    "expires": "onSeparation",
+    "writeBack": { "allowed": true }
+  }
+}
+```
+
+- **Qualification by relationship:** "current employer" resolves to whichever job is current, so it follows you to each new job, and access ends when the job does (`expires: "onSeparation"`). `former` covers past employers; `organization` or `workRef` names one directly.
+- **Recognising the recipient:** organizations list their `domains`. The application verifies the requester (OIDC or SAML token from the employer's identity provider, a DNS TXT record or `.well-known` file, or a signed request), and `checkRequester` decides whether that method and domain qualify. A matching email address alone is the weakest proof and can never authorize write-back.
+- **Grants:** an audience receives only the person-level fields and sections it lists. Entries are included when their visibility is in `baseVisibility`, and an entry can name an audience to share something otherwise private with that recipient only (a first-aid certificate for the employer's safety roster, say).
+- **The employer's own record:** `work[].employerRecord` holds the official title, department, manager and internal ids as the employer records them. It goes only to an audience bound to that job, never to anyone else. Your own wording (`title`) stays alongside it.
+
+### Releases and consent receipts
+
+```sh
+node bin/profile.mjs release examples/employee.profile.json current-employer \
+  --format scim --domain acme.example --method oidc --application acme-directory \
+  --out directory.json --receipt receipt.json --record
+```
+
+A release is the scoped payload plus a **consent receipt**: recipient, purpose, what was shared, expiry and the SHA-256 of the payload. `--record` appends it to the profile's `releases` log. Stopping a release stops future updates; copies already delivered stay with the recipient, and the receipt says so. The `scim` mapping produces a SCIM 2.0 User with the Enterprise User extension (employee number, department, division, cost centre, manager), the format directories and identity providers already accept.
+
+### Write-back: corrections from the employer
+
+```sh
+node bin/profile.mjs writeback examples/employee.profile.json current-employer examples/acme-writeback.scim.json \
+  --domain acme.example --method oidc --out updated.profile.json
+```
+
+The employer's SCIM User is read as evidence, not as an overwrite. Each value becomes a claim cited to the employer's system of record (primary quality).
+
+| Field | Default authority | Result |
+|---|---|---|
+| `employerRecord.*` (official title, department, manager, ids…), `startDate`, `endDate` | Employer | Accepted, with the previous value kept as an unaccepted claim. If the job is locked, existing values are kept and the employer's value is flagged for review; empty fields can still be filled. |
+| `title` (your own wording) | You | Kept as a claim for review. |
+| Name, preferred name, pronouns | You | Returned as suggestions, never applied. |
+
+An audience's `writeBack.authority` can change these defaults field by field. Write-back requires a strong verification method (OIDC, SAML or a signed request by default).
+
+**Out of scope here:** verifying tokens, DNS records and signatures is the application's job. This library decides whether what was verified satisfies the audience. Signed attestations (for example W3C Verifiable Credentials issued by the employer) fit naturally as primary-quality citations and are a likely next step.
+
 ## Repository layout
 
 | Path | What it is |
@@ -55,9 +109,12 @@ The sample is a **fictional** person built to exercise every feature. Its output
 | [`lib/validate.mjs`](lib/validate.mjs) | Schema validation, plus the checks a schema can't express: cross-references, claim consistency, open questions, consent for references, bundle files, rule syntax. |
 | [`lib/convert.mjs`](lib/convert.mjs) | Applies a mapping to a profile and enforces the content rules. |
 | [`lib/import-jsonresume.mjs`](lib/import-jsonresume.mjs) | Converts a JSON Resume into a profile. Everything imported starts as a draft. |
-| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`. |
-| [`bin/profile.mjs`](bin/profile.mjs) | Command line: `validate`, `open`, `convert`, `import`. |
-| [`examples/`](examples/) | The fictional sample profile and every output generated from it. |
+| [`lib/audience.mjs`](lib/audience.mjs) | Resolves audiences on a date, checks requesters against policy and looks up field authority. |
+| [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
+| [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
+| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`. |
+| [`bin/profile.mjs`](bin/profile.mjs) | Command line: `validate`, `open`, `convert`, `import`, `release`, `writeback`. |
+| [`examples/`](examples/) | Two fictional profiles (a founder; a new employee with audiences), a sample SCIM write-back, and every output generated from them. |
 | [`upstream/jsonresume/`](upstream/jsonresume/) | An unmodified copy of the current JSON Resume schema (1.7.1). The tests validate our JSON Resume export against it. |
 | [`test/`](test/) | `node --test`: schema, validator, converter, rules and import round trip. |
 
@@ -111,7 +168,7 @@ A mapping is JSON: an `include` filter and an `output` template.
 ### Other targets
 
 - **Europass:** copy `jsonresume.json` and rename keys to the Europass model. Map `languages[].cefr` to the language levels and `skills[].escoUri` to ESCO skills. Europass imports XML, so add a JSON-to-XML step.
-- **HR Open Standards / ATS:** map `work` to employment history and `credentials` to certifications the same way.
+- **HR Open Standards / ATS:** map `work` to employment history and `credentials` to certifications the same way. Employee directories and identity providers are covered by the `scim` mapping.
 - **GEDCOM:** `timeline`, `service`, `education` and `names` map naturally to GEDCOM events, attributes and name structures, if a family-history export is ever wanted.
 
 ## Profile bundles
@@ -134,7 +191,7 @@ The schema makes privacy enforceable, but it doesn't decide what is appropriate.
 
 ## Versioning
 
-`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 is the first public release (1.0 was an internal draft).
+`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 adds audiences, releases and write-back, and 2.0.0 files remain valid.
 
 ## Credits and licence
 

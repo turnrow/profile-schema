@@ -1,0 +1,26 @@
+{
+  "schemas": [
+    "urn:ietf:params:scim:schemas:core:2.0:User",
+    "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",
+    "urn:turnrow:params:scim:schemas:extension:profile:2.0:User"
+  ],
+  "id": "2819c223-7f76-453a-919d-413861904646",
+  "externalId": "E-104233",
+  "userName": "sam.rivera@acme.example",
+  "displayName": "Samantha Rivera",
+  "title": "Senior Software Engineer II, Platform",
+  "active": true,
+  "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": {
+    "employeeNumber": "E-104233",
+    "costCenter": "CC-4410",
+    "organization": "Acme Example Corp",
+    "division": "Technology",
+    "department": "Platform Engineering",
+    "manager": { "value": "E-100871", "displayName": "Jordan Example" }
+  },
+  "urn:turnrow:params:scim:schemas:extension:profile:2.0:User": {
+    "workLocation": "Austin HQ, Floor 4",
+    "startDate": "2026-11-03",
+    "hireDate": "2026-11-03"
+  }
+}

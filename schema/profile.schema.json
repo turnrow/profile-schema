@@ -4,55 +4,166 @@
   "title": "Turnrow Profile",
   "description": "A single source of truth for a person's professional record, from which a résumé, a LinkedIn profile, schema.org JSON-LD, a slide bio or a Europass CV are generated. Derived from JSON Resume, with an evidence model borrowed from genealogy (GEDCOM 7 / GEDCOM X): every fact carries its sources, competing claims, a confidence level, a review status and a visibility, so nothing unconfirmed or private is ever published by accident.",
   "type": "object",
-  "required": ["schemaVersion", "meta", "person"],
+  "required": [
+    "schemaVersion",
+    "meta",
+    "person"
+  ],
   "additionalProperties": false,
   "properties": {
-    "$schema": { "type": "string" },
-    "schemaVersion": { "const": "2.0.0" },
-    "meta": { "$ref": "#/$defs/meta" },
-    "person": { "$ref": "#/$defs/person" },
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "enum": [
+        "2.0.0",
+        "2.1.0"
+      ],
+      "description": "2.1.0 adds audiences, employer records and releases; 2.0.0 files remain valid."
+    },
+    "meta": {
+      "$ref": "#/$defs/meta"
+    },
+    "person": {
+      "$ref": "#/$defs/person"
+    },
     "organizations": {
       "description": "Organizations defined once and referenced by id everywhere else.",
       "type": "object",
-      "propertyNames": { "$ref": "#/$defs/id" },
-      "additionalProperties": { "$ref": "#/$defs/organization" }
+      "propertyNames": {
+        "$ref": "#/$defs/id"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/organization"
+      }
     },
     "places": {
       "description": "Places defined once and referenced by id (optional; inline places are also allowed).",
       "type": "object",
-      "propertyNames": { "$ref": "#/$defs/id" },
-      "additionalProperties": { "$ref": "#/$defs/place" }
+      "propertyNames": {
+        "$ref": "#/$defs/id"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/place"
+      }
     },
-    "work": { "type": "array", "items": { "$ref": "#/$defs/work" } },
-    "service": { "type": "array", "items": { "$ref": "#/$defs/service" } },
-    "education": { "type": "array", "items": { "$ref": "#/$defs/education" } },
-    "credentials": { "type": "array", "items": { "$ref": "#/$defs/credential" } },
-    "awards": { "type": "array", "items": { "$ref": "#/$defs/award" } },
-    "projects": { "type": "array", "items": { "$ref": "#/$defs/project" } },
-    "publications": { "type": "array", "items": { "$ref": "#/$defs/publication" } },
-    "timeline": { "type": "array", "items": { "$ref": "#/$defs/event" } },
-    "media": { "type": "array", "items": { "$ref": "#/$defs/media" } },
-    "skills": { "type": "array", "items": { "$ref": "#/$defs/skill" } },
-    "languages": { "type": "array", "items": { "$ref": "#/$defs/language" } },
-    "interests": { "type": "array", "items": { "$ref": "#/$defs/interest" } },
-    "references": { "type": "array", "items": { "$ref": "#/$defs/reference" } },
+    "audiences": {
+      "description": "Named audiences that qualify by relationship (e.g. 'my current employer') and receive only what they are granted. Built-in audiences public, network and private need no entry here.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/id"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/audience"
+      }
+    },
+    "work": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/work"
+      }
+    },
+    "service": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/service"
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/education"
+      }
+    },
+    "credentials": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/credential"
+      }
+    },
+    "awards": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/award"
+      }
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/project"
+      }
+    },
+    "publications": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/publication"
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/event"
+      }
+    },
+    "media": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/media"
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skill"
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/language"
+      }
+    },
+    "interests": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/interest"
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reference"
+      }
+    },
     "rules": {
       "description": "Content rules every rendered output must obey: phrases never to use and statements that are not true (negative assertions). Converters refuse to emit output that breaks a rule.",
       "type": "array",
-      "items": { "$ref": "#/$defs/rule" }
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    },
+    "releases": {
+      "description": "Log of what was released to whom: each entry is a consent receipt for one release. Private; never rendered.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/release"
+      }
     },
     "sources": {
       "description": "The documents facts are drawn from, referenced by id from every citation.",
       "type": "object",
-      "propertyNames": { "$ref": "#/$defs/id" },
-      "additionalProperties": { "$ref": "#/$defs/source" }
+      "propertyNames": {
+        "$ref": "#/$defs/id"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/source"
+      }
     },
     "extensions": {
       "description": "Namespaced data for one consumer, keyed by consumer name (e.g. extensions.linkedin.customUrl).",
       "type": "object"
     }
   },
-
   "$defs": {
     "id": {
       "type": "string",
@@ -67,12 +178,18 @@
     "text": {
       "description": "A string in meta.defaultLocale, or a map of BCP 47 tags to translations.",
       "oneOf": [
-        { "type": "string" },
+        {
+          "type": "string"
+        },
         {
           "type": "object",
           "minProperties": 1,
-          "propertyNames": { "$ref": "#/$defs/localeTag" },
-          "additionalProperties": { "type": "string" }
+          "propertyNames": {
+            "$ref": "#/$defs/localeTag"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       ]
     },
@@ -84,24 +201,48 @@
     "fuzzyDate": {
       "description": "A date as precisely as it is known (after GEDCOM date qualifiers). A plain partial date is exact to its precision; the object forms say 'about', 'before', 'after', 'estimated', or 'between' two dates.",
       "oneOf": [
-        { "$ref": "#/$defs/partialDate" },
+        {
+          "$ref": "#/$defs/partialDate"
+        },
         {
           "type": "object",
-          "required": ["value", "qualifier"],
+          "required": [
+            "value",
+            "qualifier"
+          ],
           "additionalProperties": false,
           "properties": {
-            "value": { "$ref": "#/$defs/partialDate" },
-            "qualifier": { "enum": ["about", "before", "after", "estimated", "calculated"] }
+            "value": {
+              "$ref": "#/$defs/partialDate"
+            },
+            "qualifier": {
+              "enum": [
+                "about",
+                "before",
+                "after",
+                "estimated",
+                "calculated"
+              ]
+            }
           }
         },
         {
           "type": "object",
-          "required": ["between"],
+          "required": [
+            "between"
+          ],
           "additionalProperties": false,
           "properties": {
             "between": {
               "type": "array",
-              "prefixItems": [ { "$ref": "#/$defs/partialDate" }, { "$ref": "#/$defs/partialDate" } ],
+              "prefixItems": [
+                {
+                  "$ref": "#/$defs/partialDate"
+                },
+                {
+                  "$ref": "#/$defs/partialDate"
+                }
+              ],
               "minItems": 2,
               "maxItems": 2
             }
@@ -109,46 +250,99 @@
         }
       ]
     },
-
     "visibility": {
-      "enum": ["public", "network", "private"],
+      "enum": [
+        "public",
+        "network",
+        "private"
+      ],
       "description": "public: may appear on the open web. network: signed-in or shared views (LinkedIn, a data room, an application). private: source of truth only; never rendered."
     },
     "status": {
-      "enum": ["draft", "pending", "approved", "disputed", "retired"],
+      "enum": [
+        "draft",
+        "pending",
+        "approved",
+        "disputed",
+        "retired"
+      ],
       "description": "Review lifecycle. draft: entered, not reviewed. pending: waiting on a named question. approved: the subject (or owner) signed off. disputed: sources conflict and no claim is accepted. retired: kept as history, never rendered."
     },
     "confidence": {
-      "enum": ["high", "medium", "low"],
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
       "description": "How sure we are, judged from the evidence (GEDCOM X confidence). Independent of status: an approved fact can still rest only on the subject's word."
     },
     "evidenceQuality": {
-      "enum": ["primary", "secondary", "selfReported", "published", "hearsay"],
+      "enum": [
+        "primary",
+        "secondary",
+        "selfReported",
+        "published",
+        "hearsay"
+      ],
       "description": "Quality of one citation (after GEDCOM QUAY). primary: an original record made at the time (licence, pay record, certificate). secondary: a later record by someone else. selfReported: the subject's own CV, bio or interview. published: press or a third-party profile. hearsay: second-hand, unverified."
     },
     "citation": {
       "type": "object",
-      "required": ["source"],
+      "required": [
+        "source"
+      ],
       "additionalProperties": false,
       "properties": {
-        "source": { "$ref": "#/$defs/id" },
-        "locator": { "type": "string", "description": "Page, section, timestamp: 'p3', '§2.6'." },
-        "quality": { "$ref": "#/$defs/evidenceQuality", "description": "Overrides the source's defaultQuality for this citation." },
-        "quote": { "type": "string", "description": "Short excerpt supporting the claim (keep it brief)." },
-        "note": { "type": "string" }
+        "source": {
+          "$ref": "#/$defs/id"
+        },
+        "locator": {
+          "type": "string",
+          "description": "Page, section, timestamp: 'p3', '§2.6'."
+        },
+        "quality": {
+          "$ref": "#/$defs/evidenceQuality",
+          "description": "Overrides the source's defaultQuality for this citation."
+        },
+        "quote": {
+          "type": "string",
+          "description": "Short excerpt supporting the claim (keep it brief)."
+        },
+        "note": {
+          "type": "string"
+        }
       }
     },
     "claim": {
       "description": "One source's version of a field (GEDCOM X evidence vs. conclusion). Keep every competing claim; mark the one the entry uses as accepted.",
       "type": "object",
-      "required": ["field", "value", "citations"],
+      "required": [
+        "field",
+        "value",
+        "citations"
+      ],
       "additionalProperties": false,
       "properties": {
-        "field": { "type": "string", "description": "The entry field the claim is about, as a dotted path: 'title', 'endDate', 'metrics.marina-slips.value'." },
+        "field": {
+          "type": "string",
+          "description": "The entry field the claim is about, as a dotted path: 'title', 'endDate', 'metrics.marina-slips.value'."
+        },
         "value": {},
-        "citations": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/citation" } },
-        "accepted": { "type": "boolean", "default": false },
-        "rationale": { "type": "string", "description": "Why this claim was accepted or rejected." }
+        "citations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        },
+        "accepted": {
+          "type": "boolean",
+          "default": false
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Why this claim was accepted or rejected."
+        }
       }
     },
     "attribution": {
@@ -156,505 +350,1787 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "createdBy": { "type": "string" },
-        "created": { "type": "string", "format": "date-time" },
-        "modifiedBy": { "type": "string" },
-        "modified": { "type": "string", "format": "date-time" },
-        "changeMessage": { "type": "string" }
+        "createdBy": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "modifiedBy": {
+          "type": "string"
+        },
+        "modified": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "changeMessage": {
+          "type": "string"
+        }
       }
     },
     "lock": {
       "description": "Set when the subject approves an entry. Any later change must clear the lock and go back for approval (after GEDCOM RESN LOCKED).",
       "type": "object",
-      "required": ["by", "on"],
+      "required": [
+        "by",
+        "on"
+      ],
       "additionalProperties": false,
       "properties": {
-        "by": { "type": "string" },
-        "on": { "$ref": "#/$defs/partialDate" },
-        "note": { "type": "string" }
+        "by": {
+          "type": "string"
+        },
+        "on": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "note": {
+          "type": "string"
+        }
       }
     },
-
     "entryBase": {
       "description": "Fields shared by every list entry.",
       "type": "object",
-      "required": ["id"],
+      "required": [
+        "id"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "visibility": { "$ref": "#/$defs/visibility", "default": "public" },
-        "status": { "$ref": "#/$defs/status", "default": "draft" },
-        "confidence": { "$ref": "#/$defs/confidence", "default": "medium" },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "visibility": {
+          "$ref": "#/$defs/visibility",
+          "default": "public"
+        },
+        "status": {
+          "$ref": "#/$defs/status",
+          "default": "draft"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence",
+          "default": "medium"
+        },
         "priority": {
-          "type": "integer", "minimum": 0, "maximum": 100, "default": 50,
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 50,
           "description": "Relative weight for short views: a slide bio might take only priority >= 80."
         },
-        "order": { "type": "number", "description": "Explicit display order inside the section; otherwise newest first." },
-        "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
-        "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } },
-        "claims": { "type": "array", "items": { "$ref": "#/$defs/claim" } },
-        "openQuestion": { "type": "string", "description": "What still needs answering. Required while status is pending or disputed." },
-        "lock": { "$ref": "#/$defs/lock" },
-        "attribution": { "$ref": "#/$defs/attribution" },
+        "order": {
+          "type": "number",
+          "description": "Explicit display order inside the section; otherwise newest first."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/claim"
+          }
+        },
+        "openQuestion": {
+          "type": "string",
+          "description": "What still needs answering. Required while status is pending or disputed."
+        },
+        "lock": {
+          "$ref": "#/$defs/lock"
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        },
         "targets": {
           "description": "Per-target overrides keyed by target name: { \"linkedin\": { \"title\": \"…\" }, \"jsonresume\": { \"omit\": true } }.",
           "type": "object",
-          "additionalProperties": { "type": "object" }
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "audiences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "uniqueItems": true,
+          "description": "Named audiences that may receive this entry even if its visibility would otherwise exclude it (ids from the top-level audiences map)."
         }
       }
     },
     "dateRange": {
       "type": "object",
       "properties": {
-        "startDate": { "$ref": "#/$defs/fuzzyDate" },
-        "endDate": { "$ref": "#/$defs/fuzzyDate" },
-        "current": { "type": "boolean", "default": false }
+        "startDate": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "endDate": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "current": {
+          "type": "boolean",
+          "default": false
+        }
       }
     },
-
     "place": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "label": { "$ref": "#/$defs/text", "description": "How the place should read: 'Greater Asheville'." },
-        "historicalName": { "type": "string", "description": "The name used at the time, if different: 'British West Indies'." },
-        "locality": { "type": "string" },
-        "region": { "type": "string" },
-        "countryCode": { "type": "string", "pattern": "^[A-Z]{2}$", "description": "ISO 3166-1 alpha-2." },
-        "postalCode": { "type": "string" },
-        "streetAddress": { "type": "string" },
+        "label": {
+          "$ref": "#/$defs/text",
+          "description": "How the place should read: 'Greater Asheville'."
+        },
+        "historicalName": {
+          "type": "string",
+          "description": "The name used at the time, if different: 'British West Indies'."
+        },
+        "locality": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "countryCode": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2."
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "streetAddress": {
+          "type": "string"
+        },
         "geo": {
           "type": "object",
-          "required": ["lat", "lon"],
+          "required": [
+            "lat",
+            "lon"
+          ],
           "additionalProperties": false,
-          "properties": { "lat": { "type": "number", "minimum": -90, "maximum": 90 }, "lon": { "type": "number", "minimum": -180, "maximum": 180 } }
+          "properties": {
+            "lat": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "lon": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            }
+          }
         },
         "ids": {
           "description": "Standard place identifiers, so the place is unambiguous to machines.",
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "geonames": { "type": "string", "pattern": "^\\d+$" },
-            "wikidata": { "type": "string", "pattern": "^Q\\d+$" },
-            "osm": { "type": "string" }
+            "geonames": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "wikidata": {
+              "type": "string",
+              "pattern": "^Q\\d+$"
+            },
+            "osm": {
+              "type": "string"
+            }
           }
         }
       }
     },
     "placeRef": {
       "description": "The id of an entry in places, or an inline place.",
-      "oneOf": [ { "$ref": "#/$defs/id" }, { "$ref": "#/$defs/place" } ]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "$ref": "#/$defs/place"
+        }
+      ]
     },
     "money": {
       "type": "object",
-      "required": ["amount", "currency"],
+      "required": [
+        "amount",
+        "currency"
+      ],
       "additionalProperties": false,
       "properties": {
-        "amount": { "type": "number" },
-        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
-        "approximate": { "type": "boolean", "default": false }
+        "amount": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "approximate": {
+          "type": "boolean",
+          "default": false
+        }
       }
     },
     "metric": {
       "description": "A number that can be confirmed, disputed or hidden on its own.",
       "type": "object",
-      "required": ["id", "label", "value"],
+      "required": [
+        "id",
+        "label",
+        "value"
+      ],
       "additionalProperties": false,
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "label": { "$ref": "#/$defs/text" },
-        "value": { "type": ["number", "string"] },
-        "unit": { "type": "string" },
-        "qualifier": { "enum": ["exact", "approx", "atLeast", "atMost"], "default": "exact" },
-        "visibility": { "$ref": "#/$defs/visibility" },
-        "status": { "$ref": "#/$defs/status" },
-        "confidence": { "$ref": "#/$defs/confidence" },
-        "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } },
-        "claims": { "type": "array", "items": { "$ref": "#/$defs/claim" } },
-        "openQuestion": { "type": "string" }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "value": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "unit": {
+          "type": "string"
+        },
+        "qualifier": {
+          "enum": [
+            "exact",
+            "approx",
+            "atLeast",
+            "atMost"
+          ],
+          "default": "exact"
+        },
+        "visibility": {
+          "$ref": "#/$defs/visibility"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/claim"
+          }
+        },
+        "openQuestion": {
+          "type": "string"
+        }
       }
     },
     "orgRef": {
       "description": "The id of an entry in organizations, or an inline organization.",
-      "oneOf": [ { "$ref": "#/$defs/id" }, { "$ref": "#/$defs/organization" } ]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "$ref": "#/$defs/organization"
+        }
+      ]
     },
     "link": {
       "type": "object",
-      "required": ["url"],
+      "required": [
+        "url"
+      ],
       "additionalProperties": false,
       "properties": {
-        "url": { "type": "string", "format": "uri" },
-        "label": { "$ref": "#/$defs/text" },
-        "network": { "type": "string", "description": "LinkedIn, GitHub, ORCID, Website…" },
-        "username": { "type": "string" },
-        "visibility": { "$ref": "#/$defs/visibility" }
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "network": {
+          "type": "string",
+          "description": "LinkedIn, GitHub, ORCID, Website…"
+        },
+        "username": {
+          "type": "string"
+        },
+        "visibility": {
+          "$ref": "#/$defs/visibility"
+        }
       }
     },
     "image": {
       "type": "object",
-      "required": ["url", "alt"],
+      "required": [
+        "url",
+        "alt"
+      ],
       "additionalProperties": false,
       "properties": {
-        "url": { "type": "string", "description": "Absolute URL, or 'bundle:media/…' inside a profile bundle." },
-        "alt": { "$ref": "#/$defs/text", "description": "Required: describe the image for people who cannot see it." },
-        "width": { "type": "integer" },
-        "height": { "type": "integer" },
-        "credit": { "type": "string" }
+        "url": {
+          "type": "string",
+          "description": "Absolute URL, or 'bundle:media/…' inside a profile bundle."
+        },
+        "alt": {
+          "$ref": "#/$defs/text",
+          "description": "Required: describe the image for people who cannot see it."
+        },
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        },
+        "credit": {
+          "type": "string"
+        }
       }
     },
-
     "meta": {
       "type": "object",
-      "required": ["defaultLocale"],
+      "required": [
+        "defaultLocale"
+      ],
       "additionalProperties": false,
       "properties": {
-        "defaultLocale": { "$ref": "#/$defs/localeTag" },
-        "locales": { "type": "array", "items": { "$ref": "#/$defs/localeTag" }, "uniqueItems": true },
-        "updated": { "type": "string", "format": "date-time" },
-        "canonicalUrl": { "type": "string", "format": "uri" },
-        "owner": { "type": "string" },
+        "defaultLocale": {
+          "$ref": "#/$defs/localeTag"
+        },
+        "locales": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/localeTag"
+          },
+          "uniqueItems": true
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "canonicalUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "owner": {
+          "type": "string"
+        },
         "subjectConsent": {
           "description": "Record of the subject's consent to publish public entries.",
           "type": "object",
           "additionalProperties": false,
-          "properties": { "given": { "type": "boolean" }, "on": { "$ref": "#/$defs/partialDate" }, "note": { "type": "string" } }
+          "properties": {
+            "given": {
+              "type": "boolean"
+            },
+            "on": {
+              "$ref": "#/$defs/partialDate"
+            },
+            "note": {
+              "type": "string"
+            }
+          }
         },
-        "notes": { "type": "string" }
+        "notes": {
+          "type": "string"
+        }
       }
     },
-
     "personName": {
       "type": "object",
-      "required": ["type", "full"],
+      "required": [
+        "type",
+        "full"
+      ],
       "additionalProperties": false,
       "properties": {
-        "type": { "enum": ["preferred", "legal", "birth", "professional", "nickname", "alsoKnownAs", "transliteration", "native"] },
-        "full": { "type": "string" },
-        "given": { "type": "string" },
-        "additional": { "type": "string" },
-        "family": { "type": "string" },
-        "prefix": { "type": "string" },
-        "suffix": { "type": "string" },
-        "lang": { "$ref": "#/$defs/localeTag" },
-        "script": { "type": "string", "pattern": "^[A-Z][a-z]{3}$", "description": "ISO 15924 script code: Latn, Cyrl, Hans." },
-        "sortKey": { "type": "string" },
-        "visibility": { "$ref": "#/$defs/visibility" }
+        "type": {
+          "enum": [
+            "preferred",
+            "legal",
+            "birth",
+            "professional",
+            "nickname",
+            "alsoKnownAs",
+            "transliteration",
+            "native"
+          ]
+        },
+        "full": {
+          "type": "string"
+        },
+        "given": {
+          "type": "string"
+        },
+        "additional": {
+          "type": "string"
+        },
+        "family": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "suffix": {
+          "type": "string"
+        },
+        "lang": {
+          "$ref": "#/$defs/localeTag"
+        },
+        "script": {
+          "type": "string",
+          "pattern": "^[A-Z][a-z]{3}$",
+          "description": "ISO 15924 script code: Latn, Cyrl, Hans."
+        },
+        "sortKey": {
+          "type": "string"
+        },
+        "visibility": {
+          "$ref": "#/$defs/visibility"
+        }
       }
     },
     "person": {
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "additionalProperties": false,
       "properties": {
-        "name": { "type": "string", "description": "Display name. Other forms go in names." },
-        "names": { "type": "array", "items": { "$ref": "#/$defs/personName" } },
-        "pronouns": { "type": "string", "description": "Only if the person chooses to show them." },
-        "headline": { "$ref": "#/$defs/text", "description": "One line: LinkedIn headline, JSON Resume label." },
-        "jobTitle": { "$ref": "#/$defs/text" },
-        "summary": { "$ref": "#/$defs/text", "description": "Long-form About text." },
-        "shortBio": { "$ref": "#/$defs/text", "description": "Two or three lines for slides and cards." },
-        "image": { "$ref": "#/$defs/image" },
-        "location": { "$ref": "#/$defs/placeRef" },
+        "name": {
+          "type": "string",
+          "description": "Display name. Other forms go in names."
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/personName"
+          }
+        },
+        "pronouns": {
+          "type": "string",
+          "description": "Only if the person chooses to show them."
+        },
+        "headline": {
+          "$ref": "#/$defs/text",
+          "description": "One line: LinkedIn headline, JSON Resume label."
+        },
+        "jobTitle": {
+          "$ref": "#/$defs/text"
+        },
+        "summary": {
+          "$ref": "#/$defs/text",
+          "description": "Long-form About text."
+        },
+        "shortBio": {
+          "$ref": "#/$defs/text",
+          "description": "Two or three lines for slides and cards."
+        },
+        "image": {
+          "$ref": "#/$defs/image"
+        },
+        "location": {
+          "$ref": "#/$defs/placeRef"
+        },
         "contact": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "email": { "type": "string", "format": "email" },
-            "phone": { "type": "string" },
-            "website": { "type": "string", "format": "uri" },
-            "emailVisibility": { "$ref": "#/$defs/visibility", "default": "private" },
-            "phoneVisibility": { "$ref": "#/$defs/visibility", "default": "private" }
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "website": {
+              "type": "string",
+              "format": "uri"
+            },
+            "emailVisibility": {
+              "$ref": "#/$defs/visibility",
+              "default": "private"
+            },
+            "phoneVisibility": {
+              "$ref": "#/$defs/visibility",
+              "default": "private"
+            }
           }
         },
-        "profiles": { "type": "array", "items": { "$ref": "#/$defs/link" } },
-        "industry": { "type": "string" },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/link"
+          }
+        },
+        "industry": {
+          "type": "string"
+        },
         "identifiers": {
           "description": "External ids for the person (GEDCOM EXID): ORCID, Wikidata, a licence registry.",
           "type": "object",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
-
     "organization": {
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "additionalProperties": false,
       "properties": {
-        "name": { "$ref": "#/$defs/text" },
-        "alternateName": { "type": "array", "items": { "type": "string" } },
-        "kind": { "enum": ["company", "government", "military", "school", "nonprofit", "association", "project", "self", "other"] },
-        "url": { "type": "string", "format": "uri" },
-        "logo": { "$ref": "#/$defs/image" },
-        "location": { "$ref": "#/$defs/placeRef" },
-        "sameAs": { "type": "array", "items": { "type": "string", "format": "uri" } },
-        "description": { "$ref": "#/$defs/text" }
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "alternateName": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "kind": {
+          "enum": [
+            "company",
+            "government",
+            "military",
+            "school",
+            "nonprofit",
+            "association",
+            "project",
+            "self",
+            "other"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "logo": {
+          "$ref": "#/$defs/image"
+        },
+        "location": {
+          "$ref": "#/$defs/placeRef"
+        },
+        "sameAs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "description": {
+          "$ref": "#/$defs/text"
+        },
+        "domains": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$"
+          },
+          "description": "Internet domains the organization controls (lower case), used to recognise it as a requester: acme.com, acme.co.uk."
+        }
       }
     },
-
     "work": {
-      "allOf": [ { "$ref": "#/$defs/entryBase" }, { "$ref": "#/$defs/dateRange" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        },
+        {
+          "$ref": "#/$defs/dateRange"
+        }
+      ],
       "type": "object",
-      "required": ["organization", "title"],
+      "required": [
+        "organization",
+        "title"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "organization": { "$ref": "#/$defs/orgRef" },
-        "client": { "$ref": "#/$defs/orgRef", "description": "Who the work was for, when not the employer." },
-        "title": { "$ref": "#/$defs/text" },
-        "employmentType": { "enum": ["fullTime", "partTime", "selfEmployed", "freelance", "contract", "internship", "apprenticeship", "seasonal", "founder", "board", "advisor"] },
-        "workplaceType": { "enum": ["onSite", "hybrid", "remote"] },
-        "location": { "$ref": "#/$defs/placeRef" },
-        "summary": { "$ref": "#/$defs/text" },
-        "highlights": { "type": "array", "items": { "$ref": "#/$defs/text" } },
-        "metrics": { "type": "array", "items": { "$ref": "#/$defs/metric" } },
-        "skills": { "type": "array", "items": { "$ref": "#/$defs/id" } },
-        "projects": { "type": "array", "items": { "$ref": "#/$defs/id" } },
-        "media": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+        "organization": {
+          "$ref": "#/$defs/orgRef"
+        },
+        "client": {
+          "$ref": "#/$defs/orgRef",
+          "description": "Who the work was for, when not the employer."
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "employmentType": {
+          "enum": [
+            "fullTime",
+            "partTime",
+            "selfEmployed",
+            "freelance",
+            "contract",
+            "internship",
+            "apprenticeship",
+            "seasonal",
+            "founder",
+            "board",
+            "advisor"
+          ]
+        },
+        "workplaceType": {
+          "enum": [
+            "onSite",
+            "hybrid",
+            "remote"
+          ]
+        },
+        "location": {
+          "$ref": "#/$defs/placeRef"
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "highlights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/metric"
+          }
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "projects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "employerRecord": {
+          "$ref": "#/$defs/employerRecord"
+        }
       }
     },
-
     "service": {
       "description": "Military, reserve, scouting, volunteer, civic and board service.",
-      "allOf": [ { "$ref": "#/$defs/entryBase" }, { "$ref": "#/$defs/dateRange" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        },
+        {
+          "$ref": "#/$defs/dateRange"
+        }
+      ],
       "type": "object",
-      "required": ["kind", "organization"],
+      "required": [
+        "kind",
+        "organization"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "kind": { "enum": ["military", "reserve", "scouting", "volunteer", "civic", "board"] },
-        "organization": { "$ref": "#/$defs/orgRef" },
-        "role": { "$ref": "#/$defs/text" },
-        "rank": { "type": "string" },
-        "branch": { "type": "string" },
-        "cause": { "type": "string" },
-        "location": { "$ref": "#/$defs/placeRef" },
-        "summary": { "$ref": "#/$defs/text" },
-        "highlights": { "type": "array", "items": { "$ref": "#/$defs/text" } },
-        "metrics": { "type": "array", "items": { "$ref": "#/$defs/metric" } }
+        "kind": {
+          "enum": [
+            "military",
+            "reserve",
+            "scouting",
+            "volunteer",
+            "civic",
+            "board"
+          ]
+        },
+        "organization": {
+          "$ref": "#/$defs/orgRef"
+        },
+        "role": {
+          "$ref": "#/$defs/text"
+        },
+        "rank": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "cause": {
+          "type": "string"
+        },
+        "location": {
+          "$ref": "#/$defs/placeRef"
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "highlights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/metric"
+          }
+        }
       }
     },
-
     "education": {
-      "allOf": [ { "$ref": "#/$defs/entryBase" }, { "$ref": "#/$defs/dateRange" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        },
+        {
+          "$ref": "#/$defs/dateRange"
+        }
+      ],
       "type": "object",
-      "required": ["institution"],
+      "required": [
+        "institution"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "institution": { "$ref": "#/$defs/orgRef" },
-        "kind": { "enum": ["degree", "coursework", "continuingEducation", "training", "certificateProgram", "bootcamp"] },
-        "credential": { "type": "string", "description": "Degree or credential earned. Leave empty for coursework without one." },
-        "completed": { "type": "boolean", "description": "False records study that did not finish in a credential, so no output implies one." },
-        "area": { "$ref": "#/$defs/text" },
-        "score": { "type": "string" },
-        "courses": { "type": "array", "items": { "$ref": "#/$defs/text" } },
-        "location": { "$ref": "#/$defs/placeRef" },
-        "summary": { "$ref": "#/$defs/text" }
+        "institution": {
+          "$ref": "#/$defs/orgRef"
+        },
+        "kind": {
+          "enum": [
+            "degree",
+            "coursework",
+            "continuingEducation",
+            "training",
+            "certificateProgram",
+            "bootcamp"
+          ]
+        },
+        "credential": {
+          "type": "string",
+          "description": "Degree or credential earned. Leave empty for coursework without one."
+        },
+        "completed": {
+          "type": "boolean",
+          "description": "False records study that did not finish in a credential, so no output implies one."
+        },
+        "area": {
+          "$ref": "#/$defs/text"
+        },
+        "score": {
+          "type": "string"
+        },
+        "courses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "location": {
+          "$ref": "#/$defs/placeRef"
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        }
       }
     },
-
     "credential": {
       "description": "Licences and certifications. credentialId is a real issuer number only, never a note.",
-      "allOf": [ { "$ref": "#/$defs/entryBase" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
       "type": "object",
-      "required": ["name", "kind"],
+      "required": [
+        "name",
+        "kind"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "name": { "$ref": "#/$defs/text" },
-        "abbreviation": { "type": "string" },
-        "kind": { "enum": ["license", "certification", "rating", "membership", "clearance"] },
-        "issuer": { "$ref": "#/$defs/orgRef" },
-        "ratings": { "type": "array", "items": { "type": "string" } },
-        "credentialId": { "type": "string" },
-        "credentialIdVisibility": { "$ref": "#/$defs/visibility", "default": "private" },
-        "issued": { "$ref": "#/$defs/fuzzyDate" },
-        "expires": { "$ref": "#/$defs/fuzzyDate" },
-        "active": { "type": "boolean", "description": "False for lapsed credentials kept as history." },
-        "url": { "type": "string", "format": "uri" },
-        "metrics": { "type": "array", "items": { "$ref": "#/$defs/metric" } },
-        "summary": { "$ref": "#/$defs/text" }
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "abbreviation": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "license",
+            "certification",
+            "rating",
+            "membership",
+            "clearance"
+          ]
+        },
+        "issuer": {
+          "$ref": "#/$defs/orgRef"
+        },
+        "ratings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "credentialId": {
+          "type": "string"
+        },
+        "credentialIdVisibility": {
+          "$ref": "#/$defs/visibility",
+          "default": "private"
+        },
+        "issued": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "expires": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "active": {
+          "type": "boolean",
+          "description": "False for lapsed credentials kept as history."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/metric"
+          }
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        }
       }
     },
-
     "award": {
-      "allOf": [ { "$ref": "#/$defs/entryBase" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
       "type": "object",
-      "required": ["title"],
+      "required": [
+        "title"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "title": { "$ref": "#/$defs/text" },
-        "awarder": { "$ref": "#/$defs/orgRef" },
-        "date": { "$ref": "#/$defs/fuzzyDate" },
-        "summary": { "$ref": "#/$defs/text" },
-        "relatedTo": { "$ref": "#/$defs/id" }
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "awarder": {
+          "$ref": "#/$defs/orgRef"
+        },
+        "date": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "relatedTo": {
+          "$ref": "#/$defs/id"
+        }
       }
     },
-
     "project": {
-      "allOf": [ { "$ref": "#/$defs/entryBase" }, { "$ref": "#/$defs/dateRange" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        },
+        {
+          "$ref": "#/$defs/dateRange"
+        }
+      ],
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "name": { "$ref": "#/$defs/text" },
-        "role": { "$ref": "#/$defs/text" },
-        "organization": { "$ref": "#/$defs/orgRef" },
-        "location": { "$ref": "#/$defs/placeRef" },
-        "value": { "$ref": "#/$defs/money" },
-        "outcome": { "enum": ["completed", "delivered", "cancelled", "postponed", "ongoing"] },
-        "summary": { "$ref": "#/$defs/text" },
-        "highlights": { "type": "array", "items": { "$ref": "#/$defs/text" } },
-        "metrics": { "type": "array", "items": { "$ref": "#/$defs/metric" } },
-        "url": { "type": "string", "format": "uri" },
-        "media": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "role": {
+          "$ref": "#/$defs/text"
+        },
+        "organization": {
+          "$ref": "#/$defs/orgRef"
+        },
+        "location": {
+          "$ref": "#/$defs/placeRef"
+        },
+        "value": {
+          "$ref": "#/$defs/money"
+        },
+        "outcome": {
+          "enum": [
+            "completed",
+            "delivered",
+            "cancelled",
+            "postponed",
+            "ongoing"
+          ]
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "highlights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/metric"
+          }
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
       }
     },
-
     "publication": {
-      "allOf": [ { "$ref": "#/$defs/entryBase" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
       "type": "object",
-      "required": ["title"],
+      "required": [
+        "title"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "title": { "$ref": "#/$defs/text" },
-        "kind": { "enum": ["article", "pressCoverage", "book", "paper", "talk", "podcast", "post"] },
-        "publisher": { "$ref": "#/$defs/orgRef" },
-        "date": { "$ref": "#/$defs/fuzzyDate" },
-        "url": { "type": "string", "format": "uri" },
-        "summary": { "$ref": "#/$defs/text" },
-        "aboutPerson": { "type": "boolean", "description": "True for coverage of the person rather than work by them." }
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "kind": {
+          "enum": [
+            "article",
+            "pressCoverage",
+            "book",
+            "paper",
+            "talk",
+            "podcast",
+            "post"
+          ]
+        },
+        "publisher": {
+          "$ref": "#/$defs/orgRef"
+        },
+        "date": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "aboutPerson": {
+          "type": "boolean",
+          "description": "True for coverage of the person rather than work by them."
+        }
       }
     },
-
     "event": {
       "description": "A dated life event that is not a job: a journey, a move, a voyage, a first, a founding. Lets the story behind a profile be told the same way everywhere (after GEDCOM events).",
-      "allOf": [ { "$ref": "#/$defs/entryBase" }, { "$ref": "#/$defs/dateRange" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        },
+        {
+          "$ref": "#/$defs/dateRange"
+        }
+      ],
       "type": "object",
-      "required": ["type", "title"],
+      "required": [
+        "type",
+        "title"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "type": { "enum": ["journey", "voyage", "residence", "relocation", "milestone", "founding", "first", "story", "other"] },
-        "title": { "$ref": "#/$defs/text" },
-        "places": { "type": "array", "items": { "$ref": "#/$defs/placeRef" } },
-        "summary": { "$ref": "#/$defs/text" },
-        "metrics": { "type": "array", "items": { "$ref": "#/$defs/metric" } },
-        "relatedTo": { "type": "array", "items": { "$ref": "#/$defs/id" }, "description": "Ids of work, service or project entries this event belongs to." },
-        "media": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+        "type": {
+          "enum": [
+            "journey",
+            "voyage",
+            "residence",
+            "relocation",
+            "milestone",
+            "founding",
+            "first",
+            "story",
+            "other"
+          ]
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "places": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/placeRef"
+          }
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/metric"
+          }
+        },
+        "relatedTo": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "description": "Ids of work, service or project entries this event belongs to."
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
       }
     },
-
     "media": {
       "description": "Featured items and evidence files: links, PDFs, images, video. 'bundle:' URLs point inside a profile bundle.",
-      "allOf": [ { "$ref": "#/$defs/entryBase" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
       "type": "object",
-      "required": ["title", "url"],
+      "required": [
+        "title",
+        "url"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "title": { "$ref": "#/$defs/text" },
-        "url": { "type": "string" },
-        "mediaType": { "type": "string", "description": "MIME type: application/pdf, image/jpeg." },
-        "alt": { "$ref": "#/$defs/text" },
-        "summary": { "$ref": "#/$defs/text" },
-        "featured": { "type": "boolean", "default": false },
-        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$", "description": "Checksum of the file, so a bundle can be verified." }
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "url": {
+          "type": "string"
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "MIME type: application/pdf, image/jpeg."
+        },
+        "alt": {
+          "$ref": "#/$defs/text"
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "featured": {
+          "type": "boolean",
+          "default": false
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Checksum of the file, so a bundle can be verified."
+        }
       }
     },
-
     "skill": {
-      "allOf": [ { "$ref": "#/$defs/entryBase" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "name": { "$ref": "#/$defs/text" },
-        "category": { "enum": ["domain", "management", "technical", "software", "language", "soft", "other"] },
-        "level": { "enum": ["familiar", "proficient", "advanced", "expert"] },
-        "years": { "type": "number", "minimum": 0 },
-        "keywords": { "type": "array", "items": { "type": "string" } },
-        "pinned": { "type": "boolean", "default": false },
-        "escoUri": { "type": "string", "format": "uri", "description": "ESCO skill URI, for Europass and EU job boards." }
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "category": {
+          "enum": [
+            "domain",
+            "management",
+            "technical",
+            "software",
+            "language",
+            "soft",
+            "other"
+          ]
+        },
+        "level": {
+          "enum": [
+            "familiar",
+            "proficient",
+            "advanced",
+            "expert"
+          ]
+        },
+        "years": {
+          "type": "number",
+          "minimum": 0
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pinned": {
+          "type": "boolean",
+          "default": false
+        },
+        "escoUri": {
+          "type": "string",
+          "format": "uri",
+          "description": "ESCO skill URI, for Europass and EU job boards."
+        }
       }
     },
-
     "language": {
-      "allOf": [ { "$ref": "#/$defs/entryBase" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
       "type": "object",
-      "required": ["language"],
+      "required": [
+        "language"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "language": { "$ref": "#/$defs/localeTag" },
-        "name": { "$ref": "#/$defs/text" },
-        "fluency": { "enum": ["elementary", "limitedWorking", "professionalWorking", "fullProfessional", "native"] },
-        "cefr": { "enum": ["A1", "A2", "B1", "B2", "C1", "C2"] }
+        "language": {
+          "$ref": "#/$defs/localeTag"
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "fluency": {
+          "enum": [
+            "elementary",
+            "limitedWorking",
+            "professionalWorking",
+            "fullProfessional",
+            "native"
+          ]
+        },
+        "cefr": {
+          "enum": [
+            "A1",
+            "A2",
+            "B1",
+            "B2",
+            "C1",
+            "C2"
+          ]
+        }
       }
     },
-
     "interest": {
-      "allOf": [ { "$ref": "#/$defs/entryBase" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "name": { "$ref": "#/$defs/text" },
-        "keywords": { "type": "array", "items": { "type": "string" } },
-        "metrics": { "type": "array", "items": { "$ref": "#/$defs/metric" } }
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/metric"
+          }
+        }
       }
     },
-
     "reference": {
       "description": "Private by default; rendered only with the referee's consent.",
-      "allOf": [ { "$ref": "#/$defs/entryBase" } ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "unevaluatedProperties": false,
       "properties": {
-        "name": { "type": "string" },
-        "relationship": { "type": "string" },
-        "organization": { "$ref": "#/$defs/orgRef" },
-        "quote": { "$ref": "#/$defs/text" },
-        "consentToPublish": { "type": "boolean", "default": false },
-        "contact": { "type": "string" }
+        "name": {
+          "type": "string"
+        },
+        "relationship": {
+          "type": "string"
+        },
+        "organization": {
+          "$ref": "#/$defs/orgRef"
+        },
+        "quote": {
+          "$ref": "#/$defs/text"
+        },
+        "consentToPublish": {
+          "type": "boolean",
+          "default": false
+        },
+        "contact": {
+          "type": "string"
+        }
       }
     },
-
     "rule": {
       "type": "object",
-      "required": ["id", "kind", "reason"],
+      "required": [
+        "id",
+        "kind",
+        "reason"
+      ],
       "additionalProperties": false,
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
         "kind": {
-          "enum": ["forbiddenPhrase", "forbiddenPattern", "notTrue"],
+          "enum": [
+            "forbiddenPhrase",
+            "forbiddenPattern",
+            "notTrue"
+          ],
           "description": "forbiddenPhrase: case-insensitive whole words that must not appear. forbiddenPattern: a regular expression that must not match. notTrue: a negative assertion for humans and writing tools (GEDCOM 'NO'); converters also block its phrases if given."
         },
-        "phrases": { "type": "array", "items": { "type": "string" } },
-        "pattern": { "type": "string" },
-        "statement": { "$ref": "#/$defs/text", "description": "For notTrue: the thing that is not true, e.g. 'Does not hold a current captain's licence.'" },
+        "phrases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "statement": {
+          "$ref": "#/$defs/text",
+          "description": "For notTrue: the thing that is not true, e.g. 'Does not hold a current captain's licence.'"
+        },
         "appliesTo": {
           "type": "array",
-          "items": { "$ref": "#/$defs/visibility" },
+          "items": {
+            "$ref": "#/$defs/visibility"
+          },
           "description": "Outputs the rule applies to, by their highest included visibility. Default: all.",
           "uniqueItems": true
         },
-        "reason": { "type": "string" },
-        "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+        "reason": {
+          "type": "string"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        }
       },
       "allOf": [
-        { "if": { "properties": { "kind": { "const": "forbiddenPhrase" } } }, "then": { "required": ["phrases"] } },
-        { "if": { "properties": { "kind": { "const": "forbiddenPattern" } } }, "then": { "required": ["pattern"] } },
-        { "if": { "properties": { "kind": { "const": "notTrue" } } }, "then": { "required": ["statement"] } }
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "forbiddenPhrase"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "phrases"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "forbiddenPattern"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "notTrue"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "statement"
+            ]
+          }
+        }
       ]
     },
-
     "source": {
       "type": "object",
-      "required": ["title"],
+      "required": [
+        "title"
+      ],
       "additionalProperties": false,
       "properties": {
-        "title": { "type": "string" },
-        "kind": { "enum": ["cv", "bio", "email", "interview", "document", "certificate", "record", "article", "website", "import"] },
-        "date": { "$ref": "#/$defs/fuzzyDate" },
-        "author": { "type": "string" },
-        "defaultQuality": { "$ref": "#/$defs/evidenceQuality" },
-        "media": { "$ref": "#/$defs/id", "description": "Id of the media entry holding the file itself, if it is in the bundle." },
-        "location": { "type": "string", "description": "Where the original lives. Never rendered." }
+        "title": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "cv",
+            "bio",
+            "email",
+            "interview",
+            "document",
+            "certificate",
+            "record",
+            "article",
+            "website",
+            "import"
+          ]
+        },
+        "date": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "author": {
+          "type": "string"
+        },
+        "defaultQuality": {
+          "$ref": "#/$defs/evidenceQuality"
+        },
+        "media": {
+          "$ref": "#/$defs/id",
+          "description": "Id of the media entry holding the file itself, if it is in the bundle."
+        },
+        "location": {
+          "type": "string",
+          "description": "Where the original lives. Never rendered."
+        }
+      }
+    },
+    "employerRecord": {
+      "description": "Facts as the employer's own systems record them (title, department, manager, internal ids). The employer is the authority for these fields; they are released only to an audience bound to this job, never to anyone else.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "officialTitle": {
+          "$ref": "#/$defs/text"
+        },
+        "department": {
+          "type": "string"
+        },
+        "division": {
+          "type": "string"
+        },
+        "organizationUnit": {
+          "type": "string"
+        },
+        "costCenter": {
+          "type": "string"
+        },
+        "employeeNumber": {
+          "type": "string"
+        },
+        "positionId": {
+          "type": "string"
+        },
+        "managerName": {
+          "type": "string"
+        },
+        "managerId": {
+          "type": "string"
+        },
+        "workLocation": {
+          "type": "string"
+        },
+        "employmentStatus": {
+          "enum": [
+            "active",
+            "leave",
+            "separated"
+          ]
+        },
+        "hireDate": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "lastSynced": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "verificationMethod": {
+      "enum": [
+        "oidc",
+        "saml",
+        "dnsTxt",
+        "wellKnown",
+        "signedRequest",
+        "emailDomain"
+      ],
+      "description": "How a requester proves it acts for an organization. oidc/saml: a token from the organization's identity provider. dnsTxt/wellKnown: the organization's domain names the application. signedRequest: signed with a key published at the domain. emailDomain: an address at the domain (weakest; never enough for write-back)."
+    },
+    "personGrant": {
+      "enum": [
+        "name",
+        "preferredName",
+        "legalName",
+        "pronouns",
+        "headline",
+        "jobTitle",
+        "shortBio",
+        "summary",
+        "image",
+        "location",
+        "email",
+        "phone",
+        "website",
+        "profiles"
+      ],
+      "description": "A person-level field an audience may receive."
+    },
+    "audience": {
+      "type": "object",
+      "required": [
+        "kind",
+        "purpose"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "kind": {
+          "enum": [
+            "employer",
+            "client",
+            "recruiter",
+            "organization",
+            "group"
+          ]
+        },
+        "relation": {
+          "enum": [
+            "current",
+            "former",
+            "any"
+          ],
+          "description": "For employer and client audiences: which organizations qualify, resolved from work entries. 'current' follows you to each new job and ends when the job does."
+        },
+        "organization": {
+          "$ref": "#/$defs/orgRef",
+          "description": "A fixed organization, instead of a relation."
+        },
+        "workRef": {
+          "$ref": "#/$defs/id",
+          "description": "Bind the audience to one work entry."
+        },
+        "purpose": {
+          "enum": [
+            "employeeDirectory",
+            "onboarding",
+            "employmentVerification",
+            "recruiting",
+            "clientDelivery",
+            "marketing",
+            "other"
+          ]
+        },
+        "purposeDescription": {
+          "$ref": "#/$defs/text"
+        },
+        "baseVisibility": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/visibility"
+          },
+          "uniqueItems": true,
+          "default": [
+            "public"
+          ],
+          "description": "Entries with these visibilities are included; entries naming this audience are included regardless."
+        },
+        "person": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/personGrant"
+          },
+          "uniqueItems": true,
+          "description": "Person-level fields granted. Anything not listed is withheld."
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "work",
+              "service",
+              "education",
+              "credentials",
+              "awards",
+              "projects",
+              "publications",
+              "timeline",
+              "media",
+              "skills",
+              "languages",
+              "interests"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Sections the audience may receive (entries still filtered by visibility, status and confidence)."
+        },
+        "verification": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "methods": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/verificationMethod"
+              },
+              "uniqueItems": true,
+              "minItems": 1
+            },
+            "writeBackMethods": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/verificationMethod"
+              },
+              "uniqueItems": true
+            }
+          }
+        },
+        "expires": {
+          "oneOf": [
+            {
+              "enum": [
+                "onSeparation",
+                "never"
+              ]
+            },
+            {
+              "$ref": "#/$defs/partialDate"
+            }
+          ],
+          "default": "onSeparation"
+        },
+        "writeBack": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "allowed": {
+              "type": "boolean",
+              "default": false
+            },
+            "authority": {
+              "type": "array",
+              "description": "Who is authoritative for each field the organization may send back. Employer-authoritative values are accepted unless the entry is locked; subject-authoritative values are kept as suggestions.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "field",
+                  "authority"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "field": {
+                    "type": "string"
+                  },
+                  "authority": {
+                    "enum": [
+                      "employer",
+                      "subject"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "employer",
+                  "client"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": [
+                  "relation"
+                ]
+              },
+              {
+                "required": [
+                  "organization"
+                ]
+              },
+              {
+                "required": [
+                  "workRef"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "release": {
+      "type": "object",
+      "required": [
+        "id",
+        "audience",
+        "issued",
+        "payloadSha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "audience": {
+          "type": "string"
+        },
+        "workRef": {
+          "$ref": "#/$defs/id"
+        },
+        "recipient": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "organization": {
+              "type": "string"
+            },
+            "domain": {
+              "type": "string"
+            },
+            "application": {
+              "type": "string"
+            },
+            "verifiedBy": {
+              "$ref": "#/$defs/verificationMethod"
+            }
+          }
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "issued": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires": {
+          "type": "string"
+        },
+        "person": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/personGrant"
+          }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ids of the entries released."
+        },
+        "payloadSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "revoked": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When future syncs were stopped. Copies already delivered remain with the recipient."
+        },
+        "notice": {
+          "type": "string"
+        }
       }
     }
   }
