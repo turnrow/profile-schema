@@ -26,8 +26,10 @@ jobs:
         run: npm run validate:examples
       - name: Example outputs are up to date
         run: |
-          for m in jsonresume schemaorg linkedin brief timeline; do
-            ext=json; [ "$m" = linkedin ] && ext=txt
-            node bin/profile.mjs convert examples/sample.profile.json "$m" --out "examples/out/sample.$m.$ext"
+          for ex in sample history; do
+            for m in jsonresume schemaorg linkedin brief timeline; do
+              ext=json; [ "$m" = linkedin ] && ext=txt
+              node bin/profile.mjs convert "examples/$ex.profile.json" "$m" --on 2026-11-07 --out "examples/out/$ex.$m.$ext"
+            done
           done
           git diff --exit-code -- examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'

@@ -67,7 +67,7 @@ try {
       const r = validateProfile(profile, { bundleDir });
       if (!r.valid) { console.error("Profile is not valid; run validate first.\n  " + r.errors.join("\n  ")); process.exit(1); }
       const mapping = rest[1].endsWith(".json") ? JSON.parse(readFileSync(rest[1], "utf8")) : loadMapping(rest[1]);
-      const { text, violations } = convert(profile, mapping, { locale, allowRuleViolations: allow });
+      const { text, violations } = convert(profile, mapping, { locale, allowRuleViolations: allow, on });
       for (const v of violations) console.error(`warning: rule ${v.rule} matched "${v.match}"`);
       emit(text);
       break;

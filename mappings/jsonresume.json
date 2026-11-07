@@ -1,6 +1,6 @@
 {
   "target": "jsonresume",
-  "description": "JSON Resume (schema 1.7.x, jsonresume.org). Approved entries visible to the public or a network, with high or medium confidence. Qualified dates (about, before, between) are left out because JSON Resume can only state exact dates.",
+  "description": "JSON Resume (schema 1.7.x, jsonresume.org). Approved entries visible to the public or a network, with high or medium confidence. Qualified dates (about, before, between) are left out because JSON Resume can only state exact dates. Jobs with several positions become one work item per position (JSON Resume has no nested positions); employers are named as they were then, with today's name added when it changed.",
   "include": {
     "visibility": [
       "public",
@@ -79,21 +79,23 @@
       }
     },
     "work": {
-      "$each": "$$.work",
+      "$each": {
+        "$fn": "flatPositions",
+        "args": [
+          "$$.work"
+        ]
+      },
       "$sort": "-startDate",
       "$map": {
         "name": {
-          "$fn": "org",
+          "$fn": "employer",
           "args": [
-            "$.organization"
+            "$.organization",
+            "$.startDate",
+            "$.endDate"
           ]
         },
-        "position": {
-          "$fn": "text",
-          "args": [
-            "$.title"
-          ]
-        },
+        "position": "$.title",
         "url": {
           "$fn": "org",
           "args": [
@@ -123,17 +125,17 @@
             ]
           }
         },
-        "summary": {
-          "$fn": "text",
-          "args": [
-            "$.summary"
-          ]
-        },
+        "summary": "$.summary",
         "highlights": {
-          "$fn": "metricText",
+          "$fn": "concatLists",
           "args": [
-            "$.metrics",
-            "$"
+            {
+              "$fn": "responsibilityLines",
+              "args": [
+                "$"
+              ]
+            },
+            "$.jobMetrics"
           ]
         }
       }
@@ -439,5 +441,6 @@
       "version": "$.schemaVersion",
       "lastModified": "$.meta.updated"
     }
-  }
+  },
+  "orgNameStyle": "both"
 }

@@ -37,7 +37,10 @@
       {
         "@type": "Organization",
         "name": "Tidewater Trails",
-        "url": "https://example.com"
+        "url": "https://example.com",
+        "alternateName": [
+          "Tidewater Trails"
+        ]
       }
     ],
     "hasOccupation": [
