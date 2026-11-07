@@ -1,0 +1,62 @@
+Headline: Enterprise architect | Release engineering | Consulting
+Location: Dallas–Fort Worth, Texas
+Experience:
+  - (1)
+    Company (search LinkedIn for): DXC Technology
+    Company at the time: EDS
+    Changes while there:
+      - Acquired by HP (Aug 2008)
+      - Renamed HP Enterprise Services (Sep 2009)
+    Employment type: Full-time
+    Location: Plano, Texas
+    Positions:
+      - (1)
+        Title: Solutions Architect
+        Dates: Feb 2010 – Mar 2011
+        Description: Release engineering and architecture for state government outsourcing accounts.
+          Continued: Led the release-engineering team for the account. (8 engineers (Jul 2009–Mar 2011))
+          Owned the target architecture for the claims-system modernization.
+      - (2)
+        Title: Technology Consultant III
+        Dates: Jan 2009 – Jan 2010
+        Description: Same job; the title changed when HP mapped EDS roles onto its own job architecture.
+          Continued: Ran nightly batch operations for a state Medicaid claims system.
+          Continued: Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009); 8 engineers (Jul 2009–Mar 2011))
+          Continued: Mentored new engineers through the onboarding program.
+      - (3)
+        Title: Senior Systems Engineer
+        Dates: Apr 2007 – Dec 2008
+        Description: Continued: Ran nightly batch operations for a state Medicaid claims system.
+          Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009))
+          Mentored new engineers through the onboarding program.
+      - (4)
+        Title: Systems Engineer
+        Dates: Jun 2005 – Mar 2007
+        Description: Ran nightly batch operations for a state Medicaid claims system.
+  - (2)
+    Company (search LinkedIn for): Buchanan Technologies
+    Company at the time: Buchanan Associates
+    Employment type: Full-time
+    Location: Grapevine, Texas
+    Positions:
+      - (1)
+        Title: Network Engineer
+        Dates: Jul 1999 – May 2005
+        Description: Managed network services for outsourcing clients.
+  - (3)
+    Company (search LinkedIn for): PwC
+    Company at the time: Coopers & Lybrand
+    Changes while there:
+      - Merged into PricewaterhouseCoopers (1998)
+    Employment type: Full-time
+    Location: Dallas, Texas
+    Positions:
+      - (1)
+        Title: Senior Associate
+        Dates: Jul 1998 – Jun 1999
+        Description: Continued with the merged firm, PricewaterhouseCoopers.
+          Continued: Delivered ERP integration work for manufacturing clients.
+      - (2)
+        Title: Associate
+        Dates: Mar 1996 – Jun 1998
+        Description: Delivered ERP integration work for manufacturing clients.

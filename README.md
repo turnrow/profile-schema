@@ -44,8 +44,65 @@ The sample is a **fictional** person built to exercise every feature. Its output
 | Accessibility | `alt` is required on every image. | |
 | Short and long views from one file | `priority` (0–100), structured `metrics`, and per-target `targets.<name>` overrides or omission. | |
 | Organizations written once | `organizations` map, referenced by id, with `sameAs` links. | |
+| Organizations that change | Dated names, domains, identifiers and parents; `organizationEvents` for mergers, acquisitions, splits and rebrands; employer names in each output's style. | GEDCOM X place jurisdictions over time; Wikidata "replaces"/"replaced by" |
+| Titles and duties within a job | `positions` with how each began; `responsibilities` that continue through promotions, with dated scope. | |
 | Military, scouting, volunteer and board work | `service`, its own section, so each output decides where it goes. | |
 | Study that didn't end in a degree | `education.completed: false`, so no output implies a degree. | |
+
+## Organizations change; your history shouldn't
+
+Companies rename, rebrand, merge, get acquired, split and dissolve. Each organization keeps one id while its names, domains, owners and identifiers change around it, and `organizationEvents` link it to what came before and after. A job always points at the organization you actually worked for.
+
+```json
+"eds": {
+  "name": "EDS",
+  "names": [
+    { "name": "Electronic Data Systems Corporation", "type": "legal", "to": "2008" },
+    { "name": "EDS, an HP Company", "type": "brand", "from": "2008-08-26", "to": "2009-09-23" },
+    { "name": "HP Enterprise Services", "type": "brand", "from": "2009-09-23", "to": "2015-11-01" }
+  ],
+  "domains": [ { "domain": "eds.com", "status": "retired" } ],
+  "parents": [ { "organization": "hp", "relation": "subsidiary", "from": "2008-08-26", "to": "2015-11-01" } ]
+}
+```
+
+```json
+{ "id": "dxc-formed", "type": "merger", "date": "2017-04", "predecessors": ["eds", "csc"], "successors": ["dxc"] }
+```
+
+Each output names employers in its own style (`orgNameStyle`):
+
+| Style | Example | Use |
+|---|---|---|
+| `atTheTime` | Coopers & Lybrand | Résumés, reference letters, timelines |
+| `today` | PwC | Search, matching a company page |
+| `both` (default) | Coopers & Lybrand (now PwC) | Most outputs |
+| `legal` | CSI (doing business as Buchanan Associates) | Background checks, which match the legal entity on your W-2 |
+
+The LinkedIn sheet gives both the name at the time and the company to search for today, and lists what changed while you were there ("Acquired by HP (Aug 2008)").
+
+**Audiences follow history too.** Only domains live on the request date qualify, and retired domains never do (an expired domain can be bought by anyone). A requester can speak for a past employer if it is the employer, a parent that owns it on that date, or its successor. In the example, DXC can verify EDS employment today, HP could in 2012, and `eds.com` never can. For a split, `recordsTo` says which successor holds the records.
+
+Identity is always the id, never the name: two companies can share a name ("CSI"), and a famous name can be reused by an unrelated company.
+
+## Positions and responsibilities
+
+A job is one relationship with an employer. **Positions** are the titles held within it, with how each began: hire, promotion, re-title, lateral move, transfer, reorganization, acquisition, merger, demotion or return. A re-title or an acquisition can change the name of a job without changing the job.
+
+**Responsibilities** are duties, and they don't stop at a promotion. Each applies by its dates, or by naming the positions it covers, so one responsibility can run through several titles. Outputs list it under each position it applied to, marked "Continued" after the first. Its `scope` figures carry dates, so "3 engineers" shows under the position where that was true and "8 engineers" under the later one.
+
+```json
+{
+  "id": "release-team", "kind": "leadership", "summary": "Led the release-engineering team.",
+  "startDate": "2007-04", "endDate": "2011-03",
+  "scope": [
+    { "id": "team-2007", "label": "engineers", "value": 3, "from": "2007-04", "to": "2009-06" },
+    { "id": "team-2009", "label": "engineers", "value": 8, "from": "2009-07", "to": "2011-03" }
+  ]
+}
+```
+
+JSON Resume and schema.org have no nested positions, so they get one entry per position. The LinkedIn sheet groups positions under the company, the way LinkedIn shows them. A job without positions behaves as a single position. For staffing agencies, PEOs and parent companies, `employerOfRecord` records who legally employed you.
 
 ## Audiences: share different things with different recipients
 
@@ -109,12 +166,13 @@ An audience's `writeBack.authority` can change these defaults field by field. Wr
 | [`lib/validate.mjs`](lib/validate.mjs) | Schema validation, plus the checks a schema can't express: cross-references, claim consistency, open questions, consent for references, bundle files, rule syntax. |
 | [`lib/convert.mjs`](lib/convert.mjs) | Applies a mapping to a profile and enforces the content rules. |
 | [`lib/import-jsonresume.mjs`](lib/import-jsonresume.mjs) | Converts a JSON Resume into a profile. Everything imported starts as a draft. |
+| [`lib/history.mjs`](lib/history.mjs) | Organization names and domains on a date, parents, successors, and how a job's positions and responsibilities line up. |
 | [`lib/audience.mjs`](lib/audience.mjs) | Resolves audiences on a date, checks requesters against policy and looks up field authority. |
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
 | [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`. |
 | [`bin/profile.mjs`](bin/profile.mjs) | Command line: `validate`, `open`, `convert`, `import`, `release`, `writeback`. |
-| [`examples/`](examples/) | Two fictional profiles (a founder; a new employee with audiences), a sample SCIM write-back, and every output generated from them. |
+| [`examples/`](examples/) | Three fictional people: a founder; a new employee with audiences; and someone whose employers (EDS, Coopers & Lybrand, Buchanan) changed around them, with real company histories cited to public sources. Plus a sample SCIM write-back and every generated output. |
 | [`upstream/jsonresume/`](upstream/jsonresume/) | An unmodified copy of the current JSON Resume schema (1.7.1). The tests validate our JSON Resume export against it. |
 | [`test/`](test/) | `node --test`: schema, validator, converter, rules and import round trip. |
 
@@ -161,6 +219,7 @@ A mapping is JSON: an `include` filter and an `output` template.
   - Organizations and places: `org`, `orgObj`, `place`, `placeObj`, `placeGeo`, `placeIdUri`.
   - Names: `name`, `names`.
   - Dates: `isoExact` (exact dates only), `isoLoose` (lower bound), `date`, `dateText` (renders "c. 1996", "before 1998", "1990/91"), `dateRangeText`.
+  - History and roles: `employer` (in the mapping's `orgNameStyle`), `orgNameAt`, `orgNow`, `orgAlternateNames`, `tenureNotes`, `positions`, `flatPositions`, `responsibilityLines`, `joinLines`, `concatLists`.
   - Values and lookups: `money`, `metricText`, `lookup`, `visible`.
   - Context: `locale`, `now`.
 - Empty values are dropped, so missing data never renders as a blank field.
@@ -191,7 +250,7 @@ The schema makes privacy enforceable, but it doesn't decide what is appropriate.
 
 ## Versioning
 
-`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 adds audiences, releases and write-back, and 2.0.0 files remain valid.
+`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 adds organization history, positions and responsibilities. Earlier files remain valid.
 
 ## Credits and licence
 

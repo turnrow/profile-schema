@@ -1,0 +1,93 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/jsonresume.org/master/packages/schema/schema.json",
+  "basics": {
+    "name": "Pat Example",
+    "label": "Enterprise architect | Release engineering | Consulting",
+    "location": {
+      "region": "TX",
+      "countryCode": "US"
+    }
+  },
+  "work": [
+    {
+      "name": "HP Enterprise Services (now DXC Technology)",
+      "position": "Solutions Architect",
+      "location": "Plano, Texas",
+      "startDate": "2010-02",
+      "endDate": "2011-03",
+      "summary": "Release engineering and architecture for state government outsourcing accounts.",
+      "highlights": [
+        "Continued: Led the release-engineering team for the account. (8 engineers (Jul 2009–Mar 2011))",
+        "Owned the target architecture for the claims-system modernization."
+      ]
+    },
+    {
+      "name": "EDS, an HP Company (now DXC Technology)",
+      "position": "Technology Consultant III",
+      "location": "Plano, Texas",
+      "startDate": "2009-01",
+      "endDate": "2010-01",
+      "summary": "Same job; the title changed when HP mapped EDS roles onto its own job architecture.",
+      "highlights": [
+        "Continued: Ran nightly batch operations for a state Medicaid claims system.",
+        "Continued: Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009); 8 engineers (Jul 2009–Mar 2011))",
+        "Continued: Mentored new engineers through the onboarding program."
+      ]
+    },
+    {
+      "name": "EDS (now DXC Technology)",
+      "position": "Senior Systems Engineer",
+      "location": "Plano, Texas",
+      "startDate": "2007-04",
+      "endDate": "2008-12",
+      "highlights": [
+        "Continued: Ran nightly batch operations for a state Medicaid claims system.",
+        "Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009))",
+        "Mentored new engineers through the onboarding program."
+      ]
+    },
+    {
+      "name": "EDS (now DXC Technology)",
+      "position": "Systems Engineer",
+      "location": "Plano, Texas",
+      "startDate": "2005-06",
+      "endDate": "2007-03",
+      "highlights": [
+        "Ran nightly batch operations for a state Medicaid claims system."
+      ]
+    },
+    {
+      "name": "Buchanan Associates (now Buchanan Technologies)",
+      "position": "Network Engineer",
+      "location": "Grapevine, Texas",
+      "startDate": "1999-07",
+      "endDate": "2005-05",
+      "summary": "Managed network services for outsourcing clients."
+    },
+    {
+      "name": "PricewaterhouseCoopers (now PwC)",
+      "position": "Senior Associate",
+      "location": "Dallas, Texas",
+      "startDate": "1998-07",
+      "endDate": "1999-06",
+      "summary": "Continued with the merged firm, PricewaterhouseCoopers.",
+      "highlights": [
+        "Continued: Delivered ERP integration work for manufacturing clients."
+      ]
+    },
+    {
+      "name": "Coopers & Lybrand (now PwC)",
+      "position": "Associate",
+      "location": "Dallas, Texas",
+      "startDate": "1996-03",
+      "endDate": "1998-06",
+      "highlights": [
+        "Delivered ERP integration work for manufacturing clients."
+      ]
+    }
+  ],
+  "meta": {
+    "version": "2.2.0",
+    "lastModified": "2026-11-07T23:00:00Z"
+  }
+}

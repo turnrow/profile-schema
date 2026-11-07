@@ -1,5 +1,36 @@
 # Changelog
 
+## 2.2.0 (2026-11-07): organization history, positions and responsibilities
+
+Backwards compatible: 2.0.0 and 2.1.0 files remain valid.
+
+### Added
+- **Organization history.** An organization keeps one id while everything else about it changes:
+  - `names` with dates and types (legal, brand, trade name, abbreviation, localized);
+  - `domains` with dates and a status (primary, redirect, retired);
+  - `identifiers` with dates (Wikidata, LEI, D-U-N-S, SEC CIK, company number, ticker…);
+  - `parents` with dates (subsidiary, division, business unit, member firm);
+  - `locations` with roles; `founded` and `dissolved`.
+- **`organizationEvents`**: mergers, acquisitions, spin-offs, split-offs, splits, division transfers, renames, rebrands, trade names, reincorporations and dissolutions. Each lists the organizations before and after, and `recordsTo` says which successor of a split holds employment records. Events carry citations, status and confidence like any other fact.
+- **Employer names in each output's style** (`orgNameStyle` on a mapping):
+  - `atTheTime` — the name when you were there, following any merger that had already happened;
+  - `today` — following events to the current successor;
+  - `both` — "Coopers & Lybrand (now PwC)";
+  - `legal` — "CSI (doing business as Buchanan Associates)", for background checks.
+- **Positions** (`work[].positions`): titles within one job, with how each began (hire, promotion, re-title, lateral move, transfer, reorganization, acquisition, merger, demotion, return), official title, level, unit and manager.
+- **Responsibilities** (`work[].responsibilities`): duties that apply by date or by named positions, so they carry through promotions and re-titles. Outputs mark them "Continued". `scope` figures carry `from` and `to` dates and appear only for the positions they applied to.
+- `work[].employerOfRecord`, for staffing agencies, PEOs and parent companies.
+- `metric.from` / `metric.to`; `source.url`.
+- Converter helpers: `employer`, `orgNameAt`, `orgNow`, `orgAlternateNames`, `tenureNotes` ("Acquired by HP (Aug 2008)"), `positions`, `flatPositions`, `responsibilityLines`, `joinLines`, `concatLists`.
+- `examples/history.profile.json`: a fictional person at three real companies (EDS → HP → HPE → DXC; Coopers & Lybrand → PwC; Buchanan), with company histories cited to public sources.
+
+### Changed
+- **Audiences follow history.** A requester qualifies if its domain is live on the request date for the bound organization, for a parent that owns it on that date, or for its successor. DXC can verify EDS employment today, HP could in 2012, and nobody can through the retired `eds.com`. Retired domains never qualify.
+- Releases carry the history (events, parents, successors) of the organizations they mention, so names resolve the same way for the recipient.
+- JSON Resume, schema.org and timeline outputs list one entry per position. LinkedIn groups positions under the company, with "Company at the time", the company to search LinkedIn for, and "Changes while there".
+- `convert` and the CLI take an `on` date, so "now" names are reproducible.
+- 17 new tests (75 total).
+
 ## 2.1.0 (2026-11-07): audiences, employer releases and write-back
 
 Backwards compatible: 2.0.0 files remain valid.

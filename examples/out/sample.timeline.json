@@ -65,7 +65,7 @@
   ],
   "roles": [
     {
-      "id": "coastal-lab-researcher",
+      "id": "coastal-lab-researcher-role",
       "title": "Research Biologist",
       "organization": "Coastal Ecology Lab",
       "when": "c. 1996 – May 2009",
@@ -73,7 +73,7 @@
       "place": "Azores, Portugal"
     },
     {
-      "id": "harborline-director",
+      "id": "harborline-director-role",
       "title": "Director of Development",
       "organization": "Harborline Resorts",
       "when": "Jun 2009 – Dec 2023",
@@ -81,7 +81,7 @@
       "place": "Cartagena, Colombia"
     },
     {
-      "id": "tidewater-ceo",
+      "id": "tidewater-ceo-role",
       "title": "Founder & CEO",
       "organization": "Tidewater Trails",
       "when": "Mar 2024 – Present",

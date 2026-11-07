@@ -1,0 +1,90 @@
+{
+  "person": "Pat Example",
+  "roles": [
+    {
+      "id": "cl-assoc",
+      "title": "Associate",
+      "change": "hire",
+      "organization": "Coopers & Lybrand",
+      "when": "Mar 1996 – Jun 1998",
+      "start": "1996-03",
+      "place": "Dallas, Texas",
+      "responsibilities": [
+        "Delivered ERP integration work for manufacturing clients."
+      ]
+    },
+    {
+      "id": "pwc-sassoc",
+      "title": "Senior Associate",
+      "change": "merger",
+      "organization": "PricewaterhouseCoopers",
+      "when": "Jul 1998 – Jun 1999",
+      "start": "1998-07",
+      "place": "Dallas, Texas",
+      "responsibilities": [
+        "Continued: Delivered ERP integration work for manufacturing clients."
+      ]
+    },
+    {
+      "id": "buchanan-job-role",
+      "title": "Network Engineer",
+      "organization": "Buchanan Associates",
+      "when": "Jul 1999 – May 2005",
+      "start": "1999-07",
+      "place": "Grapevine, Texas"
+    },
+    {
+      "id": "eds-se",
+      "title": "Systems Engineer",
+      "change": "hire",
+      "organization": "EDS",
+      "when": "Jun 2005 – Mar 2007",
+      "start": "2005-06",
+      "place": "Plano, Texas",
+      "responsibilities": [
+        "Ran nightly batch operations for a state Medicaid claims system."
+      ]
+    },
+    {
+      "id": "eds-sse",
+      "title": "Senior Systems Engineer",
+      "change": "promotion",
+      "organization": "EDS",
+      "when": "Apr 2007 – Dec 2008",
+      "start": "2007-04",
+      "place": "Plano, Texas",
+      "responsibilities": [
+        "Continued: Ran nightly batch operations for a state Medicaid claims system.",
+        "Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009))",
+        "Mentored new engineers through the onboarding program."
+      ]
+    },
+    {
+      "id": "eds-tc3",
+      "title": "Technology Consultant III",
+      "change": "acquisition",
+      "organization": "EDS, an HP Company",
+      "when": "Jan 2009 – Jan 2010",
+      "start": "2009-01",
+      "place": "Plano, Texas",
+      "responsibilities": [
+        "Continued: Ran nightly batch operations for a state Medicaid claims system.",
+        "Continued: Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009); 8 engineers (Jul 2009–Mar 2011))",
+        "Continued: Mentored new engineers through the onboarding program."
+      ]
+    },
+    {
+      "id": "eds-sa",
+      "title": "Solutions Architect",
+      "change": "promotion",
+      "organization": "HP Enterprise Services",
+      "when": "Feb 2010 – Mar 2011",
+      "start": "2010-02",
+      "place": "Plano, Texas",
+      "responsibilities": [
+        "Continued: Led the release-engineering team for the account. (8 engineers (Jul 2009–Mar 2011))",
+        "Owned the target architecture for the claims-system modernization."
+      ]
+    }
+  ]
+}

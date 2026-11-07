@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "inLanguage": "en-US",
+  "dateModified": "2026-11-07T23:00:00Z",
+  "mainEntity": {
+    "@type": "Person",
+    "@id": "#person",
+    "name": "Pat Example",
+    "givenName": "Pat",
+    "familyName": "Example",
+    "image": {
+      "@type": "ImageObject"
+    },
+    "homeLocation": {
+      "@type": "Place",
+      "name": "Dallas–Fort Worth, Texas",
+      "address": {
+        "@type": "PostalAddress",
+        "addressRegion": "TX",
+        "addressCountry": "US"
+      }
+    }
+  }
+}

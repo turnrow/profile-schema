@@ -136,9 +136,10 @@
         "$map": {
           "@type": "Organization",
           "name": {
-            "$fn": "org",
+            "$fn": "orgNameAt",
             "args": [
-              "$.organization"
+              "$.organization",
+              "$.startDate"
             ]
           },
           "url": {
@@ -154,27 +155,35 @@
               "$.organization",
               "sameAs"
             ]
+          },
+          "alternateName": {
+            "$fn": "orgAlternateNames",
+            "args": [
+              "$.organization"
+            ]
           }
         }
       },
       "hasOccupation": {
-        "$each": "$$.work",
+        "$each": {
+          "$fn": "flatPositions",
+          "args": [
+            "$$.work"
+          ]
+        },
         "$sort": "-startDate",
         "$map": {
           "@type": "Occupation",
-          "name": {
-            "$fn": "text",
-            "args": [
-              "$.title"
-            ]
-          },
+          "name": "$.title",
           "description": {
             "$fn": "concat",
             "args": [
               {
-                "$fn": "org",
+                "$fn": "employer",
                 "args": [
-                  "$.organization"
+                  "$.organization",
+                  "$.startDate",
+                  "$.endDate"
                 ]
               },
               ", ",
@@ -317,5 +326,6 @@
         "$map": "$.url"
       }
     }
-  }
+  },
+  "orgNameStyle": "atTheTime"
 }

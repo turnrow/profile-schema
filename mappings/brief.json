@@ -51,9 +51,11 @@
             },
             ", ",
             {
-              "$fn": "org",
+              "$fn": "employer",
               "args": [
-                "$.organization"
+                "$.organization",
+                "$.startDate",
+                "$.endDate"
               ]
             }
           ]
@@ -102,5 +104,6 @@
         ]
       }
     }
-  }
+  },
+  "orgNameStyle": "both"
 }

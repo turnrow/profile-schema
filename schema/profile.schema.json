@@ -17,9 +17,10 @@
     "schemaVersion": {
       "enum": [
         "2.0.0",
-        "2.1.0"
+        "2.1.0",
+        "2.2.0"
       ],
-      "description": "2.1.0 adds audiences, employer records and releases; 2.0.0 files remain valid."
+      "description": "2.2.0 adds organization history, positions and responsibilities; earlier files remain valid."
     },
     "meta": {
       "$ref": "#/$defs/meta"
@@ -35,6 +36,13 @@
       },
       "additionalProperties": {
         "$ref": "#/$defs/organization"
+      }
+    },
+    "organizationEvents": {
+      "description": "Mergers, acquisitions, spin-offs, splits, renames and rebrands that link organizations over time. Identity is the organization id; names, domains and owners change around it.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/organizationEvent"
       }
     },
     "places": {
@@ -641,6 +649,14 @@
         },
         "openQuestion": {
           "type": "string"
+        },
+        "from": {
+          "$ref": "#/$defs/partialDate",
+          "description": "When this figure started to apply."
+        },
+        "to": {
+          "$ref": "#/$defs/partialDate",
+          "description": "When it stopped applying."
         }
       }
     },
@@ -904,7 +920,8 @@
       "additionalProperties": false,
       "properties": {
         "name": {
-          "$ref": "#/$defs/text"
+          "$ref": "#/$defs/text",
+          "description": "Display name today. Names over time go in names."
         },
         "alternateName": {
           "type": "array",
@@ -922,7 +939,10 @@
             "association",
             "project",
             "self",
-            "other"
+            "other",
+            "division",
+            "businessUnit",
+            "partnership"
           ]
         },
         "url": {
@@ -947,12 +967,183 @@
         },
         "domains": {
           "type": "array",
-          "uniqueItems": true,
+          "description": "Domains the organization controls. A plain string is a current domain; an object can carry dates and a status. Only domains valid on the date of a request qualify a requester, and retired domains never do (they can be bought by anyone).",
           "items": {
-            "type": "string",
-            "pattern": "^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$"
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "domain": {
+                    "type": "string",
+                    "pattern": "^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$"
+                  },
+                  "status": {
+                    "enum": [
+                      "primary",
+                      "redirect",
+                      "retired"
+                    ]
+                  },
+                  "from": {
+                    "$ref": "#/$defs/fuzzyDate"
+                  },
+                  "to": {
+                    "$ref": "#/$defs/fuzzyDate"
+                  }
+                },
+                "required": [
+                  "domain"
+                ]
+              }
+            ]
+          }
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/text"
+              },
+              "type": {
+                "enum": [
+                  "legal",
+                  "brand",
+                  "tradeName",
+                  "abbreviation",
+                  "localized"
+                ]
+              },
+              "note": {
+                "type": "string"
+              },
+              "from": {
+                "$ref": "#/$defs/fuzzyDate"
+              },
+              "to": {
+                "$ref": "#/$defs/fuzzyDate"
+              }
+            },
+            "required": [
+              "name",
+              "type"
+            ]
           },
-          "description": "Internet domains the organization controls (lower case), used to recognise it as a requester: acme.com, acme.co.uk."
+          "description": "Every name the organization has used, with dates: legal names, brands, trade (doing-business-as) names, abbreviations."
+        },
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "scheme": {
+                "enum": [
+                  "wikidata",
+                  "lei",
+                  "duns",
+                  "secCik",
+                  "opencorporates",
+                  "companyNumber",
+                  "ticker",
+                  "figi",
+                  "other"
+                ]
+              },
+              "value": {
+                "type": "string"
+              },
+              "jurisdiction": {
+                "type": "string"
+              },
+              "from": {
+                "$ref": "#/$defs/fuzzyDate"
+              },
+              "to": {
+                "$ref": "#/$defs/fuzzyDate"
+              }
+            },
+            "required": [
+              "scheme",
+              "value"
+            ]
+          },
+          "description": "Registry ids, with dates where they changed (tickers and filer numbers end with the entity). Wikidata and LEI are the steadiest anchors."
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "organization": {
+                "$ref": "#/$defs/id"
+              },
+              "relation": {
+                "enum": [
+                  "subsidiary",
+                  "division",
+                  "businessUnit",
+                  "brand",
+                  "memberFirm",
+                  "jointVenture"
+                ]
+              },
+              "from": {
+                "$ref": "#/$defs/fuzzyDate"
+              },
+              "to": {
+                "$ref": "#/$defs/fuzzyDate"
+              }
+            },
+            "required": [
+              "organization",
+              "relation"
+            ]
+          },
+          "description": "Who owned or contained this organization, and when."
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "place": {
+                "$ref": "#/$defs/placeRef"
+              },
+              "role": {
+                "enum": [
+                  "headquarters",
+                  "office",
+                  "site",
+                  "registeredOffice"
+                ]
+              },
+              "from": {
+                "$ref": "#/$defs/fuzzyDate"
+              },
+              "to": {
+                "$ref": "#/$defs/fuzzyDate"
+              }
+            },
+            "required": [
+              "place"
+            ]
+          }
+        },
+        "founded": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "dissolved": {
+          "$ref": "#/$defs/fuzzyDate"
         }
       }
     },
@@ -1042,6 +1233,22 @@
         },
         "employerRecord": {
           "$ref": "#/$defs/employerRecord"
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/position"
+          }
+        },
+        "responsibilities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/responsibility"
+          }
+        },
+        "employerOfRecord": {
+          "$ref": "#/$defs/orgRef",
+          "description": "Who legally employed and paid you, when different from where you worked (a staffing agency, a PEO, a parent company). Background checks verify against this."
         }
       }
     },
@@ -1770,6 +1977,11 @@
         "location": {
           "type": "string",
           "description": "Where the original lives. Never rendered."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Public address of the source, if it has one."
         }
       }
     },
@@ -2129,6 +2341,256 @@
           "description": "When future syncs were stopped. Copies already delivered remain with the recipient."
         },
         "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "organizationEvent": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
+      "type": "object",
+      "required": [
+        "type",
+        "date"
+      ],
+      "unevaluatedProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "merger",
+            "acquisition",
+            "spinOff",
+            "splitOff",
+            "split",
+            "divisionTransfer",
+            "rename",
+            "rebrand",
+            "tradeName",
+            "reincorporation",
+            "dissolution"
+          ]
+        },
+        "date": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "organization": {
+          "$ref": "#/$defs/id",
+          "description": "The organization a rename, rebrand, trade name, reincorporation or dissolution applies to."
+        },
+        "predecessors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "description": "Organizations that stop existing as such (merged, split up)."
+        },
+        "successors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "description": "Organizations that carry on afterwards."
+        },
+        "acquirer": {
+          "$ref": "#/$defs/id"
+        },
+        "target": {
+          "$ref": "#/$defs/id",
+          "description": "For acquisitions and spin-offs: the organization bought or spun off. It keeps its identity."
+        },
+        "recordsTo": {
+          "$ref": "#/$defs/id",
+          "description": "For splits: which successor holds the predecessor's employment records."
+        },
+        "name": {
+          "$ref": "#/$defs/text",
+          "description": "The new name, for renames, rebrands and trade names."
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "position": {
+      "type": "object",
+      "required": [
+        "id",
+        "title"
+      ],
+      "additionalProperties": false,
+      "description": "One title held within a job. A job with several positions is one employer relationship; positions record promotions, re-titles and moves inside it.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "officialTitle": {
+          "$ref": "#/$defs/text",
+          "description": "The employer's title for this position, if it differs."
+        },
+        "change": {
+          "enum": [
+            "hire",
+            "promotion",
+            "retitle",
+            "lateralMove",
+            "transfer",
+            "reorganization",
+            "merger",
+            "acquisition",
+            "demotion",
+            "return"
+          ],
+          "description": "How this position began. 'retitle' and 'reorganization' change the name, not the job; 'acquisition' marks titles imposed by a new owner."
+        },
+        "startDate": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "endDate": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "current": {
+          "type": "boolean"
+        },
+        "level": {
+          "type": "string",
+          "description": "Grade or band, if useful (e.g. L6, Manager II)."
+        },
+        "organizationUnit": {
+          "type": "string",
+          "description": "Team, department or practice."
+        },
+        "reportsTo": {
+          "type": "string",
+          "description": "Title or name of the manager, if appropriate to share."
+        },
+        "location": {
+          "$ref": "#/$defs/placeRef"
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "visibility": {
+          "$ref": "#/$defs/visibility"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        },
+        "openQuestion": {
+          "type": "string"
+        }
+      }
+    },
+    "responsibility": {
+      "type": "object",
+      "required": [
+        "id",
+        "summary"
+      ],
+      "additionalProperties": false,
+      "description": "A duty owned during a job. It can start in one position and continue through promotions and re-titles: its dates (or an explicit list of positions) say when it applied, and outputs show it as continuing.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "kind": {
+          "enum": [
+            "leadership",
+            "management",
+            "ownership",
+            "delivery",
+            "operations",
+            "advisory",
+            "compliance",
+            "commercial",
+            "mentoring",
+            "other"
+          ]
+        },
+        "startDate": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "endDate": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "current": {
+          "type": "boolean"
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "description": "Positions it applied to. If left out, it applies to every position its dates overlap (or the whole job, without dates)."
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/metric"
+          },
+          "description": "Size of the responsibility, which may change over time: give each figure from/to dates (team of 4 in 2019, 12 by 2022)."
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/metric"
+          }
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "handedOffTo": {
+          "type": "string",
+          "description": "Who took it over when it ended, if worth noting."
+        },
+        "visibility": {
+          "$ref": "#/$defs/visibility"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/claim"
+          }
+        },
+        "openQuestion": {
           "type": "string"
         }
       }

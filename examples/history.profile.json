@@ -1,0 +1,166 @@
+{
+  "$schema": "../schema/profile.schema.json",
+  "schemaVersion": "2.2.0",
+  "meta": {
+    "defaultLocale": "en-US",
+    "updated": "2026-11-07T23:00:00Z",
+    "owner": "Pat Example",
+    "subjectConsent": { "given": true, "on": "2026-11-07", "note": "Fictional person." },
+    "notes": "FICTIONAL PERSON, REAL COMPANIES. Pat Example, the job dates, titles and duties are invented. The organization histories (EDS, Coopers & Lybrand / PwC, Buchanan) are drawn from the public sources cited, except where an entry says otherwise. Shows organization history, positions within a job, and responsibilities that continue through promotions and re-titles."
+  },
+  "person": {
+    "name": "Pat Example",
+    "names": [ { "type": "preferred", "full": "Pat Example", "given": "Pat", "family": "Example" } ],
+    "headline": "Enterprise architect | Release engineering | Consulting",
+    "location": { "label": "Dallas–Fort Worth, Texas", "region": "TX", "countryCode": "US" }
+  },
+  "places": {
+    "plano": { "label": "Plano, Texas", "locality": "Plano", "region": "TX", "countryCode": "US", "geo": { "lat": 33.0198, "lon": -96.6989 } },
+    "dallas": { "label": "Dallas, Texas", "locality": "Dallas", "region": "TX", "countryCode": "US" },
+    "grapevine": { "label": "Grapevine, Texas", "locality": "Grapevine", "region": "TX", "countryCode": "US" }
+  },
+  "organizations": {
+    "eds": {
+      "name": "EDS",
+      "kind": "company",
+      "founded": "1962-06-27",
+      "dissolved": "2017-04",
+      "names": [
+        { "name": "Electronic Data Systems Corporation", "type": "legal", "to": "2008" },
+        { "name": "Electronic Data Systems LLC", "type": "legal", "from": "2008", "to": "2009" },
+        { "name": "HP Enterprise Services LLC", "type": "legal", "from": "2009" },
+        { "name": "EDS", "type": "brand", "to": "2008-08-26" },
+        { "name": "EDS, an HP Company", "type": "brand", "from": "2008-08-26", "to": "2009-09-23" },
+        { "name": "HP Enterprise Services", "type": "brand", "from": "2009-09-23", "to": "2015-11-01" },
+        { "name": "Hewlett Packard Enterprise Services", "type": "brand", "from": "2015-11-01", "to": "2017-04" }
+      ],
+      "domains": [ { "domain": "eds.com", "status": "retired" } ],
+      "parents": [
+        { "organization": "gm", "relation": "subsidiary", "from": "1984", "to": "1996" },
+        { "organization": "hp", "relation": "subsidiary", "from": "2008-08-26", "to": "2015-11-01" },
+        { "organization": "hpe", "relation": "businessUnit", "from": "2015-11-01", "to": "2017-04" }
+      ],
+      "locations": [ { "place": "plano", "role": "headquarters" } ],
+      "identifiers": [ { "scheme": "ticker", "value": "NYSE:EDS", "to": "2008-08-26" } ]
+    },
+    "gm": { "name": "General Motors", "kind": "company", "domains": ["gm.com"] },
+    "hp": {
+      "name": "HP Inc.", "kind": "company",
+      "names": [ { "name": "Hewlett-Packard Company", "type": "legal", "to": "2015-11-01" }, { "name": "HP", "type": "brand", "to": "2015-11-01" }, { "name": "HP Inc.", "type": "legal", "from": "2015-11-01" } ],
+      "domains": ["hp.com"]
+    },
+    "hpe": { "name": "Hewlett Packard Enterprise", "kind": "company", "founded": "2015-11-01", "domains": ["hpe.com"] },
+    "csc": { "name": "Computer Sciences Corporation", "kind": "company", "dissolved": "2017-04" },
+    "dxc": { "name": "DXC Technology", "kind": "company", "founded": "2017-04", "domains": ["dxc.com"] },
+
+    "coopers-lybrand": { "name": "Coopers & Lybrand", "kind": "partnership", "dissolved": "1998" },
+    "price-waterhouse": { "name": "Price Waterhouse", "kind": "partnership", "dissolved": "1998" },
+    "pwc": {
+      "name": "PwC", "kind": "partnership", "founded": "1998",
+      "names": [
+        { "name": "PricewaterhouseCoopers", "type": "legal", "from": "1998" },
+        { "name": "PricewaterhouseCoopers", "type": "brand", "from": "1998", "to": "2010-09-20" },
+        { "name": "PwC", "type": "brand", "from": "2010-09-20" }
+      ],
+      "domains": [ { "domain": "pwc.com", "status": "primary" }, { "domain": "pwcglobal.com", "status": "retired" } ]
+    },
+
+    "buchanan": {
+      "name": "Buchanan Technologies", "kind": "company", "founded": "1988",
+      "names": [
+        { "name": "CSI", "type": "legal", "note": "As the profile owner recalls it; not found in public sources. Confirm against a W-2 before using it for verification." },
+        { "name": "Buchanan Associates", "type": "tradeName", "to": { "value": "2012", "qualifier": "before" } },
+        { "name": "Buchanan Technologies", "type": "brand", "from": { "value": "2012", "qualifier": "before" } }
+      ],
+      "domains": [ { "domain": "buchanan.com", "status": "primary" }, { "domain": "buchanantech.com" } ],
+      "locations": [ { "place": "grapevine", "role": "headquarters" } ]
+    }
+  },
+
+  "organizationEvents": [
+    { "id": "gm-acquires-eds", "type": "acquisition", "date": "1984", "acquirer": "gm", "target": "eds", "status": "approved", "confidence": "high", "citations": [ { "source": "wikipedia-eds" } ] },
+    { "id": "eds-split-off", "type": "splitOff", "date": "1996", "target": "eds", "predecessors": [], "status": "approved", "confidence": "high", "citations": [ { "source": "wikipedia-eds" } ] },
+    { "id": "hp-acquires-eds", "type": "acquisition", "date": "2008-08-26", "acquirer": "hp", "target": "eds", "status": "approved", "confidence": "high", "citations": [ { "source": "perspecta-10k" }, { "source": "hp-alumni-timeline" } ] },
+    { "id": "eds-rebrand-hpes", "type": "rebrand", "date": "2009-09-23", "organization": "eds", "name": "HP Enterprise Services", "status": "approved", "confidence": "high", "citations": [ { "source": "hp-alumni-timeline" }, { "source": "perspecta-10k" } ] },
+    { "id": "hp-spins-off-hpe", "type": "spinOff", "date": "2015-11-01", "acquirer": "hp", "target": "hpe", "status": "approved", "confidence": "high", "citations": [ { "source": "perspecta-10k" } ] },
+    { "id": "eds-moves-to-hpe", "type": "divisionTransfer", "date": "2015-11-01", "target": "eds", "acquirer": "hpe", "status": "approved", "confidence": "high", "citations": [ { "source": "perspecta-10k" } ] },
+    { "id": "dxc-formed", "type": "merger", "date": "2017-04", "predecessors": ["eds", "csc"], "successors": ["dxc"], "status": "approved", "confidence": "high",
+      "summary": "HPE's Enterprise Services business combined with CSC to form DXC Technology.", "citations": [ { "source": "perspecta-10k" } ] },
+    { "id": "pwc-merger", "type": "merger", "date": "1998", "predecessors": ["coopers-lybrand", "price-waterhouse"], "successors": ["pwc"], "status": "approved", "confidence": "high", "citations": [ { "source": "wikipedia-pwc" } ] },
+    { "id": "pwc-rebrand", "type": "rebrand", "date": "2010-09-20", "organization": "pwc", "name": "PwC", "status": "approved", "confidence": "high",
+      "summary": "Trading name shortened to PwC; the legal name stayed PricewaterhouseCoopers.", "citations": [ { "source": "wikipedia-pwc" } ] },
+    { "id": "buchanan-brand", "type": "rebrand", "date": { "value": "2012", "qualifier": "before" }, "organization": "buchanan", "name": "Buchanan Technologies", "status": "approved", "confidence": "medium",
+      "citations": [ { "source": "buchanan-35-years" }, { "source": "dnb-buchanan" } ] }
+  ],
+
+  "audiences": {
+    "past-employers": {
+      "label": "Employment verification",
+      "kind": "employer", "relation": "former", "purpose": "employmentVerification",
+      "person": ["name", "legalName"],
+      "sections": ["work"],
+      "baseVisibility": ["public", "network"],
+      "verification": { "methods": ["oidc", "signedRequest"] }
+    }
+  },
+
+  "work": [
+    {
+      "id": "eds-job", "status": "approved", "confidence": "medium", "priority": 90,
+      "organization": "eds", "title": "Solutions Architect", "employmentType": "fullTime",
+      "startDate": "2005-06", "endDate": "2011-03", "location": "plano",
+      "summary": "Release engineering and architecture for state government outsourcing accounts.",
+      "positions": [
+        { "id": "eds-se", "title": "Systems Engineer", "change": "hire", "startDate": "2005-06", "endDate": "2007-03" },
+        { "id": "eds-sse", "title": "Senior Systems Engineer", "change": "promotion", "startDate": "2007-04", "endDate": "2008-12" },
+        { "id": "eds-tc3", "title": "Technology Consultant III", "change": "acquisition", "startDate": "2009-01", "endDate": "2010-01",
+          "summary": "Same job; the title changed when HP mapped EDS roles onto its own job architecture." },
+        { "id": "eds-sa", "title": "Solutions Architect", "change": "promotion", "startDate": "2010-02", "endDate": "2011-03" }
+      ],
+      "responsibilities": [
+        { "id": "batch-ops", "kind": "operations", "summary": "Ran nightly batch operations for a state Medicaid claims system.", "startDate": "2005-06", "endDate": "2009-12" },
+        {
+          "id": "release-team", "kind": "leadership", "summary": "Led the release-engineering team for the account.", "startDate": "2007-04", "endDate": "2011-03",
+          "scope": [
+            { "id": "team-2007", "label": "engineers", "value": 3, "from": "2007-04", "to": "2009-06" },
+            { "id": "team-2009", "label": "engineers", "value": 8, "from": "2009-07", "to": "2011-03" }
+          ],
+          "outcomes": [ "Cut release lead time from six weeks to ten days." ]
+        },
+        { "id": "mentoring", "kind": "mentoring", "summary": "Mentored new engineers through the onboarding program.", "positions": ["eds-sse", "eds-tc3"] },
+        { "id": "architecture", "kind": "ownership", "summary": "Owned the target architecture for the claims-system modernization.", "startDate": "2010-02", "endDate": "2011-03" }
+      ]
+    },
+    {
+      "id": "cl-job", "status": "approved", "confidence": "medium", "priority": 70,
+      "organization": "coopers-lybrand", "title": "Senior Associate", "employmentType": "fullTime",
+      "startDate": "1996-03", "endDate": "1999-06", "location": "dallas",
+      "summary": "Systems integration consulting.",
+      "positions": [
+        { "id": "cl-assoc", "title": "Associate", "change": "hire", "startDate": "1996-03", "endDate": "1998-06" },
+        { "id": "pwc-sassoc", "title": "Senior Associate", "change": "merger", "startDate": "1998-07", "endDate": "1999-06",
+          "summary": "Continued with the merged firm, PricewaterhouseCoopers." }
+      ],
+      "responsibilities": [
+        { "id": "client-delivery", "kind": "delivery", "summary": "Delivered ERP integration work for manufacturing clients." }
+      ]
+    },
+    {
+      "id": "buchanan-job", "status": "approved", "confidence": "medium", "priority": 60,
+      "organization": "buchanan", "title": "Network Engineer", "employmentType": "fullTime",
+      "startDate": "1999-07", "endDate": "2005-05", "location": "grapevine",
+      "summary": "Managed network services for outsourcing clients."
+    }
+  ],
+
+  "sources": {
+    "perspecta-10k": { "title": "Perspecta Inc., Form 10-K for fiscal 2018 (history of the Enterprise Services business)", "kind": "record", "date": "2018", "defaultQuality": "primary",
+      "url": "https://www.sec.gov/Archives/edgar/data/0001724670/000172467018000008/usps10-k.htm" },
+    "hp-alumni-timeline": { "title": "HP Alumni Association, HP spinoff timeline", "kind": "website", "defaultQuality": "secondary", "url": "https://www.hpalumni.org/hptimeline" },
+    "wikipedia-eds": { "title": "Wikipedia: Electronic Data Systems", "kind": "website", "defaultQuality": "secondary", "url": "https://en.wikipedia.org/wiki/Electronic_Data_Systems" },
+    "wikipedia-pwc": { "title": "Wikipedia: PwC", "kind": "website", "defaultQuality": "secondary", "url": "https://en.wikipedia.org/wiki/PwC" },
+    "buchanan-35-years": { "title": "Buchanan Technologies Celebrates 35 Years (press release, 2023)", "kind": "article", "date": "2023-07-19", "defaultQuality": "published",
+      "url": "https://www.buchanan.com/buchanan-technologies-celebrates-35-years" },
+    "dnb-buchanan": { "title": "Dun & Bradstreet business directory: Buchanan Technologies", "kind": "website", "defaultQuality": "secondary" }
+  }
+}

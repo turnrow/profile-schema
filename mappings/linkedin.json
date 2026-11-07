@@ -51,10 +51,26 @@
       "$each": "$$.work",
       "$sort": "-startDate",
       "$map": {
-        "Title": {
-          "$fn": "text",
+        "Company (search LinkedIn for)": {
+          "$fn": "orgNow",
           "args": [
-            "$.title"
+            "$.organization"
+          ]
+        },
+        "Company at the time": {
+          "$fn": "orgNameAt",
+          "args": [
+            "$.organization",
+            "$.startDate"
+          ]
+        },
+        "Changes while there": {
+          "$fn": "tenureNotes",
+          "args": [
+            "$.organization",
+            "$.startDate",
+            "$.endDate",
+            "$.current"
           ]
         },
         "Employment type": {
@@ -78,20 +94,6 @@
             }
           ]
         },
-        "Company": {
-          "$fn": "org",
-          "args": [
-            "$.organization"
-          ]
-        },
-        "Dates": {
-          "$fn": "dateRangeText",
-          "args": [
-            "$.startDate",
-            "$.endDate",
-            "$.current"
-          ]
-        },
         "Location": {
           "$fn": "place",
           "args": [
@@ -111,24 +113,50 @@
             }
           ]
         },
-        "Description": {
-          "$fn": "truncate",
-          "args": [
-            {
-              "$fn": "text",
-              "args": [
-                "$.summary"
-              ]
-            },
-            2000
-          ]
-        },
         "Skills": {
           "$fn": "lookup",
           "args": [
             "$.skills",
             "skills"
           ]
+        },
+        "Positions": {
+          "$each": {
+            "$fn": "positions",
+            "args": [
+              "$"
+            ]
+          },
+          "$sort": "-startDate",
+          "$map": {
+            "Title": "$.title",
+            "Dates": {
+              "$fn": "dateRangeText",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                "$.current"
+              ]
+            },
+            "Description": {
+              "$fn": "truncate",
+              "args": [
+                {
+                  "$fn": "joinLines",
+                  "args": [
+                    "$.summary",
+                    {
+                      "$fn": "responsibilityLines",
+                      "args": [
+                        "$"
+                      ]
+                    }
+                  ]
+                },
+                2000
+              ]
+            }
+          }
         }
       }
     },
