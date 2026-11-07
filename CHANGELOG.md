@@ -23,7 +23,7 @@ Backwards compatible: 2.0.0 files remain valid.
   - Changes to person-level fields are returned as suggestions and never applied.
 - `lib/audience.mjs`: resolves audiences on a date, checks requesters against policy (method and domain, including subdomains) and looks up field authority. An email address alone can never authorize write-back.
 - Validator checks for audience, release and employer-record consistency.
-- `examples/employee.profile.json` (fictional) with a sample SCIM write-back and outputs; 18 new tests (54 total).
+- `examples/employee.profile.json` (fictional) with a sample SCIM write-back and outputs; 22 new tests (58 total).
 
 ## 2.0.0 (2026-11-07): Turnrow Profile Schema
 

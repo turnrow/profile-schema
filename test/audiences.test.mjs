@@ -187,3 +187,44 @@ test("repeated conflicting corrections to a locked job stay valid, and empty fie
   const accepted = job.claims.filter((c) => c.field === "employerRecord.department" && c.accepted);
   assert.deepEqual(accepted.map((c) => c.value), ["Engineering"]);
 });
+
+// ---------- regressions from the PR #2 review ----------
+
+test("'any employer' audiences include past employers and don't lapse on separation", () => {
+  const p = employee();
+  p.audiences.anyemp = { kind: "employer", relation: "any", purpose: "employmentVerification" };
+  const r = resolveAudience(p, "anyemp", { on: ON });
+  assert.deepEqual(r.bindings.map((b) => b.organization.id).sort(), ["acme", "northwind"]);
+});
+
+test("a release carries only the organizations, places and sources it refers to, without source locations", () => {
+  const p = employee();
+  p.sources["offer-letter"].location = "Drive: /HR/offer.pdf";
+  const leak = { target: "x", output: { orgs: "$$.organizations", sources: "$$.sources", places: "$$.places" } };
+  const { payload } = buildRelease(p, "current-employer", leak, { requester: ACME, on: ON });
+  assert.deepEqual(Object.keys(payload.orgs).sort(), ["acme", "red-cross-example"]);
+  assert.deepEqual(Object.keys(payload.sources), ["offer-letter"]);
+  assert.equal(payload.sources["offer-letter"].location, undefined);
+});
+
+test("write-back doesn't suggest a name the profile already has", () => {
+  const s = scimBack();
+  s.displayName = "Sam Rivera";
+  s.name = { givenName: "Sam", familyName: "Rivera" };
+  s.nickName = "Sam";
+  assert.deepEqual(applyWriteBack(employee(), "current-employer", s, { requester: ACME, on: ON }).suggestions, []);
+});
+
+test("write-back keeps translations of a translated field and flags them for checking", () => {
+  const p = employee();
+  p.work[0].employerRecord.officialTitle = { "en-US": "Senior Software Engineer II", es: "Ingeniera de software sénior II" };
+  const { profile } = applyWriteBack(p, "current-employer", scimBack(), { requester: ACME, on: ON });
+  const job = profile.work[0];
+  assert.deepEqual(job.employerRecord.officialTitle, { "en-US": "Senior Software Engineer II, Platform", es: "Ingeniera de software sénior II" });
+  assert.match(job.openQuestion, /check its translations \(es\)/);
+  assert.deepEqual(validateProfile(profile).errors, []);
+  const same = structuredClone(p);
+  same.work[0].employerRecord.officialTitle = { "en-US": "Senior Software Engineer II, Platform", es: "x" };
+  const again = applyWriteBack(same, "current-employer", scimBack(), { requester: ACME, on: ON });
+  assert.equal(again.changes.find((c) => c.field === "employerRecord.officialTitle").action, "unchanged");
+});
