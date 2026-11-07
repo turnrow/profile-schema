@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 
-export { validateProfile, getField, SECTIONS } from "./lib/validate.mjs";
-export { convert, checkRules, renderText, RuleViolationError, DEFAULT_INCLUDE } from "./lib/convert.mjs";
+export { validateProfile, getField, canonical, SECTIONS } from "./lib/validate.mjs";
+export { convert, checkRules, stringsOf, renderText, RuleViolationError, DEFAULT_INCLUDE } from "./lib/convert.mjs";
 export { fromJsonResume } from "./lib/import-jsonresume.mjs";
 
 /** The Turnrow Profile JSON Schema (draft 2020-12). */

@@ -41,8 +41,20 @@
           "transliteration"
         ]
       },
-      "givenName": "$$.person.names.0.given",
-      "familyName": "$$.person.names.0.family",
+      "givenName": {
+        "$fn": "name",
+        "args": [
+          "preferred",
+          "given"
+        ]
+      },
+      "familyName": {
+        "$fn": "name",
+        "args": [
+          "preferred",
+          "family"
+        ]
+      },
       "jobTitle": {
         "$fn": "text",
         "args": [

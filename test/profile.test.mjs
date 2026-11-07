@@ -253,3 +253,53 @@ test("imported drafts are not published until approved, then round-trip to valid
   const v = jsonResumeValidator();
   assert.equal(v(after), true, JSON.stringify(v.errors));
 });
+
+// ---------- regressions from the PR #1 review ----------
+
+test("schema.org given and family names come from the preferred name, never a private one", () => {
+  const p = sample();
+  p.person.names = [p.person.names[1], p.person.names[0], p.person.names[2]]; // legal (private) first
+  const me = convert(p, loadMapping("schemaorg")).output.mainEntity;
+  assert.equal(me.givenName, "Ines");
+  assert.equal(me.familyName, "Calloway");
+  assert.ok(!JSON.stringify(me).includes("Calloway Ortega"));
+});
+
+test("rules catch a phrase that follows a line break", () => {
+  const p = sample();
+  p.person.shortBio = "First line.\nsafe travels for all";
+  assert.throws(() => convert(p, loadMapping("brief")), RuleViolationError);
+});
+
+test("bundle paths cannot escape the bundle folder", () => {
+  const dir = mkdtempSync(join(tmpdir(), "bundle-"));
+  const p = minimal({ media: [{ id: "m", title: "t", url: "bundle:../outside.txt" }] });
+  assert.match(validateProfile(p, { bundleDir: dir }).errors.join("\n"), /escapes the bundle folder/);
+});
+
+test("sorting treats a missing priority as the default 50", () => {
+  const p = sample();
+  p.skills.find((s) => s.id === "marine-biology").priority = 40;
+  p.skills.push({ id: "no-priority", status: "approved", confidence: "high", name: "No Priority" });
+  const skills = convert(p, loadMapping("linkedin")).output["Skills (first 3 pinned)"];
+  assert.ok(skills.indexOf("No Priority") < skills.indexOf("Marine Biology"));
+});
+
+test("accepted claims compare equal whatever the key order", () => {
+  const p = sample();
+  const w = p.work.find((x) => x.id === "coastal-lab-researcher");
+  w.claims = [{ field: "startDate", value: { qualifier: "about", value: "1996" }, accepted: true, citations: [{ source: "cv" }] }];
+  assert.deepEqual(validateProfile(p).errors, []);
+});
+
+test("import drops impossible dates instead of producing an invalid profile", () => {
+  const profile = fromJsonResume({ basics: { name: "x" }, work: [{ name: "A", position: "B", startDate: "2020-13" }] });
+  assert.equal(validateProfile(profile).valid, true);
+  assert.equal(profile.work[0].startDate, undefined);
+});
+
+test("import keeps organizations whose names slug the same apart", () => {
+  const profile = fromJsonResume({ basics: { name: "x" }, work: [{ name: "A&B", position: "p" }, { name: "A B", position: "q" }] });
+  assert.equal(Object.keys(profile.organizations).length, 2);
+  assert.notEqual(profile.work[0].organization, profile.work[1].organization);
+});
