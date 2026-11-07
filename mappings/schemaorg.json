@@ -1,0 +1,321 @@
+{
+  "target": "schemaorg",
+  "description": "schema.org JSON-LD for a public profile page: ProfilePage with a Person as mainEntity. Public, approved, high-confidence entries only. Place it in <script type=\"application/ld+json\">.",
+  "include": {
+    "visibility": [
+      "public"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high"
+    ]
+  },
+  "output": {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "inLanguage": {
+      "$fn": "locale",
+      "args": []
+    },
+    "url": "$.meta.canonicalUrl",
+    "dateModified": "$.meta.updated",
+    "mainEntity": {
+      "@type": "Person",
+      "@id": {
+        "$fn": "concat",
+        "args": [
+          "$.meta.canonicalUrl",
+          "#person"
+        ]
+      },
+      "name": "$.person.name",
+      "alternateName": {
+        "$fn": "names",
+        "args": [
+          "nickname",
+          "alsoKnownAs",
+          "professional",
+          "native",
+          "transliteration"
+        ]
+      },
+      "givenName": {
+        "$fn": "name",
+        "args": [
+          "preferred",
+          "given"
+        ]
+      },
+      "familyName": {
+        "$fn": "name",
+        "args": [
+          "preferred",
+          "family"
+        ]
+      },
+      "jobTitle": {
+        "$fn": "text",
+        "args": [
+          "$.person.jobTitle"
+        ]
+      },
+      "description": {
+        "$fn": "text",
+        "args": [
+          "$.person.shortBio"
+        ]
+      },
+      "image": {
+        "@type": "ImageObject",
+        "contentUrl": "$.person.image.url",
+        "caption": {
+          "$fn": "text",
+          "args": [
+            "$.person.image.alt"
+          ]
+        }
+      },
+      "email": {
+        "$fn": "visible",
+        "args": [
+          "$.person.contact.email",
+          "$.person.contact.emailVisibility"
+        ]
+      },
+      "url": "$.person.contact.website",
+      "homeLocation": {
+        "@type": "Place",
+        "name": {
+          "$fn": "place",
+          "args": [
+            "$.person.location"
+          ]
+        },
+        "sameAs": {
+          "$fn": "placeIdUri",
+          "args": [
+            "$.person.location"
+          ]
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": {
+            "$fn": "place",
+            "args": [
+              "$.person.location",
+              "locality"
+            ]
+          },
+          "addressRegion": {
+            "$fn": "place",
+            "args": [
+              "$.person.location",
+              "region"
+            ]
+          },
+          "addressCountry": {
+            "$fn": "place",
+            "args": [
+              "$.person.location",
+              "countryCode"
+            ]
+          }
+        }
+      },
+      "sameAs": {
+        "$each": "$$.person.profiles",
+        "$map": "$.url"
+      },
+      "worksFor": {
+        "$each": "$$.work",
+        "$where": {
+          "current": true
+        },
+        "$map": {
+          "@type": "Organization",
+          "name": {
+            "$fn": "org",
+            "args": [
+              "$.organization"
+            ]
+          },
+          "url": {
+            "$fn": "org",
+            "args": [
+              "$.organization",
+              "url"
+            ]
+          },
+          "sameAs": {
+            "$fn": "org",
+            "args": [
+              "$.organization",
+              "sameAs"
+            ]
+          }
+        }
+      },
+      "hasOccupation": {
+        "$each": "$$.work",
+        "$sort": "-startDate",
+        "$map": {
+          "@type": "Occupation",
+          "name": {
+            "$fn": "text",
+            "args": [
+              "$.title"
+            ]
+          },
+          "description": {
+            "$fn": "concat",
+            "args": [
+              {
+                "$fn": "org",
+                "args": [
+                  "$.organization"
+                ]
+              },
+              ", ",
+              {
+                "$fn": "dateRangeText",
+                "args": [
+                  "$.startDate",
+                  "$.endDate",
+                  "$.current"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "alumniOf": {
+        "$each": "$$.education",
+        "$map": {
+          "@type": "EducationalOrganization",
+          "name": {
+            "$fn": "org",
+            "args": [
+              "$.institution"
+            ]
+          },
+          "url": {
+            "$fn": "org",
+            "args": [
+              "$.institution",
+              "url"
+            ]
+          }
+        }
+      },
+      "hasCredential": {
+        "$each": "$$.credentials",
+        "$where": {
+          "active": [
+            true,
+            null
+          ]
+        },
+        "$map": {
+          "@type": "EducationalOccupationalCredential",
+          "name": {
+            "$fn": "text",
+            "args": [
+              "$.name"
+            ]
+          },
+          "credentialCategory": "$.kind",
+          "recognizedBy": {
+            "@type": "Organization",
+            "name": {
+              "$fn": "org",
+              "args": [
+                "$.issuer"
+              ]
+            },
+            "url": {
+              "$fn": "org",
+              "args": [
+                "$.issuer",
+                "url"
+              ]
+            }
+          },
+          "dateCreated": {
+            "$fn": "isoExact",
+            "args": [
+              "$.issued"
+            ]
+          },
+          "expires": {
+            "$fn": "isoExact",
+            "args": [
+              "$.expires"
+            ]
+          }
+        }
+      },
+      "award": {
+        "$each": "$$.awards",
+        "$map": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        }
+      },
+      "knowsAbout": {
+        "$each": "$$.skills",
+        "$sort": "-pinned,-priority",
+        "$map": {
+          "$fn": "text",
+          "args": [
+            "$.name"
+          ]
+        }
+      },
+      "knowsLanguage": {
+        "$each": "$$.languages",
+        "$map": "$.language"
+      },
+      "subjectOf": {
+        "$each": "$$.publications",
+        "$where": {
+          "aboutPerson": true
+        },
+        "$map": {
+          "@type": "CreativeWork",
+          "name": {
+            "$fn": "text",
+            "args": [
+              "$.title"
+            ]
+          },
+          "publisher": {
+            "$fn": "org",
+            "args": [
+              "$.publisher"
+            ]
+          },
+          "datePublished": {
+            "$fn": "isoExact",
+            "args": [
+              "$.date"
+            ]
+          },
+          "url": "$.url"
+        }
+      },
+      "identifier": {
+        "$each": "$$.person.profiles",
+        "$where": {
+          "network": [
+            "ORCID"
+          ]
+        },
+        "$map": "$.url"
+      }
+    }
+  }
+}

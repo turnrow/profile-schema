@@ -1,0 +1,122 @@
+{
+  "target": "timeline",
+  "description": "Life-and-career timeline for a web page or map: jobs, service and life events in date order, with places and coordinates. Public, approved, high or medium confidence.",
+  "include": {
+    "visibility": [
+      "public"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high",
+      "medium"
+    ]
+  },
+  "output": {
+    "person": "$.person.name",
+    "events": {
+      "$each": "$$.timeline",
+      "$sort": "startDate",
+      "$map": {
+        "id": "$.id",
+        "type": "$.type",
+        "title": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "when": {
+          "$fn": "dateRangeText",
+          "args": [
+            "$.startDate",
+            "$.endDate",
+            "$.current"
+          ]
+        },
+        "start": {
+          "$fn": "isoLoose",
+          "args": [
+            "$.startDate"
+          ]
+        },
+        "summary": {
+          "$fn": "text",
+          "args": [
+            "$.summary"
+          ]
+        },
+        "facts": {
+          "$fn": "metricText",
+          "args": [
+            "$.metrics",
+            "$"
+          ]
+        },
+        "places": {
+          "$each": "$.places",
+          "$map": {
+            "name": {
+              "$fn": "place",
+              "args": [
+                "$"
+              ]
+            },
+            "geo": {
+              "$fn": "placeGeo",
+              "args": [
+                "$"
+              ]
+            },
+            "sameAs": {
+              "$fn": "placeIdUri",
+              "args": [
+                "$"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "roles": {
+      "$each": "$$.work",
+      "$sort": "startDate",
+      "$map": {
+        "id": "$.id",
+        "title": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "organization": {
+          "$fn": "org",
+          "args": [
+            "$.organization"
+          ]
+        },
+        "when": {
+          "$fn": "dateRangeText",
+          "args": [
+            "$.startDate",
+            "$.endDate",
+            "$.current"
+          ]
+        },
+        "start": {
+          "$fn": "isoLoose",
+          "args": [
+            "$.startDate"
+          ]
+        },
+        "place": {
+          "$fn": "place",
+          "args": [
+            "$.location"
+          ]
+        }
+      }
+    }
+  }
+}

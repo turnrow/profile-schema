@@ -1,0 +1,310 @@
+{
+  "target": "linkedin",
+  "description": "Paste-ready LinkedIn fields with LinkedIn's names and limits (headline 220, About 2,600, descriptions 2,000). LinkedIn has no import API for personal profiles, so this is a sheet to paste from. Public and network entries; approved; high or medium confidence.",
+  "include": {
+    "visibility": [
+      "public",
+      "network"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high",
+      "medium"
+    ]
+  },
+  "format": "text",
+  "output": {
+    "Headline": {
+      "$fn": "truncate",
+      "args": [
+        {
+          "$fn": "text",
+          "args": [
+            "$.person.headline"
+          ]
+        },
+        220
+      ]
+    },
+    "Location": {
+      "$fn": "place",
+      "args": [
+        "$.person.location"
+      ]
+    },
+    "Industry": "$.person.industry",
+    "About": {
+      "$fn": "truncate",
+      "args": [
+        {
+          "$fn": "text",
+          "args": [
+            "$.person.summary"
+          ]
+        },
+        2600
+      ]
+    },
+    "Experience": {
+      "$each": "$$.work",
+      "$sort": "-startDate",
+      "$map": {
+        "Title": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "Employment type": {
+          "$fn": "enumMap",
+          "args": [
+            "$.employmentType",
+            {
+              "$literal": {
+                "fullTime": "Full-time",
+                "partTime": "Part-time",
+                "selfEmployed": "Self-employed",
+                "freelance": "Freelance",
+                "contract": "Contract",
+                "internship": "Internship",
+                "apprenticeship": "Apprenticeship",
+                "seasonal": "Seasonal",
+                "founder": "Full-time",
+                "board": "Part-time",
+                "advisor": "Part-time"
+              }
+            }
+          ]
+        },
+        "Company": {
+          "$fn": "org",
+          "args": [
+            "$.organization"
+          ]
+        },
+        "Dates": {
+          "$fn": "dateRangeText",
+          "args": [
+            "$.startDate",
+            "$.endDate",
+            "$.current"
+          ]
+        },
+        "Location": {
+          "$fn": "place",
+          "args": [
+            "$.location"
+          ]
+        },
+        "Location type": {
+          "$fn": "enumMap",
+          "args": [
+            "$.workplaceType",
+            {
+              "$literal": {
+                "onSite": "On-site",
+                "hybrid": "Hybrid",
+                "remote": "Remote"
+              }
+            }
+          ]
+        },
+        "Description": {
+          "$fn": "truncate",
+          "args": [
+            {
+              "$fn": "text",
+              "args": [
+                "$.summary"
+              ]
+            },
+            2000
+          ]
+        },
+        "Skills": {
+          "$fn": "lookup",
+          "args": [
+            "$.skills",
+            "skills"
+          ]
+        }
+      }
+    },
+    "Volunteering / service": {
+      "$each": "$$.service",
+      "$sort": "-startDate",
+      "$map": {
+        "Role": {
+          "$fn": "coalesce",
+          "args": [
+            {
+              "$fn": "text",
+              "args": [
+                "$.role"
+              ]
+            },
+            "$.rank"
+          ]
+        },
+        "Organization": {
+          "$fn": "org",
+          "args": [
+            "$.organization"
+          ]
+        },
+        "Dates": {
+          "$fn": "dateRangeText",
+          "args": [
+            "$.startDate",
+            "$.endDate",
+            "$.current"
+          ]
+        },
+        "Description": {
+          "$fn": "text",
+          "args": [
+            "$.summary"
+          ]
+        }
+      }
+    },
+    "Education": {
+      "$each": "$$.education",
+      "$map": {
+        "School": {
+          "$fn": "org",
+          "args": [
+            "$.institution"
+          ]
+        },
+        "Degree": "$.credential",
+        "Field of study": {
+          "$fn": "text",
+          "args": [
+            "$.area"
+          ]
+        },
+        "Dates": {
+          "$fn": "dateRangeText",
+          "args": [
+            "$.startDate",
+            "$.endDate",
+            false
+          ]
+        }
+      }
+    },
+    "Licenses & certifications": {
+      "$each": "$$.credentials",
+      "$where": {
+        "active": [
+          true,
+          null
+        ]
+      },
+      "$map": {
+        "Name": {
+          "$fn": "concat",
+          "args": [
+            {
+              "$fn": "text",
+              "args": [
+                "$.name"
+              ]
+            },
+            {
+              "$if": "$.ratings",
+              "$then": {
+                "$fn": "concat",
+                "args": [
+                  " – ",
+                  {
+                    "$fn": "join",
+                    "args": [
+                      "$.ratings"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "Issuing organization": {
+          "$fn": "org",
+          "args": [
+            "$.issuer"
+          ]
+        },
+        "Issue date": {
+          "$fn": "dateText",
+          "args": [
+            "$.issued"
+          ]
+        },
+        "Credential ID": {
+          "$fn": "visible",
+          "args": [
+            "$.credentialId",
+            "$.credentialIdVisibility"
+          ]
+        }
+      }
+    },
+    "Honors & awards": {
+      "$each": "$$.awards",
+      "$map": {
+        "Title": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "Issuer": {
+          "$fn": "org",
+          "args": [
+            "$.awarder"
+          ]
+        },
+        "Date": {
+          "$fn": "dateText",
+          "args": [
+            "$.date"
+          ]
+        },
+        "Description": {
+          "$fn": "text",
+          "args": [
+            "$.summary"
+          ]
+        }
+      }
+    },
+    "Skills (first 3 pinned)": {
+      "$each": "$$.skills",
+      "$sort": "-pinned,-priority",
+      "$map": {
+        "$fn": "text",
+        "args": [
+          "$.name"
+        ]
+      }
+    },
+    "Featured": {
+      "$each": "$$.media",
+      "$where": {
+        "featured": true
+      },
+      "$map": {
+        "Title": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "Link or file": "$.url"
+      }
+    }
+  }
+}

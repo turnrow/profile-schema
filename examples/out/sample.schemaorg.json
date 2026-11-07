@@ -1,0 +1,100 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "inLanguage": "en-US",
+  "url": "https://example.com/team/ines-calloway",
+  "dateModified": "2026-11-07T22:00:00Z",
+  "mainEntity": {
+    "@type": "Person",
+    "@id": "https://example.com/team/ines-calloway#person",
+    "name": "Ines Calloway",
+    "givenName": "Ines",
+    "familyName": "Calloway",
+    "jobTitle": "Founder & CEO, Tidewater Trails",
+    "description": "Marine biologist turned resort developer who has spent three decades building coastal places people travel to, and now builds the trips themselves.",
+    "image": {
+      "@type": "ImageObject",
+      "contentUrl": "https://example.com/images/ines-calloway.jpg",
+      "caption": "Ines Calloway smiling on a dock, wearing a navy jacket, with sailboats behind her"
+    },
+    "url": "https://example.com",
+    "homeLocation": {
+      "@type": "Place",
+      "name": "New York, NY",
+      "sameAs": "https://www.wikidata.org/entity/Q60",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "New York",
+        "addressRegion": "NY",
+        "addressCountry": "US"
+      }
+    },
+    "sameAs": [
+      "https://www.linkedin.com/in/example-ines-calloway/",
+      "https://orcid.org/0000-0000-0000-0000"
+    ],
+    "worksFor": [
+      {
+        "@type": "Organization",
+        "name": "Tidewater Trails",
+        "url": "https://example.com"
+      }
+    ],
+    "hasOccupation": [
+      {
+        "@type": "Occupation",
+        "name": "Founder & CEO",
+        "description": "Tidewater Trails, Mar 2024 – Present"
+      },
+      {
+        "@type": "Occupation",
+        "name": "Director of Development",
+        "description": "Harborline Resorts, Jun 2009 – Dec 2023"
+      }
+    ],
+    "alumniOf": [
+      {
+        "@type": "EducationalOrganization",
+        "name": "State University (fictional)"
+      }
+    ],
+    "hasCredential": [
+      {
+        "@type": "EducationalOccupationalCredential",
+        "name": "Master Mariner licence (100 GT)",
+        "credentialCategory": "license",
+        "recognizedBy": {
+          "@type": "Organization",
+          "name": "Example Maritime Authority"
+        },
+        "dateCreated": "2005-04",
+        "expires": "2030-04"
+      }
+    ],
+    "award": [
+      "Waterfront Project of the Year"
+    ],
+    "knowsAbout": [
+      "Entrepreneurship",
+      "Travel & Tourism",
+      "Resort Development",
+      "Marine Biology"
+    ],
+    "knowsLanguage": [
+      "en",
+      "es"
+    ],
+    "subjectOf": [
+      {
+        "@type": "CreativeWork",
+        "name": "The biologist who builds harbors",
+        "publisher": "The Harbor Gazette",
+        "datePublished": "2019-10-12",
+        "url": "https://example.com/press/gazette-2019"
+      }
+    ],
+    "identifier": [
+      "https://orcid.org/0000-0000-0000-0000"
+    ]
+  }
+}

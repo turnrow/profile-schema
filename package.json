@@ -1,39 +1,45 @@
 {
-  "name": "@jsonresume/schema",
-  "version": "1.2.1",
-  "description": "JSON Resume Schema",
-  "private": false,
-  "main": "validator.js",
+  "name": "@turnrow/profile-schema",
+  "version": "2.0.0",
+  "description": "One JSON source of truth for a person's professional record, with sources, competing claims, confidence, review status and per-field visibility, rendered to JSON Resume, schema.org JSON-LD, LinkedIn and more.",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./schema": "./schema/profile.schema.json",
+    "./mappings/*": "./mappings/*.json"
+  },
+  "bin": {
+    "turnrow-profile": "bin/profile.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "bin/",
+    "lib/",
+    "schema/",
+    "mappings/",
+    "examples/",
+    "upstream/"
+  ],
   "scripts": {
-    "test": "npm run validate && npm run test-units",
-    "validate": "ajv validate -s node_modules/json-metaschema/draft-07-schema -d schema",
-    "test-units": "tape **/*.spec.js | tap-spec",
-    "preversion": "npm test",
-    "postversion": "git push --follow-tags"
+    "test": "node --test test/*.test.mjs",
+    "validate:examples": "node bin/profile.mjs validate examples/sample.profile.json"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/jsonresume/resume-schema.git"
+    "url": "git+https://github.com/turnrow/profile-schema.git"
   },
-  "license": "MIT",
+  "homepage": "https://github.com/turnrow/profile-schema#readme",
   "bugs": {
-    "url": "https://github.com/jsonresume/resume-schema/issues"
+    "url": "https://github.com/turnrow/profile-schema/issues"
   },
-  "files": [
-    "sample.resume.json",
-    "sample.job.json",
-    "schema.json",
-    "job-schema.json",
-    "validator.js"
-  ],
+  "keywords": ["json-schema", "resume", "json-resume", "schema-org", "json-ld", "gedcom", "profile", "linkedin"],
+  "license": "MIT",
+  "author": "Turnrow Solutions Group LLC",
   "dependencies": {
-    "jsonschema": "^1.4.1"
-  },
-  "devDependencies": {
-    "ajv-cli": "^3.3.0",
-    "json-metaschema": "^1.3.0",
-    "tap-spec": "^5.0.0",
-    "tape": "^4.16.2"
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
   },
   "engines": {
     "node": ">=20"

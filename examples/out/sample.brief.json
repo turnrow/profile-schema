@@ -1,0 +1,25 @@
+{
+  "name": "Ines Calloway",
+  "title": "Founder & CEO, Tidewater Trails",
+  "photo": "https://example.com/images/ines-calloway.jpg",
+  "photoAlt": "Ines Calloway smiling on a dock, wearing a navy jacket, with sailboats behind her",
+  "bio": "Marine biologist turned resort developer who has spent three decades building coastal places people travel to, and now builds the trips themselves.",
+  "proofPoints": [
+    {
+      "role": "Founder & CEO, Tidewater Trails"
+    },
+    {
+      "role": "Director of Development, Harborline Resorts",
+      "facts": [
+        "3 resorts opened",
+        "~$240M development portfolio"
+      ]
+    }
+  ],
+  "credentials": [
+    "Master Mariner licence (100 GT)"
+  ],
+  "story": [
+    "Founded Tidewater Trails, 2024"
+  ]
+}

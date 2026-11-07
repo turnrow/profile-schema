@@ -1,5 +1,6 @@
 The MIT License (MIT)
 
+Copyright &copy; 2026 Turnrow Solutions Group LLC
 Copyright &copy; 2024 JSON Resume
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

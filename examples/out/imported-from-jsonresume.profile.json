@@ -1,0 +1,303 @@
+{
+  "schemaVersion": "2.0.0",
+  "meta": {
+    "defaultLocale": "en",
+    "updated": "2026-11-07T22:02:37.629Z",
+    "notes": "Imported from JSON Resume. Every entry is a draft until reviewed."
+  },
+  "person": {
+    "name": "Richard Hendriks",
+    "headline": "Programmer",
+    "summary": "Richard hails from Tulsa. He has earned degrees from the University of Oklahoma and Stanford. (Go Sooners and Cardinal!) Before starting Pied Piper, he worked for Hooli as a part time software developer. While his work focuses on applied information theory, mostly optimizing lossless compression schema of both the length-limited and adaptive variants, his non-work interests range widely, everything from quantum computing to chaos theory. He could tell you about it, but THAT would NOT be a “length-limited” conversation!",
+    "location": {
+      "label": "San Francisco, California",
+      "locality": "San Francisco",
+      "region": "California",
+      "postalCode": "CA 94115",
+      "streetAddress": "2712 Broadway St",
+      "countryCode": "US"
+    },
+    "contact": {
+      "email": "richard.hendriks@mail.com",
+      "phone": "(912) 555-4321",
+      "website": "http://richardhendricks.example.com",
+      "emailVisibility": "private",
+      "phoneVisibility": "private"
+    },
+    "profiles": [
+      {
+        "url": "https://www.twitter.com",
+        "network": "Twitter",
+        "username": "neutralthoughts"
+      },
+      {
+        "url": "https://soundcloud.example.com/dandymusicnl",
+        "network": "SoundCloud",
+        "username": "dandymusicnl"
+      }
+    ]
+  },
+  "organizations": {
+    "pied-piper": {
+      "name": "Pied Piper",
+      "url": "http://piedpiper.example.com",
+      "kind": "company"
+    },
+    "coderdojo": {
+      "name": "CoderDojo",
+      "url": "http://coderdojo.example.com/",
+      "kind": "nonprofit"
+    },
+    "university-of-oklahoma": {
+      "name": "University of Oklahoma",
+      "url": "https://www.ou.edu/",
+      "kind": "school"
+    },
+    "amazon-web-services": {
+      "name": "Amazon Web Services"
+    },
+    "techcrunch": {
+      "name": "Techcrunch"
+    },
+    "hooli": {
+      "name": "Hooli"
+    },
+    "smoogle": {
+      "name": "Smoogle"
+    }
+  },
+  "work": [
+    {
+      "id": "work-pied-piper-ceo-president",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "organization": "pied-piper",
+      "title": "CEO/President",
+      "startDate": "2013-12-01",
+      "endDate": "2014-12-01",
+      "location": {
+        "label": "Palo Alto, CA"
+      },
+      "summary": "Pied Piper is a multi-platform technology based on a proprietary universal compression algorithm that has consistently fielded high Weisman Scores™ that are not merely competitive, but approach the theoretical limit of lossless compression.",
+      "highlights": [
+        "Build an algorithm for artist to detect if their music was violating copy right infringement laws",
+        "Successfully won Techcrunch Disrupt",
+        "Optimized an algorithm that holds the current world record for Weisman Scores"
+      ]
+    }
+  ],
+  "service": [
+    {
+      "id": "service-coderdojo",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "kind": "volunteer",
+      "organization": "coderdojo",
+      "role": "Teacher",
+      "startDate": "2012-01-01",
+      "endDate": "2013-01-01",
+      "summary": "Global movement of free coding clubs for young people.",
+      "highlights": [
+        "Awarded 'Teacher of the Month'"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-university-of-oklahoma",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "institution": "university-of-oklahoma",
+      "kind": "degree",
+      "credential": "Bachelor",
+      "area": "Information Technology",
+      "score": "4.0",
+      "courses": [
+        "DB1101 - Basic SQL",
+        "CS2011 - Java Introduction"
+      ],
+      "startDate": "2011-06-01",
+      "endDate": "2014-01-01"
+    }
+  ],
+  "credentials": [
+    {
+      "id": "cert-aws-certified-solutions-architect-associate",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "name": "AWS Certified Solutions Architect – Associate",
+      "kind": "certification",
+      "issuer": "amazon-web-services",
+      "issued": "2014-06-01",
+      "url": "https://certificates.example.com/aws/rhendriks"
+    }
+  ],
+  "awards": [
+    {
+      "id": "award-digital-compression-pioneer-award",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "title": "Digital Compression Pioneer Award",
+      "awarder": "techcrunch",
+      "date": "2014-11-01",
+      "summary": "There is no spoon."
+    }
+  ],
+  "publications": [
+    {
+      "id": "pub-video-compression-for-3d-media",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "title": "Video compression for 3d media",
+      "kind": "article",
+      "publisher": "hooli",
+      "date": "2014-10-01",
+      "url": "http://en.wikipedia.org/wiki/Silicon_Valley_(TV_series)",
+      "summary": "Innovative middle-out compression algorithm that changes the way we store data."
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-miss-direction",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "name": "Miss Direction",
+      "role": "Team lead, Designer",
+      "organization": "smoogle",
+      "startDate": "2016-08-24",
+      "endDate": "2016-08-24",
+      "summary": "A mapping engine that misguides you",
+      "highlights": [
+        "Won award at AIHacks 2016",
+        "Built by all women team of newbie programmers",
+        "Using modern technologies such as GoogleMaps, Chrome Extension and Javascript"
+      ],
+      "url": "http://missdirection.example.com"
+    }
+  ],
+  "skills": [
+    {
+      "id": "skill-web-development",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "name": "Web Development",
+      "level": "expert",
+      "keywords": [
+        "HTML",
+        "CSS",
+        "Javascript"
+      ]
+    },
+    {
+      "id": "skill-compression",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "name": "Compression",
+      "level": "expert",
+      "keywords": [
+        "Mpeg",
+        "MP4",
+        "GIF"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "id": "lang-english",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "language": "en",
+      "name": "English",
+      "fluency": "native"
+    }
+  ],
+  "interests": [
+    {
+      "id": "interest-wildlife",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "name": "Wildlife",
+      "keywords": [
+        "Ferrets",
+        "Unicorns"
+      ]
+    }
+  ],
+  "references": [
+    {
+      "id": "ref-erlich-bachman",
+      "status": "draft",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source": "import"
+        }
+      ],
+      "visibility": "private",
+      "name": "Erlich Bachman",
+      "quote": "It is my pleasure to recommend Richard, his performance working as a consultant for Main St. Company proved that he will be a valuable addition to any company."
+    }
+  ],
+  "sources": {
+    "import": {
+      "title": "Imported resume.json",
+      "kind": "import",
+      "defaultQuality": "selfReported"
+    }
+  }
+}

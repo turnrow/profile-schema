@@ -1,0 +1,106 @@
+{
+  "target": "brief",
+  "description": "Short bio card for a slide, a speaker page or an investor deck: approved, high-confidence entries with priority 80 or more.",
+  "include": {
+    "visibility": [
+      "public",
+      "network"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high"
+    ],
+    "minPriority": 80
+  },
+  "output": {
+    "name": "$.person.name",
+    "title": {
+      "$fn": "text",
+      "args": [
+        "$.person.jobTitle"
+      ]
+    },
+    "photo": "$.person.image.url",
+    "photoAlt": {
+      "$fn": "text",
+      "args": [
+        "$.person.image.alt"
+      ]
+    },
+    "bio": {
+      "$fn": "text",
+      "args": [
+        "$.person.shortBio"
+      ]
+    },
+    "proofPoints": {
+      "$each": "$$.work",
+      "$sort": "-priority",
+      "$limit": 3,
+      "$map": {
+        "role": {
+          "$fn": "concat",
+          "args": [
+            {
+              "$fn": "text",
+              "args": [
+                "$.title"
+              ]
+            },
+            ", ",
+            {
+              "$fn": "org",
+              "args": [
+                "$.organization"
+              ]
+            }
+          ]
+        },
+        "facts": {
+          "$fn": "metricText",
+          "args": [
+            "$.metrics",
+            "$"
+          ]
+        }
+      }
+    },
+    "credentials": {
+      "$each": "$$.credentials",
+      "$sort": "-priority",
+      "$limit": 3,
+      "$map": {
+        "$fn": "text",
+        "args": [
+          "$.name"
+        ]
+      }
+    },
+    "story": {
+      "$each": "$$.timeline",
+      "$sort": "-priority",
+      "$limit": 2,
+      "$map": {
+        "$fn": "concat",
+        "args": [
+          {
+            "$fn": "text",
+            "args": [
+              "$.title"
+            ]
+          },
+          ", ",
+          {
+            "$fn": "dateText",
+            "args": [
+              "$.startDate",
+              "year"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
