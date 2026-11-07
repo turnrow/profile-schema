@@ -160,6 +160,55 @@
             "args": [
               "$.organization"
             ]
+          },
+          "taxID": {
+            "$fn": "orgIdentifier",
+            "args": [
+              "$.organization",
+              "ein"
+            ]
+          },
+          "duns": {
+            "$fn": "orgIdentifier",
+            "args": [
+              "$.organization",
+              "duns"
+            ]
+          },
+          "leiCode": {
+            "$fn": "orgIdentifier",
+            "args": [
+              "$.organization",
+              "lei"
+            ]
+          },
+          "naics": {
+            "$fn": "orgClassification",
+            "args": [
+              "$.organization",
+              "naics"
+            ]
+          },
+          "identifier": {
+            "$each": {
+              "$fn": "orgIdentifiers",
+              "args": [
+                "$.organization",
+                "uei",
+                "cage",
+                "secCik",
+                "wikidata",
+                "stateEntityNumber",
+                "companyNumber",
+                "opencorporates"
+              ]
+            },
+            "$map": {
+              "@type": "PropertyValue",
+              "propertyID": "$.scheme",
+              "value": "$.value",
+              "name": "$.label"
+            }
           }
         }
       },
