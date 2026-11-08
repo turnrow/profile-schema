@@ -1,5 +1,34 @@
 # Changelog
 
+## 2.3.0 (2026-11-07): registry and tax identifiers
+
+Backwards compatible: earlier files remain valid.
+
+### Added
+- **Identifier schemes, with a format check for each:**
+  - US federal: EIN, UEI (SAM.gov), D-U-N-S, CAGE/NCAGE, SEC CIK, NPI, IPEDS.
+  - State: entity number (Secretary of State file, charter or UBI), state tax id (taxpayer number, Oregon BIN…) and other state business ids. These must name their state (`jurisdiction: "US-TX"`), because formats vary state by state; `label` records what the state calls it.
+  - International: LEI, VAT, ABN, Canada BN, SIREN, SIRET, and national company numbers (which need a jurisdiction).
+  - Reference: Wikidata, ROR, OpenCorporates, ticker, ISIN, FIGI.
+- Identifiers carry `jurisdiction`, `label`, `issuer`, `url`, `status`, dates, `visibility` and `audiences`.
+- **Privacy defaults:** EINs and state tax ids are private unless their visibility says otherwise or they name an audience (an employment-verification audience, say). Registry ids are public. Releases carry only the identifiers the audience may see.
+- **Checks beyond the formats:**
+  - LEI check digits (ISO 7064 MOD 97-10);
+  - a warning when the same identifier appears on two organizations (probably one entity: merge them and use names and events);
+  - a warning when an EIN is made public.
+- `organizations[].classifications`: NAICS, SIC, NACE, ISIC and ANZSIC codes.
+- **Personal government ids are refused:** `person.identifiers` rejects keys like ssn, itin, passport or driver's licence. A profile is meant to be shared, and those numbers don't belong in it.
+- `mappings/verification.json`, for employment-verification releases. Each job gives:
+  - the employer's legal name at the time, its trading name and today's name;
+  - its EIN and DUNS as of the job's start, today's UEI, and state entity numbers;
+  - the employer of record, dates and official titles.
+- schema.org output: the current employer gets `leiCode`, `duns`, `naics`, `taxID` (only if public) and other ids as `PropertyValue` identifiers.
+- Converter helpers: `orgIdentifiers`, `orgIdentifier` (the id in force on a date, defaulting to the output date), `orgClassification`.
+
+### Fixed
+- A job without positions now takes its official title from the employer's record.
+- Releases resolve "now" (current names, identifiers in force) on the release date, not the clock date.
+
 ## 2.2.0 (2026-11-07): organization history, positions and responsibilities
 
 Backwards compatible: 2.0.0 and 2.1.0 files remain valid.

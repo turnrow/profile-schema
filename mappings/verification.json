@@ -1,0 +1,200 @@
+{
+  "target": "verification",
+  "description": "Employment verification: what a background-check or verification service matches on. Each job gives the employer's legal name at the time (with the name it traded under), its identifiers (EIN only where shared with this audience), the employer of record, dates and official titles. Use through a release to an employment-verification audience; on its own it shows only public data. EIN and DUNS are as of the job's start; the UEI is the one in force today, for finding the entity in SAM.gov.",
+  "orgNameStyle": "legal",
+  "include": {
+    "visibility": [
+      "public"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high",
+      "medium"
+    ]
+  },
+  "output": {
+    "subject": {
+      "name": "$.person.name",
+      "legalName": {
+        "$fn": "name",
+        "args": [
+          "legal"
+        ]
+      },
+      "otherNames": {
+        "$fn": "names",
+        "args": [
+          "preferred",
+          "birth",
+          "alsoKnownAs",
+          "professional"
+        ]
+      }
+    },
+    "employment": {
+      "$each": "$$.work",
+      "$sort": "-startDate",
+      "$map": {
+        "employer": {
+          "legalName": {
+            "$fn": "coalesce",
+            "args": [
+              {
+                "$fn": "orgNameAt",
+                "args": [
+                  "$.organization",
+                  "$.startDate",
+                  "legal"
+                ]
+              },
+              {
+                "$fn": "org",
+                "args": [
+                  "$.organization"
+                ]
+              }
+            ]
+          },
+          "tradingAs": {
+            "$fn": "orgNameAt",
+            "args": [
+              "$.organization",
+              "$.startDate"
+            ]
+          },
+          "knownTodayAs": {
+            "$fn": "orgNow",
+            "args": [
+              "$.organization"
+            ]
+          },
+          "ein": {
+            "$fn": "orgIdentifier",
+            "args": [
+              "$.organization",
+              "ein",
+              "$.startDate"
+            ]
+          },
+          "duns": {
+            "$fn": "orgIdentifier",
+            "args": [
+              "$.organization",
+              "duns",
+              "$.startDate"
+            ]
+          },
+          "stateEntityNumbers": {
+            "$each": {
+              "$fn": "orgIdentifiers",
+              "args": [
+                "$.organization",
+                "stateEntityNumber"
+              ]
+            },
+            "$map": {
+              "jurisdiction": "$.jurisdiction",
+              "label": "$.label",
+              "value": "$.value"
+            }
+          },
+          "ueiToday": {
+            "$fn": "orgIdentifier",
+            "args": [
+              "$.organization",
+              "uei"
+            ]
+          }
+        },
+        "employerOfRecord": {
+          "$if": "$.employerOfRecord",
+          "$then": {
+            "legalName": {
+              "$fn": "coalesce",
+              "args": [
+                {
+                  "$fn": "orgNameAt",
+                  "args": [
+                    "$.employerOfRecord",
+                    "$.startDate",
+                    "legal"
+                  ]
+                },
+                {
+                  "$fn": "org",
+                  "args": [
+                    "$.employerOfRecord"
+                  ]
+                }
+              ]
+            },
+            "ein": {
+              "$fn": "orgIdentifier",
+              "args": [
+                "$.employerOfRecord",
+                "ein",
+                "$.startDate"
+              ]
+            }
+          }
+        },
+        "startDate": {
+          "$fn": "isoLoose",
+          "args": [
+            "$.startDate"
+          ]
+        },
+        "endDate": {
+          "$if": "$.current",
+          "$then": null,
+          "$else": {
+            "$fn": "isoLoose",
+            "args": [
+              "$.endDate"
+            ]
+          }
+        },
+        "current": "$.current",
+        "location": {
+          "$fn": "place",
+          "args": [
+            "$.location"
+          ]
+        },
+        "titles": {
+          "$each": {
+            "$fn": "positions",
+            "args": [
+              "$"
+            ]
+          },
+          "$sort": "startDate",
+          "$map": {
+            "title": {
+              "$fn": "coalesce",
+              "args": [
+                "$.officialTitle",
+                "$.title"
+              ]
+            },
+            "from": {
+              "$fn": "isoLoose",
+              "args": [
+                "$.startDate"
+              ]
+            },
+            "to": {
+              "$fn": "isoLoose",
+              "args": [
+                "$.endDate"
+              ]
+            }
+          }
+        },
+        "employeeNumber": "$.employerRecord.employeeNumber"
+      }
+    }
+  }
+}

@@ -1,34 +1,159 @@
 {
   "$schema": "../schema/profile.schema.json",
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.3.0",
   "meta": {
     "defaultLocale": "en-US",
-    "locales": ["en-US", "es"],
+    "locales": [
+      "en-US",
+      "es"
+    ],
     "updated": "2026-11-02T15:00:00Z",
     "owner": "Sam Rivera",
-    "subjectConsent": { "given": true, "on": "2026-11-02", "note": "Fictional sample." },
+    "subjectConsent": {
+      "given": true,
+      "on": "2026-11-02",
+      "note": "Fictional sample."
+    },
     "notes": "FICTIONAL SAMPLE. Sam Rivera has just joined Acme Example Corp. Shows audiences, an employer directory release (SCIM), and the employer writing corrections back. All names and domains are invented; .example domains are reserved for documentation."
   },
   "person": {
     "name": "Sam Rivera",
     "names": [
-      { "type": "preferred", "full": "Sam Rivera", "given": "Sam", "family": "Rivera" },
-      { "type": "legal", "full": "Samantha Inés Rivera Cole", "given": "Samantha Inés", "family": "Rivera Cole", "visibility": "private" },
-      { "type": "nickname", "full": "Sam" }
+      {
+        "type": "preferred",
+        "full": "Sam Rivera",
+        "given": "Sam",
+        "family": "Rivera"
+      },
+      {
+        "type": "legal",
+        "full": "Samantha Inés Rivera Cole",
+        "given": "Samantha Inés",
+        "family": "Rivera Cole",
+        "visibility": "private"
+      },
+      {
+        "type": "nickname",
+        "full": "Sam"
+      }
     ],
     "pronouns": "she/her",
     "headline": "Platform engineering lead | Developer experience | Mentor",
     "jobTitle": "Platform Engineering Lead",
     "shortBio": "Platform engineer who makes other engineers faster: build systems, internal tooling and the paved road from laptop to production.",
-    "image": { "url": "https://example.com/images/sam-rivera.jpg", "alt": "Sam Rivera, smiling, with short dark hair and a green sweater" },
-    "location": { "label": "Austin, Texas", "locality": "Austin", "region": "TX", "countryCode": "US" },
-    "contact": { "email": "sam.rivera@acme.example", "emailVisibility": "network", "phone": "+1-555-0142", "phoneVisibility": "private" },
-    "profiles": [ { "network": "LinkedIn", "url": "https://www.linkedin.com/in/example-sam-rivera/" } ]
+    "image": {
+      "url": "https://example.com/images/sam-rivera.jpg",
+      "alt": "Sam Rivera, smiling, with short dark hair and a green sweater"
+    },
+    "location": {
+      "label": "Austin, Texas",
+      "locality": "Austin",
+      "region": "TX",
+      "countryCode": "US"
+    },
+    "contact": {
+      "email": "sam.rivera@acme.example",
+      "emailVisibility": "network",
+      "phone": "+1-555-0142",
+      "phoneVisibility": "private"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "url": "https://www.linkedin.com/in/example-sam-rivera/"
+      }
+    ]
   },
   "organizations": {
-    "acme": { "name": "Acme Example Corp", "kind": "company", "url": "https://acme.example", "domains": ["acme.example", "acme-corp.example"] },
-    "northwind": { "name": "Northwind Example Ltd", "kind": "company", "url": "https://northwind.example", "domains": ["northwind.example"] },
-    "red-cross-example": { "name": "Example Red Cross Chapter", "kind": "nonprofit" }
+    "acme": {
+      "name": "Acme Example Corp",
+      "kind": "company",
+      "url": "https://acme.example",
+      "domains": [
+        "acme.example",
+        "acme-corp.example"
+      ],
+      "identifiers": [
+        {
+          "scheme": "lei",
+          "value": "5493000EXAMPLEACME64"
+        },
+        {
+          "scheme": "uei",
+          "value": "JM5AQKH7XYZ1",
+          "label": "SAM.gov UEI (example)"
+        },
+        {
+          "scheme": "cage",
+          "value": "1AB23"
+        },
+        {
+          "scheme": "ein",
+          "value": "12-3456789",
+          "audiences": [
+            "current-employer"
+          ]
+        },
+        {
+          "scheme": "stateEntityNumber",
+          "value": "0801234567",
+          "jurisdiction": "US-TX",
+          "label": "Texas SOS file number"
+        },
+        {
+          "scheme": "stateTaxId",
+          "value": "32012345678",
+          "jurisdiction": "US-TX",
+          "label": "Texas taxpayer number"
+        }
+      ],
+      "classifications": [
+        {
+          "system": "naics",
+          "code": "541512",
+          "version": "2022",
+          "label": "Computer Systems Design Services"
+        }
+      ]
+    },
+    "northwind": {
+      "name": "Northwind Example Ltd",
+      "kind": "company",
+      "url": "https://northwind.example",
+      "domains": [
+        "northwind.example"
+      ],
+      "identifiers": [
+        {
+          "scheme": "ein",
+          "value": "98-7654321",
+          "audiences": [
+            "former-employers"
+          ]
+        },
+        {
+          "scheme": "duns",
+          "value": "123456789",
+          "to": "2022-04-04",
+          "status": "replaced"
+        },
+        {
+          "scheme": "uei",
+          "value": "VN1AJFAD19J9",
+          "from": "2022-04-04"
+        },
+        {
+          "scheme": "stateEntityNumber",
+          "value": "603123456",
+          "jurisdiction": "US-WA",
+          "label": "Washington UBI"
+        }
+      ]
+    },
+    "red-cross-example": {
+      "name": "Example Red Cross Chapter",
+      "kind": "nonprofit"
+    }
   },
   "audiences": {
     "current-employer": {
@@ -37,16 +162,47 @@
       "relation": "current",
       "purpose": "employeeDirectory",
       "purposeDescription": "Directory listing, chat and email profile, org chart.",
-      "baseVisibility": ["public", "network"],
-      "person": ["name", "preferredName", "pronouns", "image", "email", "jobTitle", "shortBio", "profiles"],
-      "sections": ["skills", "languages", "credentials"],
-      "verification": { "methods": ["oidc", "saml", "dnsTxt"], "writeBackMethods": ["oidc"] },
+      "baseVisibility": [
+        "public",
+        "network"
+      ],
+      "person": [
+        "name",
+        "preferredName",
+        "pronouns",
+        "image",
+        "email",
+        "jobTitle",
+        "shortBio",
+        "profiles"
+      ],
+      "sections": [
+        "skills",
+        "languages",
+        "credentials"
+      ],
+      "verification": {
+        "methods": [
+          "oidc",
+          "saml",
+          "dnsTxt"
+        ],
+        "writeBackMethods": [
+          "oidc"
+        ]
+      },
       "expires": "onSeparation",
       "writeBack": {
         "allowed": true,
         "authority": [
-          { "field": "employerRecord.*", "authority": "employer" },
-          { "field": "startDate", "authority": "employer" }
+          {
+            "field": "employerRecord.*",
+            "authority": "employer"
+          },
+          {
+            "field": "startDate",
+            "authority": "employer"
+          }
         ]
       }
     },
@@ -55,55 +211,175 @@
       "kind": "employer",
       "relation": "former",
       "purpose": "employmentVerification",
-      "person": ["name", "legalName"],
-      "verification": { "methods": ["oidc", "signedRequest"] },
+      "person": [
+        "name",
+        "legalName"
+      ],
+      "verification": {
+        "methods": [
+          "oidc",
+          "signedRequest"
+        ]
+      },
       "expires": "never"
     }
   },
   "work": [
     {
-      "id": "acme-platform", "status": "approved", "confidence": "high", "priority": 100,
-      "organization": "acme", "title": "Platform Engineering Lead", "employmentType": "fullTime", "workplaceType": "hybrid",
-      "startDate": "2026-11-02", "current": true, "location": { "label": "Austin, Texas", "countryCode": "US" },
+      "id": "acme-platform",
+      "status": "approved",
+      "confidence": "high",
+      "priority": 100,
+      "organization": "acme",
+      "title": "Platform Engineering Lead",
+      "employmentType": "fullTime",
+      "workplaceType": "hybrid",
+      "startDate": "2026-11-02",
+      "current": true,
+      "location": {
+        "label": "Austin, Texas",
+        "countryCode": "US"
+      },
       "summary": "Leads the internal developer platform team.",
       "employerRecord": {
         "officialTitle": "Senior Software Engineer II",
         "department": "Engineering",
         "employeeNumber": "E-104233"
       },
-      "citations": [ { "source": "offer-letter", "quality": "primary" } ]
+      "citations": [
+        {
+          "source": "offer-letter",
+          "quality": "primary"
+        }
+      ]
     },
     {
-      "id": "northwind-devex", "status": "approved", "confidence": "high", "priority": 80,
-      "organization": "northwind", "title": "Staff Engineer, Developer Experience", "employmentType": "fullTime",
-      "startDate": "2019-03", "endDate": "2026-10",
+      "id": "northwind-devex",
+      "status": "approved",
+      "confidence": "high",
+      "priority": 80,
+      "organization": "northwind",
+      "title": "Staff Engineer, Developer Experience",
+      "employmentType": "fullTime",
+      "startDate": "2019-03",
+      "endDate": "2026-10",
       "summary": "Built the build-and-release platform used by 400 engineers.",
-      "metrics": [ { "id": "engineers-served", "label": "engineers using the platform", "value": 400, "qualifier": "approx" } ],
-      "employerRecord": { "officialTitle": "Staff Software Engineer", "employeeNumber": "NW-0099", "department": "Developer Productivity" },
-      "citations": [ { "source": "northwind-letter", "quality": "primary" } ],
-      "lock": { "by": "Sam Rivera", "on": "2026-10-31" }
+      "metrics": [
+        {
+          "id": "engineers-served",
+          "label": "engineers using the platform",
+          "value": 400,
+          "qualifier": "approx"
+        }
+      ],
+      "employerRecord": {
+        "officialTitle": "Staff Software Engineer",
+        "employeeNumber": "NW-0099",
+        "department": "Developer Productivity"
+      },
+      "citations": [
+        {
+          "source": "northwind-letter",
+          "quality": "primary"
+        }
+      ],
+      "lock": {
+        "by": "Sam Rivera",
+        "on": "2026-10-31"
+      }
     }
   ],
   "credentials": [
-    { "id": "cka", "status": "approved", "confidence": "high", "name": "Certified Kubernetes Administrator", "kind": "certification", "issued": "2024-05", "expires": "2027-05" },
     {
-      "id": "first-aid", "status": "approved", "confidence": "high", "visibility": "private", "audiences": ["current-employer"],
-      "name": "First Aid / CPR", "kind": "certification", "issuer": "red-cross-example", "issued": "2026-01", "expires": "2028-01",
+      "id": "cka",
+      "status": "approved",
+      "confidence": "high",
+      "name": "Certified Kubernetes Administrator",
+      "kind": "certification",
+      "issued": "2024-05",
+      "expires": "2027-05"
+    },
+    {
+      "id": "first-aid",
+      "status": "approved",
+      "confidence": "high",
+      "visibility": "private",
+      "audiences": [
+        "current-employer"
+      ],
+      "name": "First Aid / CPR",
+      "kind": "certification",
+      "issuer": "red-cross-example",
+      "issued": "2026-01",
+      "expires": "2028-01",
       "summary": "Shared with the employer's safety roster only."
     }
   ],
   "skills": [
-    { "id": "platform", "status": "approved", "confidence": "high", "name": "Platform Engineering", "pinned": true, "priority": 90 },
-    { "id": "kubernetes", "status": "approved", "confidence": "high", "name": "Kubernetes", "pinned": true, "priority": 85 },
-    { "id": "mentoring", "status": "approved", "confidence": "high", "name": "Mentoring", "priority": 60 },
-    { "id": "side-project", "status": "approved", "confidence": "high", "visibility": "private", "name": "Competitive barbecue" }
+    {
+      "id": "platform",
+      "status": "approved",
+      "confidence": "high",
+      "name": "Platform Engineering",
+      "pinned": true,
+      "priority": 90
+    },
+    {
+      "id": "kubernetes",
+      "status": "approved",
+      "confidence": "high",
+      "name": "Kubernetes",
+      "pinned": true,
+      "priority": 85
+    },
+    {
+      "id": "mentoring",
+      "status": "approved",
+      "confidence": "high",
+      "name": "Mentoring",
+      "priority": 60
+    },
+    {
+      "id": "side-project",
+      "status": "approved",
+      "confidence": "high",
+      "visibility": "private",
+      "name": "Competitive barbecue"
+    }
   ],
   "languages": [
-    { "id": "lang-en", "status": "approved", "confidence": "high", "language": "en", "name": "English", "fluency": "native" },
-    { "id": "lang-es", "status": "approved", "confidence": "high", "language": "es", "name": { "en-US": "Spanish", "es": "Español" }, "fluency": "fullProfessional" }
+    {
+      "id": "lang-en",
+      "status": "approved",
+      "confidence": "high",
+      "language": "en",
+      "name": "English",
+      "fluency": "native"
+    },
+    {
+      "id": "lang-es",
+      "status": "approved",
+      "confidence": "high",
+      "language": "es",
+      "name": {
+        "en-US": "Spanish",
+        "es": "Español"
+      },
+      "fluency": "fullProfessional"
+    }
   ],
   "sources": {
-    "offer-letter": { "title": "Acme offer letter", "kind": "document", "date": "2026-10-01", "defaultQuality": "primary" },
-    "northwind-letter": { "title": "Northwind employment verification letter", "kind": "document", "date": "2026-10-31", "defaultQuality": "primary" }
+    "offer-letter": {
+      "title": "Acme offer letter",
+      "kind": "document",
+      "date": "2026-10-01",
+      "defaultQuality": "primary"
+    },
+    "northwind-letter": {
+      "title": "Northwind employment verification letter",
+      "kind": "document",
+      "date": "2026-10-31",
+      "defaultQuality": "primary"
+    }
   }
 }

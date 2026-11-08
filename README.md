@@ -45,6 +45,7 @@ The sample is a **fictional** person built to exercise every feature. Its output
 | Short and long views from one file | `priority` (0–100), structured `metrics`, and per-target `targets.<name>` overrides or omission. | |
 | Organizations written once | `organizations` map, referenced by id, with `sameAs` links. | |
 | Organizations that change | Dated names, domains, identifiers and parents; `organizationEvents` for mergers, acquisitions, splits and rebrands; employer names in each output's style. | GEDCOM X place jurisdictions over time; Wikidata "replaces"/"replaced by" |
+| Registry and tax ids | EIN, UEI, DUNS, CAGE, LEI, state entity and tax numbers and more, with format checks, dates and privacy defaults (tax ids private). | GEDCOM EXID |
 | Titles and duties within a job | `positions` with how each began; `responsibilities` that continue through promotions, with dated scope. | |
 | Military, scouting, volunteer and board work | `service`, its own section, so each output decides where it goes. | |
 | Study that didn't end in a degree | `education.completed: false`, so no output implies a degree. | |
@@ -84,6 +85,32 @@ The LinkedIn sheet gives both the name at the time and the company to search for
 **Audiences follow history too.** Only domains live on the request date qualify, and retired domains never do (an expired domain can be bought by anyone). A requester can speak for a past employer if it is the employer, a parent that owns it on that date, or its successor. In the example, DXC can verify EDS employment today, HP could in 2012, and `eds.com` never can. For a split, `recordsTo` says which successor holds the records.
 
 Identity is always the id, never the name: two companies can share a name ("CSI"), and a famous name can be reused by an unrelated company.
+
+## Registry and tax identifiers
+
+Organizations carry the ids that registries and tax authorities issue, each checked against its format:
+
+| Kind | Schemes |
+|---|---|
+| US federal | `ein`, `uei` (SAM.gov), `duns`, `cage`, `secCik`, `npi`, `ipeds` |
+| US state | `stateEntityNumber` (Secretary of State file/charter number, Washington UBI…), `stateTaxId` (state taxpayer number, Oregon BIN…), `stateBusinessId`; each needs `jurisdiction` (`US-TX`) and usually a `label` |
+| International | `lei` (check digits verified), `vat`, `abn`, `bn`, `siren`, `siret`, `companyNumber` (with `jurisdiction`) |
+| Reference | `wikidata`, `ror`, `opencorporates`, `ticker`, `isin`, `figi`, `other` |
+
+```json
+"identifiers": [
+  { "scheme": "ein", "value": "98-7654321", "audiences": ["former-employers"] },
+  { "scheme": "duns", "value": "123456789", "to": "2022-04-04", "status": "replaced" },
+  { "scheme": "uei", "value": "VN1AJFAD19J9", "from": "2022-04-04" },
+  { "scheme": "stateEntityNumber", "value": "603123456", "jurisdiction": "US-WA", "label": "Washington UBI" }
+]
+```
+
+- **Tax ids are private by default.** An EIN or state tax id appears only where its visibility allows, or in a release to an audience it names. For a sole proprietor, an EIN identifies a person. Registry ids (UEI, DUNS, LEI, CAGE, state entity numbers) are public.
+- **Dates matter.** `orgIdentifier` returns the id in force on a date, so a DUNS retired in 2022 isn't presented as current, while a verification of a 2019 job still gets the DUNS from then.
+- **Personal government ids are refused.** SSNs, ITINs, passport and driver's licence numbers can't be stored as person identifiers.
+- **The `verification` mapping** gives what background checks match on: the employer's legal name at the time, its EIN (where shared), state entity numbers, the employer of record, dates and official titles.
+- `classifications` hold NAICS, SIC, NACE, ISIC or ANZSIC codes.
 
 ## Positions and responsibilities
 
@@ -166,11 +193,12 @@ An audience's `writeBack.authority` can change these defaults field by field. Wr
 | [`lib/validate.mjs`](lib/validate.mjs) | Schema validation, plus the checks a schema can't express: cross-references, claim consistency, open questions, consent for references, bundle files, rule syntax. |
 | [`lib/convert.mjs`](lib/convert.mjs) | Applies a mapping to a profile and enforces the content rules. |
 | [`lib/import-jsonresume.mjs`](lib/import-jsonresume.mjs) | Converts a JSON Resume into a profile. Everything imported starts as a draft. |
+| [`lib/identifiers.mjs`](lib/identifiers.mjs) | Identifier privacy defaults, LEI check digits, normalization. |
 | [`lib/history.mjs`](lib/history.mjs) | Organization names and domains on a date, parents, successors, and how a job's positions and responsibilities line up. |
 | [`lib/audience.mjs`](lib/audience.mjs) | Resolves audiences on a date, checks requesters against policy and looks up field authority. |
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
-| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`. |
+| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`, `verification`. |
 | [`bin/profile.mjs`](bin/profile.mjs) | Command line: `validate`, `open`, `convert`, `import`, `release`, `writeback`. |
 | [`examples/`](examples/) | Three fictional people: a founder; a new employee with audiences; and someone whose employers (EDS, Coopers & Lybrand, Buchanan) changed around them, with real company histories cited to public sources. Plus a sample SCIM write-back and every generated output. |
 | [`upstream/jsonresume/`](upstream/jsonresume/) | An unmodified copy of the current JSON Resume schema (1.7.1). The tests validate our JSON Resume export against it. |
@@ -219,6 +247,7 @@ A mapping is JSON: an `include` filter and an `output` template.
   - Organizations and places: `org`, `orgObj`, `place`, `placeObj`, `placeGeo`, `placeIdUri`.
   - Names: `name`, `names`.
   - Dates: `isoExact` (exact dates only), `isoLoose` (lower bound), `date`, `dateText` (renders "c. 1996", "before 1998", "1990/91"), `dateRangeText`.
+  - Identifiers: `orgIdentifiers`, `orgIdentifier` (in force on a date), `orgClassification`.
   - History and roles: `employer` (in the mapping's `orgNameStyle`), `orgNameAt`, `orgNow`, `orgAlternateNames`, `tenureNotes`, `positions`, `flatPositions`, `responsibilityLines`, `joinLines`, `concatLists`.
   - Values and lookups: `money`, `metricText`, `lookup`, `visible`.
   - Context: `locale`, `now`.
@@ -250,7 +279,7 @@ The schema makes privacy enforceable, but it doesn't decide what is appropriate.
 
 ## Versioning
 
-`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 adds organization history, positions and responsibilities. Earlier files remain valid.
+`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 added organization history, positions and responsibilities; 2.3.0 adds registry and tax identifiers. Earlier files remain valid.
 
 ## Credits and licence
 
