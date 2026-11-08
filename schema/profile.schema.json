@@ -908,7 +908,11 @@
           "description": "External ids for the person that are safe to hold (ORCID, a professional licence registry). Never put government identity or tax numbers here (SSN, ITIN, passport, driver's licence): a profile is meant to be shared, and those numbers should not be in it at all.",
           "type": "object",
           "additionalProperties": {
-            "type": "string"
+            "type": "string",
+            "not": {
+              "pattern": "^\\s*[0-9]{3}[- ]?[0-9]{2}[- ]?[0-9]{4}\\s*$"
+            },
+            "description": "A value shaped like a US Social Security or ITIN number (nnn-nn-nnnn) is refused whatever its key."
           },
           "propertyNames": {
             "not": {

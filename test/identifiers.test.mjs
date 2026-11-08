@@ -128,3 +128,31 @@ test("an identifier asked for without a date is the one in force today", () => {
   const { payload } = buildRelease(p, "former-employers", m, { requester: { domain: "northwind.example", method: "oidc" }, on: ON });
   assert.deepEqual(payload, [], "Northwind's DUNS was retired in 2022, so nothing is presented as current");
 });
+
+// ---------- regressions from the PR #4 review ----------
+
+test("an SSN-shaped value is refused whatever its key", () => {
+  for (const v of ["123-45-6789", "123 45 6789", "123456789"]) {
+    const p = minimal([], { person: { name: "x", identifiers: { taxNumber: v } } });
+    assert.equal(validateProfile(p).valid, false, v);
+  }
+  assert.equal(validateProfile(minimal([], { person: { name: "x", identifiers: { orcid: "0000-0002-1825-0097" } } })).valid, true);
+});
+
+test("a release resolves 'now' on the release's own date", () => {
+  const h = read("../examples/history.profile.json");
+  const { payload } = buildRelease(h, "past-employers", loadMapping("jsonresume"), { requester: { domain: "hp.com", method: "oidc" }, on: "2012-01-01" });
+  assert.deepEqual(payload.work.filter((w) => w.position === "Systems Engineer").map((w) => w.name), ["EDS (now HP Enterprise Services)"]);
+});
+
+test("revoked identifiers are never presented, and undated replaced ones aren't current", () => {
+  const p = employee();
+  p.organizations.northwind.identifiers.push({ scheme: "cage", value: "9XY78", status: "revoked" });
+  p.organizations.northwind.identifiers.push({ scheme: "npi", value: "1234567893", status: "replaced" });
+  p.work.find((w) => w.id === "northwind-devex").audiences = ["former-employers"];
+  const m = { target: "x", output: { "$each": "$$.work", "$map": {
+    cage: { "$fn": "orgIdentifier", "args": ["$.organization", "cage"] },
+    npi: { "$fn": "orgIdentifier", "args": ["$.organization", "npi"] } } } };
+  const { payload } = buildRelease(p, "former-employers", m, { requester: { domain: "northwind.example", method: "oidc" }, on: ON });
+  assert.deepEqual(payload, []);
+});

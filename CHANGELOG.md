@@ -27,6 +27,7 @@ Backwards compatible: earlier files remain valid.
 
 ### Fixed
 - A job without positions now takes its official title from the employer's record.
+- Releases resolve "now" (current names, identifiers in force) on the release date, not the clock date.
 
 ## 2.2.0 (2026-11-07): organization history, positions and responsibilities
 
