@@ -1,0 +1,396 @@
+{
+  "color": {
+    "surface-100": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$description": "Page background. Every text token passes 7:1 on it.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#ffffff",
+          "dark": "#04161d"
+        }
+      }
+    },
+    "surface-200": {
+      "$type": "color",
+      "$value": "#f2f7f6",
+      "$description": "Raised areas: cards, panels, code blocks. Every text token passes 7:1 on it.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#f2f7f6",
+          "dark": "#0a2530"
+        }
+      }
+    },
+    "surface-300": {
+      "$type": "color",
+      "$value": "#e3eeec",
+      "$description": "Inset and hover fills, table header rows. Every text token passes 7:1 on it.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#e3eeec",
+          "dark": "#12333f"
+        }
+      }
+    },
+    "ink": {
+      "$type": "color",
+      "$value": "#023341",
+      "$description": "Body text and headings on any surface (11.4:1 or better).",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#023341",
+          "dark": "#e6f6f1"
+        }
+      }
+    },
+    "ink-muted": {
+      "$type": "color",
+      "$value": "#2f4b55",
+      "$description": "Secondary text, metadata, captions. Still AAA: 7.3:1 or better on every surface.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#2f4b55",
+          "dark": "#a9c6c6"
+        }
+      }
+    },
+    "link": {
+      "$type": "color",
+      "$value": "#00524c",
+      "$description": "Links and text actions; always underlined. 7.6:1 or better on every surface.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#00524c",
+          "dark": "#7fe3cb"
+        }
+      }
+    },
+    "action": {
+      "$type": "color",
+      "$value": "#023341",
+      "$description": "Primary button fill. Pair with on-action text.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#023341",
+          "dark": "#8fe9d0"
+        }
+      }
+    },
+    "on-action": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$description": "Text and icons on an action fill (13.5:1 light, 9.5:1 dark).",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#ffffff",
+          "dark": "#023341"
+        }
+      }
+    },
+    "border-control": {
+      "$type": "color",
+      "$value": "#5f7a82",
+      "$description": "Borders of inputs, checkboxes and other controls; 3.8:1 or better on every surface.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#5f7a82",
+          "dark": "#6f9097"
+        }
+      }
+    },
+    "hairline": {
+      "$type": "color",
+      "$value": "#c9dbd8",
+      "$description": "Decorative dividers and card outlines only. Never the only cue for a control's edge.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#c9dbd8",
+          "dark": "#1f4552"
+        }
+      }
+    },
+    "focus-ring": {
+      "$type": "color",
+      "$value": "#00524c",
+      "$description": "2px focus outline with a 2px offset on every focusable element.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#00524c",
+          "dark": "#7fe3cb"
+        }
+      }
+    },
+    "success": {
+      "$type": "color",
+      "$value": "#0f5020",
+      "$description": "Valid / passed text and icons. Always paired with a word or icon, never colour alone.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#0f5020",
+          "dark": "#86e0a3"
+        }
+      }
+    },
+    "warning": {
+      "$type": "color",
+      "$value": "#5c3a00",
+      "$description": "Caution text and icons. Always paired with a word or icon.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#5c3a00",
+          "dark": "#f3c46e"
+        }
+      }
+    },
+    "danger": {
+      "$type": "color",
+      "$value": "#8a131a",
+      "$description": "Error and destructive text and icons. Always paired with a word or icon.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#8a131a",
+          "dark": "#ffb3b3"
+        }
+      }
+    },
+    "brand-navy": {
+      "$type": "color",
+      "$value": "#023341",
+      "$description": "The icon tile and the wordmark ink on light grounds. Same in both themes.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#023341",
+          "dark": "#023341"
+        }
+      }
+    },
+    "brand-teal": {
+      "$type": "color",
+      "$value": "#00a89f",
+      "$description": "Start of the ring gradient (bottom-left). Decorative only: 3:1 on white, so never text on light grounds.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#00a89f",
+          "dark": "#00a89f"
+        }
+      }
+    },
+    "brand-mint": {
+      "$type": "color",
+      "$value": "#b8f2dc",
+      "$description": "End of the ring gradient (top-right). Decorative fills and highlights; never text on light grounds.",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#b8f2dc",
+          "dark": "#b8f2dc"
+        }
+      }
+    },
+    "brand-cream": {
+      "$type": "color",
+      "$value": "#f7f6ee",
+      "$description": "The person glyph inside the mark (12.5:1 on brand-navy).",
+      "$extensions": {
+        "com.turnrow.themes": {
+          "light": "#f7f6ee",
+          "dark": "#f7f6ee"
+        }
+      }
+    }
+  },
+  "font": {
+    "family": {
+      "sans": {
+        "$type": "fontFamily",
+        "$value": "\"Atkinson Hyperlegible Next\", system-ui, -apple-system, \"Segoe UI\", \"Noto Sans\", sans-serif"
+      },
+      "mono": {
+        "$type": "fontFamily",
+        "$value": "\"Atkinson Hyperlegible Mono\", ui-monospace, \"SFMono-Regular\", Menlo, Consolas, \"Noto Sans Mono\", monospace"
+      },
+      "display": {
+        "$type": "fontFamily",
+        "$value": "Sarpanch, \"Atkinson Hyperlegible Next\", system-ui, sans-serif"
+      }
+    }
+  },
+  "spacing": {
+    "space-1": {
+      "$type": "dimension",
+      "$value": "0.25rem",
+      "$description": "Icon-to-label gap."
+    },
+    "space-2": {
+      "$type": "dimension",
+      "$value": "0.5rem",
+      "$description": "Gap between related controls."
+    },
+    "space-3": {
+      "$type": "dimension",
+      "$value": "0.75rem",
+      "$description": "Button vertical padding; list item gap."
+    },
+    "space-4": {
+      "$type": "dimension",
+      "$value": "1rem",
+      "$description": "Card padding on small screens; page gutter on mobile."
+    },
+    "space-6": {
+      "$type": "dimension",
+      "$value": "1.5rem",
+      "$description": "Card padding from 48rem; paragraph spacing."
+    },
+    "space-8": {
+      "$type": "dimension",
+      "$value": "2rem",
+      "$description": "Between page sections on mobile."
+    },
+    "space-12": {
+      "$type": "dimension",
+      "$value": "3rem",
+      "$description": "Between page sections from 48rem."
+    },
+    "space-16": {
+      "$type": "dimension",
+      "$value": "4rem",
+      "$description": "Hero padding."
+    }
+  },
+  "radius": {
+    "radius-sm": {
+      "$type": "dimension",
+      "$value": "6px",
+      "$description": "Inputs, tags, inline code."
+    },
+    "radius-md": {
+      "$type": "dimension",
+      "$value": "12px",
+      "$description": "Buttons, cards, code blocks."
+    },
+    "radius-lg": {
+      "$type": "dimension",
+      "$value": "20px",
+      "$description": "Dialogs and large panels."
+    },
+    "radius-icon": {
+      "$type": "dimension",
+      "$value": "21.875%",
+      "$description": "The app-icon tile corner (112 of 512). Use on any square that frames the mark."
+    },
+    "radius-pill": {
+      "$type": "dimension",
+      "$value": "999px",
+      "$description": "Pills and status badges."
+    }
+  },
+  "size": {
+    "target-min": {
+      "$type": "dimension",
+      "$value": "44px",
+      "$description": "Minimum touch target (WCAG 2.5.5, AAA)."
+    },
+    "measure": {
+      "$type": "dimension",
+      "$value": "70ch",
+      "$description": "Maximum line length for running text (WCAG 1.4.8 asks for 80 characters or fewer)."
+    },
+    "focus-width": {
+      "$type": "dimension",
+      "$value": "2px",
+      "$description": "Focus outline width and offset."
+    }
+  },
+  "typography": {
+    "display": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "2.5rem",
+        "lineHeight": 1.1,
+        "fontWeight": 700
+      }
+    },
+    "heading-1": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "2rem",
+        "lineHeight": 1.2,
+        "fontWeight": 700
+      }
+    },
+    "heading-2": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "1.5rem",
+        "lineHeight": 1.25,
+        "fontWeight": 700
+      }
+    },
+    "heading-3": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "1.25rem",
+        "lineHeight": 1.3,
+        "fontWeight": 700
+      }
+    },
+    "body-lg": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "1.1875rem",
+        "lineHeight": 1.6,
+        "fontWeight": 400
+      }
+    },
+    "body": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "1.0625rem",
+        "lineHeight": 1.6,
+        "fontWeight": 400
+      }
+    },
+    "label": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "0.9375rem",
+        "lineHeight": 1.35,
+        "fontWeight": 600
+      }
+    },
+    "caption": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "0.875rem",
+        "lineHeight": 1.5,
+        "fontWeight": 400
+      }
+    },
+    "code": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.mono}",
+        "fontSize": "0.9375rem",
+        "lineHeight": 1.6,
+        "fontWeight": 400
+      }
+    },
+    "wordmark": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.family.display}",
+        "fontSize": "4rem",
+        "lineHeight": 0.95,
+        "fontWeight": 700
+      }
+    }
+  }
+}

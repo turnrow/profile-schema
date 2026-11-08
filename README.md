@@ -1,4 +1,19 @@
-# Turnrow Profile Schema
+<p align="center">
+  <picture>
+    <source srcset="brand/svg/profile-schema-lockup-dark.svg" media="(prefers-color-scheme: dark)">
+    <img src="brand/svg/profile-schema-lockup-light.svg" alt="Profile Schema" width="420">
+  </picture>
+</p>
+
+# Profile Schema, a Turnrow Solution
+
+[![CI status](https://github.com/turnrow/profile-schema/actions/workflows/ci.yml/badge.svg)](https://github.com/turnrow/profile-schema/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/github/package-json/v/turnrow/profile-schema?label=version&color=023341)](CHANGELOG.md)
+[![JSON Schema draft 2020-12](https://img.shields.io/badge/JSON%20Schema-2020--12-023341)](schema/profile.schema.json)
+[![Exports to JSON Resume 1.7.1](https://img.shields.io/badge/JSON%20Resume-1.7.1-023341)](upstream/jsonresume/)
+[![Node.js 20 or later](https://img.shields.io/badge/node-%3E%3D20-023341?logo=nodedotjs&logoColor=white)](package.json)
+[![MIT licence](https://img.shields.io/badge/licence-MIT-023341)](LICENSE.md)
+[![Design system: WCAG AAA](https://img.shields.io/badge/design%20system-WCAG%20AAA-023341)](brand/README.md)
 
 One JSON file holds a person's whole professional record. Every output (a JSON Resume, schema.org JSON-LD for a profile page, a LinkedIn paste sheet, a slide bio, a timeline or map) is a filtered, mapped view of that file. Fix a fact once and every output picks it up.
 
@@ -203,6 +218,7 @@ An audience's `writeBack.authority` can change these defaults field by field. Wr
 | [`examples/`](examples/) | Three fictional people: a founder; a new employee with audiences; and someone whose employers (EDS, Coopers & Lybrand, Buchanan) changed around them, with real company histories cited to public sources. Plus a sample SCIM write-back and every generated output. |
 | [`upstream/jsonresume/`](upstream/jsonresume/) | An unmodified copy of the current JSON Resume schema (1.7.1). The tests validate our JSON Resume export against it. |
 | [`test/`](test/) | `node --test`: schema, validator, converter, rules and import round trip. |
+| [`brand/`](brand/) | Logos, icons, favicons, design tokens (light and dark), fonts and the scripts that generate them. See [Brand and design system](#brand-and-design-system). |
 
 ## Use it from code
 
@@ -281,8 +297,26 @@ The schema makes privacy enforceable, but it doesn't decide what is appropriate.
 
 `schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 added organization history, positions and responsibilities; 2.3.0 adds registry and tax identifiers. Earlier files remain valid.
 
+## Brand and design system
+
+Profile Schema has its own logo and design system in [`brand/`](brand/). The mark is a person inside three nested rings that point forward: one record, described in layers, rendered to many outputs. The full guide is [`brand/README.md`](brand/README.md). The essentials:
+
+| Need | Use |
+|---|---|
+| Logo on a light page | [`brand/svg/profile-schema-lockup-light.svg`](brand/svg/profile-schema-lockup-light.svg) |
+| Logo on a dark page | [`brand/svg/profile-schema-lockup-dark.svg`](brand/svg/profile-schema-lockup-dark.svg) |
+| App icon or avatar | [`brand/svg/profile-schema-icon.svg`](brand/svg/profile-schema-icon.svg), or PNGs in [`brand/png/`](brand/png/) |
+| Favicons, manifest and theme colour | [`brand/head-snippet.html`](brand/head-snippet.html) |
+| Colours, type, spacing in CSS | [`brand/design-system/tokens.css`](brand/design-system/tokens.css), which follows the reader's light or dark setting |
+| Tokens for design tools | [`brand/design-system/tokens.dtcg.json`](brand/design-system/tokens.dtcg.json) (W3C format) |
+
+- **Name.** In writing, the product is **Profile Schema**, and the full form is **Profile Schema, a Turnrow Solution**. The lowercase `profile-schema` belongs to the logo and to code (the package `@turnrow/profile-schema`, file names, URLs).
+- **Accessible by default.** Every text colour meets WCAG AAA (7:1) on every surface in both themes, and `brand/tools/contrast.py` fails if one stops meeting it. Type is Atkinson Hyperlegible Next and Mono, sized in `rem` and mobile-first.
+- **Dark mode and localisation.** Each colour has a light and a dark value. Layouts use logical properties so right-to-left locales mirror; the logo itself never mirrors, and the product name is never translated.
+- **Generated, not drawn.** Logos come from constructed geometry in `brand/tools/build_brand.py`. Change its constants and re-run; never hand-edit an SVG.
+
 ## Credits and licence
 
 This repository began as a fork of [jsonresume/resume-schema](https://github.com/jsonresume/resume-schema), which is archived; JSON Resume development continues in [jsonresume/jsonresume.org](https://github.com/jsonresume/jsonresume.org). The evidence model follows ideas from the FamilySearch GEDCOM 7 specification and the GEDCOM X conceptual model.
 
-MIT licence. See [LICENSE.md](LICENSE.md). JSON Resume's own copyright notice is kept there and in [`upstream/jsonresume/LICENSE.md`](upstream/jsonresume/LICENSE.md).
+MIT licence. See [LICENSE.md](LICENSE.md). The fonts in `brand/fonts/` are under the SIL Open Font License; their licences are kept beside them. JSON Resume's own copyright notice is kept there and in [`upstream/jsonresume/LICENSE.md`](upstream/jsonresume/LICENSE.md).

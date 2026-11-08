@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="t">
+  <title id="t">profile-schema</title>
+  <defs><clipPath id="ps-c"><path clip-rule="evenodd" d="M-64 -64H640V640H-64Z M263 242H640V270H263Z"/></clipPath></defs>
+  <rect width="512" height="512" rx="112" fill="#023341"/>
+  <path d="M480.62 256 L381.78 114.83 A145 145 0 0 0 263 53 L248 53 A203 203 0 0 0 248 459 L263 459 A145 145 0 0 0 381.78 397.17 Z" fill="none" stroke="#ffffff" stroke-width="24.5" stroke-linejoin="miter" stroke-miterlimit="4"/>
+  <g clip-path="url(#ps-c)"><path d="M428.74 256 L346.96 139.21 A102.5 102.5 0 0 0 263 95.5 L248 95.5 A160.5 160.5 0 0 0 248 416.5 L263 416.5 A102.5 102.5 0 0 0 346.96 372.79 Z" fill="none" stroke="#ffffff" stroke-width="24.5" stroke-linejoin="miter" stroke-miterlimit="4"/><path d="M376.86 256 L312.15 163.59 A60 60 0 0 0 263 138 L248 138 A118 118 0 0 0 248 374 L263 374 A60 60 0 0 0 312.15 348.41 Z" fill="none" stroke="#ffffff" stroke-width="24.5" stroke-linejoin="miter" stroke-miterlimit="4"/></g>
+  <path d="M207 220 a41 41 0 1 0 82 0 a41 41 0 1 0 -82 0Z M189 328 a10 10 0 0 1 -10 -10 A69 48 0 0 1 317 318 a10 10 0 0 1 -10 10Z" fill="#ffffff"/>
+</svg>

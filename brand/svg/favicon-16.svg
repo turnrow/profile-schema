@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="t">
+  <title id="t">profile-schema</title>
+  <defs><clipPath id="fs-c"><path clip-rule="evenodd" d="M-64 -64H640V640H-64Z M263 242H640V270H263Z"/></clipPath><linearGradient id="fs-g" x1="64" y1="448" x2="448" y2="64" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00a89f"/><stop offset="1" stop-color="#b8f2dc"/></linearGradient></defs>
+  <rect width="512" height="512" rx="112" fill="#023341"/>
+  <path d="M437.9 256 L353.11 134.91 A110 110 0 0 0 263 88 L248 88 A168 168 0 0 0 248 424 L263 424 A110 110 0 0 0 353.11 377.09 Z" fill="none" stroke="url(#fs-g)" stroke-width="64" stroke-linejoin="miter" stroke-miterlimit="4"/>
+  <path d="M190 212 a58 58 0 1 0 116 0 a58 58 0 1 0 -116 0Z M160 358 a10 10 0 0 1 -10 -10 A98 70 0 0 1 346 348 a10 10 0 0 1 -10 10Z" fill="#f7f6ee"/>
+</svg>

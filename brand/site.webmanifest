@@ -1,0 +1,12 @@
+{
+  "name": "Profile Schema",
+  "short_name": "Profile Schema",
+  "icons": [
+    { "src": "/brand/png/android-chrome-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/brand/png/android-chrome-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/brand/svg/profile-schema-icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "theme_color": "#023341",
+  "background_color": "#04161d",
+  "display": "standalone"
+}
