@@ -1,6 +1,6 @@
 {
   "name": "@turnrow/profile-schema",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "One JSON source of truth for a person's professional record, with sources, competing claims, confidence, review status and per-field visibility, rendered to JSON Resume, schema.org JSON-LD, LinkedIn and more.",
   "private": true,
   "type": "module",
@@ -20,7 +20,8 @@
     "schema/",
     "mappings/",
     "examples/",
-    "upstream/"
+    "upstream/",
+    "SECURITY.md"
   ],
   "scripts": {
     "test": "node --test test/*.test.mjs",

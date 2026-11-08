@@ -1,7 +1,7 @@
 {
   "receiptVersion": "turnrow-1",
-  "receiptId": "release-e1c04cf5-5fcd-4cd7-a254-9b629ed906e5",
-  "issued": "2026-11-08T00:59:06.151Z",
+  "receiptId": "release-ce1e3cf7-bc0a-4a62-82a7-866432acfcda",
+  "issued": "2026-11-08T05:26:17.929Z",
   "subject": "Sam Rivera",
   "recipient": {
     "name": "Acme Example Corp",
@@ -33,6 +33,6 @@
     "entries": 8
   },
   "expires": "onSeparation",
-  "payloadSha256": "411171e560c889f28d528a6baa16ab5492477e7f254aa267e572f511686ce23d",
+  "payloadSha256": "5ebd9f45c8711c1a54a685e3d7bfb69fb1aff5cdc26fb6349ee67d698b945cb8",
   "notice": "Stopping this release stops future updates. Copies already delivered stay with the recipient."
 }

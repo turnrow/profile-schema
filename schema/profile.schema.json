@@ -19,9 +19,10 @@
         "2.0.0",
         "2.1.0",
         "2.2.0",
-        "2.3.0"
+        "2.3.0",
+        "2.4.0"
       ],
-      "description": "2.3.0 adds registry and tax identifiers with formats and privacy defaults; earlier files remain valid."
+      "description": "2.4.0 hardens links and privacy, adds person field visibility, dated names, career breaks and more; earlier files remain valid."
     },
     "meta": {
       "$ref": "#/$defs/meta"
@@ -681,7 +682,8 @@
       "properties": {
         "url": {
           "type": "string",
-          "format": "uri"
+          "format": "uri",
+          "pattern": "^https?://[^\\s]+$"
         },
         "label": {
           "$ref": "#/$defs/text"
@@ -708,7 +710,8 @@
       "properties": {
         "url": {
           "type": "string",
-          "description": "Absolute URL, or 'bundle:media/…' inside a profile bundle."
+          "description": "Absolute URL, or 'bundle:media/…' inside a profile bundle.",
+          "pattern": "^(https?://|bundle:)[^\\s]+$"
         },
         "alt": {
           "$ref": "#/$defs/text",
@@ -748,7 +751,8 @@
         },
         "canonicalUrl": {
           "type": "string",
-          "format": "uri"
+          "format": "uri",
+          "pattern": "^https?://[^\\s]+$"
         },
         "owner": {
           "type": "string"
@@ -825,6 +829,31 @@
         },
         "visibility": {
           "$ref": "#/$defs/visibility"
+        },
+        "from": {
+          "$ref": "#/$defs/fuzzyDate",
+          "description": "When this name came into use (marriage, legal change, transliteration adopted)."
+        },
+        "to": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "pronunciation": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "How to say the name, for directories, introductions and screen readers.",
+          "properties": {
+            "respelling": {
+              "type": "string",
+              "description": "Plain respelling, e.g. 'eh-NES kah-LOH-way'."
+            },
+            "ipa": {
+              "type": "string"
+            },
+            "audio": {
+              "type": "string",
+              "pattern": "^(https?://|bundle:)[^\\s]+$"
+            }
+          }
         }
       }
     },
@@ -883,7 +912,8 @@
             },
             "website": {
               "type": "string",
-              "format": "uri"
+              "format": "uri",
+              "pattern": "^https?://[^\\s]+$"
             },
             "emailVisibility": {
               "$ref": "#/$defs/visibility",
@@ -917,6 +947,43 @@
           "propertyNames": {
             "not": {
               "pattern": "^([Ss][Ss][Nn]|[Ss]ocial|SOCIAL|[Ii][Tt][Ii][Nn]|[Tt][Ii][Nn]|[Pp]assport|PASSPORT|[Dd]river|DRIVER|[Dd][Ll])"
+            }
+          }
+        },
+        "visibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Visibility of individual person fields (default public). A grant to a named audience still shares a field with that audience.",
+          "properties": {
+            "headline": {
+              "$ref": "#/$defs/visibility"
+            },
+            "jobTitle": {
+              "$ref": "#/$defs/visibility"
+            },
+            "summary": {
+              "$ref": "#/$defs/visibility"
+            },
+            "shortBio": {
+              "$ref": "#/$defs/visibility"
+            },
+            "image": {
+              "$ref": "#/$defs/visibility"
+            },
+            "location": {
+              "$ref": "#/$defs/visibility"
+            },
+            "pronouns": {
+              "$ref": "#/$defs/visibility"
+            },
+            "industry": {
+              "$ref": "#/$defs/visibility"
+            },
+            "website": {
+              "$ref": "#/$defs/visibility"
+            },
+            "profiles": {
+              "$ref": "#/$defs/visibility"
             }
           }
         }
@@ -957,7 +1024,8 @@
         },
         "url": {
           "type": "string",
-          "format": "uri"
+          "format": "uri",
+          "pattern": "^https?://[^\\s]+$"
         },
         "logo": {
           "$ref": "#/$defs/image"
@@ -969,7 +1037,8 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "pattern": "^https?://[^\\s]+$"
           }
         },
         "description": {
@@ -1442,7 +1511,8 @@
         },
         "url": {
           "type": "string",
-          "format": "uri"
+          "format": "uri",
+          "pattern": "^https?://[^\\s]+$"
         },
         "metrics": {
           "type": "array",
@@ -1452,6 +1522,19 @@
         },
         "summary": {
           "$ref": "#/$defs/text"
+        },
+        "jurisdiction": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$",
+          "description": "Where a licence is valid: US-TX for a Texas PE licence or bar admission."
+        },
+        "compactStates": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}-[A-Z0-9]{1,3}$"
+          },
+          "description": "Other states recognising it under a compact (nursing, telehealth)."
         }
       }
     },
@@ -1540,7 +1623,8 @@
         },
         "url": {
           "type": "string",
-          "format": "uri"
+          "format": "uri",
+          "pattern": "^https?://[^\\s]+$"
         },
         "media": {
           "type": "array",
@@ -1573,7 +1657,13 @@
             "paper",
             "talk",
             "podcast",
-            "post"
+            "post",
+            "patent",
+            "patentApplication",
+            "dataset",
+            "software",
+            "thesis",
+            "report"
           ]
         },
         "publisher": {
@@ -1584,7 +1674,8 @@
         },
         "url": {
           "type": "string",
-          "format": "uri"
+          "format": "uri",
+          "pattern": "^https?://[^\\s]+$"
         },
         "summary": {
           "$ref": "#/$defs/text"
@@ -1592,6 +1683,36 @@
         "aboutPerson": {
           "type": "boolean",
           "description": "True for coverage of the person rather than work by them."
+        },
+        "doi": {
+          "type": "string",
+          "pattern": "^10\\.[0-9]{4,9}/[^\\s]+$"
+        },
+        "isbn": {
+          "type": "string",
+          "pattern": "^(97[89])?[0-9]{9}[0-9X]$"
+        },
+        "number": {
+          "type": "string",
+          "description": "Patent or report number, e.g. US 11,234,567 B2."
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Authors or inventors in published order, the subject included."
+        },
+        "role": {
+          "enum": [
+            "author",
+            "coAuthor",
+            "editor",
+            "inventor",
+            "coInventor",
+            "contributor",
+            "subject"
+          ]
         }
       }
     },
@@ -1622,7 +1743,8 @@
             "founding",
             "first",
             "story",
-            "other"
+            "other",
+            "careerBreak"
           ]
         },
         "title": {
@@ -1655,6 +1777,23 @@
           "items": {
             "$ref": "#/$defs/id"
           }
+        },
+        "reason": {
+          "enum": [
+            "caregiving",
+            "parentalLeave",
+            "education",
+            "travel",
+            "health",
+            "relocation",
+            "layoff",
+            "sabbatical",
+            "military",
+            "volunteering",
+            "personal",
+            "other"
+          ],
+          "description": "For career breaks. 'health' is sensitive: keep it private, or describe the break as 'personal'."
         }
       }
     },
@@ -1676,7 +1815,8 @@
           "$ref": "#/$defs/text"
         },
         "url": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^(https?://|bundle:)[^\\s]+$"
         },
         "mediaType": {
           "type": "string",
@@ -1750,7 +1890,8 @@
         "escoUri": {
           "type": "string",
           "format": "uri",
-          "description": "ESCO skill URI, for Europass and EU job boards."
+          "description": "ESCO skill URI, for Europass and EU job boards.",
+          "pattern": "^https?://[^\\s]+$"
         }
       }
     },
@@ -1996,7 +2137,8 @@
         "url": {
           "type": "string",
           "format": "uri",
-          "description": "Public address of the source, if it has one."
+          "description": "Public address of the source, if it has one.",
+          "pattern": "^https?://[^\\s]+$"
         }
       }
     },
@@ -2668,7 +2810,8 @@
         "url": {
           "type": "string",
           "format": "uri",
-          "description": "Public registry page for this record."
+          "description": "Public registry page for this record.",
+          "pattern": "^https?://[^\\s]+$"
         },
         "status": {
           "enum": [

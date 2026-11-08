@@ -160,6 +160,30 @@
         }
       }
     },
+    "Career breaks": {
+      "$each": "$$.timeline",
+      "$where": {
+        "type": "careerBreak"
+      },
+      "$sort": "-startDate",
+      "$map": {
+        "Type": "$.reason",
+        "Dates": {
+          "$fn": "dateRangeText",
+          "args": [
+            "$.startDate",
+            "$.endDate",
+            "$.current"
+          ]
+        },
+        "Description": {
+          "$fn": "text",
+          "args": [
+            "$.summary"
+          ]
+        }
+      }
+    },
     "Volunteering / service": {
       "$each": "$$.service",
       "$sort": "-startDate",
@@ -333,6 +357,10 @@
         },
         "Link or file": "$.url"
       }
+    },
+    "Name pronunciation": {
+      "$fn": "pronunciation",
+      "args": []
     }
   }
 }

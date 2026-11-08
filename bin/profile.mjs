@@ -101,7 +101,7 @@ try {
       const { profile } = loadProfile(rest[0]);
       const scim = JSON.parse(readFileSync(rest[2], "utf8"));
       const r = applyWriteBack(profile, rest[1], scim, { requester, on });
-      for (const c of r.changes) if (c.action !== "unchanged") console.error(`${c.action.padEnd(11)} ${c.field}: ${JSON.stringify(c.from)} → ${JSON.stringify(c.to)}`);
+      for (const c of r.changes) if (c.action !== "unchanged") console.error(`${c.action.padEnd(11)} ${c.field}: ${JSON.stringify(c.from)} → ${JSON.stringify(c.to)}${c.reason ? ` (${c.reason})` : ""}`);
       for (const sgg of r.suggestions) console.error(`suggestion  ${sgg.field}: ${JSON.stringify(sgg.current)} → ${JSON.stringify(sgg.value)} (yours to decide)`);
       const after = validateProfile(r.profile);
       if (!after.valid) { console.error("Write-back produced an invalid profile:\n  " + after.errors.join("\n  ")); process.exit(1); }

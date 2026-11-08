@@ -1,6 +1,6 @@
 {
   "$schema": "../schema/profile.schema.json",
-  "schemaVersion": "2.3.0",
+  "schemaVersion": "2.4.0",
   "meta": {
     "defaultLocale": "en-US",
     "locales": [
@@ -23,18 +23,31 @@
         "type": "preferred",
         "full": "Sam Rivera",
         "given": "Sam",
-        "family": "Rivera"
+        "family": "Rivera",
+        "pronunciation": {
+          "respelling": "SAM ree-VAIR-uh",
+          "ipa": "sæm ɹiˈvɛɹə"
+        }
       },
       {
         "type": "legal",
         "full": "Samantha Inés Rivera Cole",
         "given": "Samantha Inés",
         "family": "Rivera Cole",
-        "visibility": "private"
+        "visibility": "private",
+        "from": "2021-06"
       },
       {
         "type": "nickname",
         "full": "Sam"
+      },
+      {
+        "type": "legal",
+        "full": "Samantha Inés Cole",
+        "given": "Samantha Inés",
+        "family": "Cole",
+        "to": "2021-06",
+        "visibility": "private"
       }
     ],
     "pronouns": "she/her",
@@ -62,7 +75,10 @@
         "network": "LinkedIn",
         "url": "https://www.linkedin.com/in/example-sam-rivera/"
       }
-    ]
+    ],
+    "visibility": {
+      "location": "network"
+    }
   },
   "organizations": {
     "acme": {
@@ -381,5 +397,35 @@
       "date": "2026-10-31",
       "defaultQuality": "primary"
     }
-  }
+  },
+  "timeline": [
+    {
+      "id": "break-2018",
+      "type": "careerBreak",
+      "reason": "caregiving",
+      "status": "approved",
+      "confidence": "high",
+      "title": "Career break: family caregiving",
+      "startDate": "2018-06",
+      "endDate": "2019-02",
+      "summary": "Full-time caregiver for a family member; kept skills current with Kubernetes certification study."
+    }
+  ],
+  "publications": [
+    {
+      "id": "build-cache-patent",
+      "status": "approved",
+      "confidence": "high",
+      "kind": "patent",
+      "title": "Content-addressed build cache with remote invalidation",
+      "number": "US 11,000,000 B2 (example)",
+      "authors": [
+        "Sam Rivera",
+        "A. Colleague"
+      ],
+      "role": "coInventor",
+      "date": "2023-05",
+      "publisher": "northwind"
+    }
+  ]
 }

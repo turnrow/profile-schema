@@ -193,7 +193,14 @@
             }
           }
         },
-        "employeeNumber": "$.employerRecord.employeeNumber"
+        "employeeNumber": "$.employerRecord.employeeNumber",
+        "namesUsed": {
+          "$fn": "namesDuring",
+          "args": [
+            "$.startDate",
+            "$.endDate"
+          ]
+        }
       }
     }
   }

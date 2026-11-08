@@ -207,7 +207,7 @@ test("target overrides change or omit an entry for one output only", () => {
   p.work[0].targets = { linkedin: { title: "Founder" }, jsonresume: { omit: true } };
   assert.match(convert(p, loadMapping("linkedin")).text, /Title: Founder\n/);
   assert.ok(!convert(p, loadMapping("jsonresume")).output.work.some((w) => w.name === "Tidewater Trails"));
-  assert.ok(convert(p, loadMapping("schemaorg")).text.includes("Founder & CEO"));
+  assert.ok(JSON.stringify(convert(p, loadMapping("schemaorg")).output).includes("Founder & CEO"));
 });
 
 test("content rules block output that breaks them", () => {

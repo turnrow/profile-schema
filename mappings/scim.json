@@ -253,6 +253,10 @@
           "network": "$.network",
           "url": "$.url"
         }
+      },
+      "namePronunciation": {
+        "$fn": "pronunciation",
+        "args": []
       }
     }
   }
