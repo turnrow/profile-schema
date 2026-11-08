@@ -10,7 +10,7 @@
     "name": "Ines Calloway",
     "givenName": "Ines",
     "familyName": "Calloway",
-    "jobTitle": "Founder & CEO, Tidewater Trails",
+    "jobTitle": "Founder \u0026 CEO, Tidewater Trails",
     "description": "Marine biologist turned resort developer who has spent three decades building coastal places people travel to, and now builds the trips themselves.",
     "image": {
       "@type": "ImageObject",
@@ -46,7 +46,7 @@
     "hasOccupation": [
       {
         "@type": "Occupation",
-        "name": "Founder & CEO",
+        "name": "Founder \u0026 CEO",
         "description": "Tidewater Trails, Mar 2024 – Present"
       },
       {
@@ -79,7 +79,7 @@
     ],
     "knowsAbout": [
       "Entrepreneurship",
-      "Travel & Tourism",
+      "Travel \u0026 Tourism",
       "Resort Development",
       "Marine Biology"
     ],

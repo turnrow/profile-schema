@@ -208,6 +208,7 @@ An audience's `writeBack.authority` can change these defaults field by field. Wr
 | [`lib/validate.mjs`](lib/validate.mjs) | Schema validation, plus the checks a schema can't express: cross-references, claim consistency, open questions, consent for references, bundle files, rule syntax. |
 | [`lib/convert.mjs`](lib/convert.mjs) | Applies a mapping to a profile and enforces the content rules. |
 | [`lib/import-jsonresume.mjs`](lib/import-jsonresume.mjs) | Converts a JSON Resume into a profile. Everything imported starts as a draft. |
+| [`lib/i18n.mjs`](lib/i18n.mjs) | Translations of the fixed words in outputs, and locale-aware dates and numbers. |
 | [`lib/identifiers.mjs`](lib/identifiers.mjs) | Identifier privacy defaults, LEI check digits, normalization. |
 | [`lib/history.mjs`](lib/history.mjs) | Organization names and domains on a date, parents, successors, and how a job's positions and responsibilities line up. |
 | [`lib/audience.mjs`](lib/audience.mjs) | Resolves audiences on a date, checks requesters against policy and looks up field authority. |
@@ -263,6 +264,7 @@ A mapping is JSON: an `include` filter and an `output` template.
   - Organizations and places: `org`, `orgObj`, `place`, `placeObj`, `placeGeo`, `placeIdUri`.
   - Names: `name`, `names`.
   - Dates: `isoExact` (exact dates only), `isoLoose` (lower bound), `date`, `dateText` (renders "c. 1996", "before 1998", "1990/91"), `dateRangeText`.
+  - Names: `namesDuring` (names in use during a period), `pronunciation`.
   - Identifiers: `orgIdentifiers`, `orgIdentifier` (in force on a date), `orgClassification`.
   - History and roles: `employer` (in the mapping's `orgNameStyle`), `orgNameAt`, `orgNow`, `orgAlternateNames`, `tenureNotes`, `positions`, `flatPositions`, `responsibilityLines`, `joinLines`, `concatLists`.
   - Values and lookups: `money`, `metricText`, `lookup`, `visible`.
@@ -289,13 +291,31 @@ ines-calloway/
 
 Refer to files as `bundle:media/cv-2024.pdf`. `validate <folder>` checks that each file exists and that any `sha256` matches. Keeping the evidence with the data means a source can't quietly go missing.
 
+## What this schema deliberately doesn't hold
+
+Some things don't belong in a file meant for sharing, so the schema has no place for them, and where it can it refuses them:
+
+- **Government identity and tax numbers for a person** (SSN, ITIN, passport, driver's licence). `person.identifiers` refuses such keys, and any value shaped like an SSN.
+- **Date of birth and age.** Graduation dates can still act as an age proxy; leave education dates out of outputs where that matters (a per-target override does this).
+- **Compensation and salary history.** Many places bar employers from asking for it.
+- **Health details, sexual orientation, religion, immigration status, criminal history.** If a career break was for health reasons, the validator asks you to keep it private or describe it as "personal".
+
+## Localization and accessibility
+
+- Every text field can hold translations. `--locale` picks one, falling back to the default language.
+- Dates and numbers are formatted for the locale. Fixed words in outputs come from translation tables (English, Spanish, French, German, Portuguese) in [`lib/i18n.mjs`](lib/i18n.mjs); adding a language means copying one block.
+- Images need alt text. Names can carry a pronunciation (respelling, IPA or audio) for directories and screen readers.
+- The project produces data, not pages. A page built from it should meet WCAG AAA, work mobile-first and support dark mode; [ROADMAP.md](ROADMAP.md) tracks a reference renderer that does.
+
 ## Privacy and consent
 
 The schema makes privacy enforceable, but it doesn't decide what is appropriate. Before publishing anything public about a real person, record their consent in `meta.subjectConsent` (the validator warns until you do). Keep real people's profiles out of public repositories unless they have agreed.
 
+Individual person fields (location, pronouns, photo and others) can be hidden from public outputs with `person.visibility`. Security notes, including the HTML-safe JSON-LD and the link rules, are in [SECURITY.md](SECURITY.md).
+
 ## Versioning
 
-`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 added organization history, positions and responsibilities; 2.3.0 adds registry and tax identifiers. Earlier files remain valid.
+`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 added organization history, positions and responsibilities; 2.3.0 added registry and tax identifiers; 2.4.0 hardens security and privacy, localizes outputs and fills model gaps. Earlier files remain valid. Each version is tagged and has a GitHub release.
 
 ## Brand and design system
 

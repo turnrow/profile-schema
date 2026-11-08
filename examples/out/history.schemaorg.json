@@ -9,9 +9,6 @@
     "name": "Pat Example",
     "givenName": "Pat",
     "familyName": "Example",
-    "image": {
-      "@type": "ImageObject"
-    },
     "homeLocation": {
       "@type": "Place",
       "name": "Dallas–Fort Worth, Texas",

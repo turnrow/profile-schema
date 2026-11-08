@@ -1,13 +1,13 @@
 {
   "$schema": "../schema/profile.schema.json",
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.4.0",
   "meta": {
     "defaultLocale": "en-US",
     "locales": [
       "en-US",
       "es"
     ],
-    "updated": "2026-11-07T22:30:36.425Z",
+    "updated": "2026-11-08T05:26:18.147Z",
     "owner": "Sam Rivera",
     "subjectConsent": {
       "given": true,
@@ -23,18 +23,31 @@
         "type": "preferred",
         "full": "Sam Rivera",
         "given": "Sam",
-        "family": "Rivera"
+        "family": "Rivera",
+        "pronunciation": {
+          "respelling": "SAM ree-VAIR-uh",
+          "ipa": "sæm ɹiˈvɛɹə"
+        }
       },
       {
         "type": "legal",
         "full": "Samantha Inés Rivera Cole",
         "given": "Samantha Inés",
         "family": "Rivera Cole",
-        "visibility": "private"
+        "visibility": "private",
+        "from": "2021-06"
       },
       {
         "type": "nickname",
         "full": "Sam"
+      },
+      {
+        "type": "legal",
+        "full": "Samantha Inés Cole",
+        "given": "Samantha Inés",
+        "family": "Cole",
+        "to": "2021-06",
+        "visibility": "private"
       }
     ],
     "pronouns": "she/her",
@@ -62,7 +75,10 @@
         "network": "LinkedIn",
         "url": "https://www.linkedin.com/in/example-sam-rivera/"
       }
-    ]
+    ],
+    "visibility": {
+      "location": "network"
+    }
   },
   "organizations": {
     "acme": {
@@ -72,6 +88,48 @@
       "domains": [
         "acme.example",
         "acme-corp.example"
+      ],
+      "identifiers": [
+        {
+          "scheme": "lei",
+          "value": "5493000EXAMPLEACME64"
+        },
+        {
+          "scheme": "uei",
+          "value": "JM5AQKH7XYZ1",
+          "label": "SAM.gov UEI (example)"
+        },
+        {
+          "scheme": "cage",
+          "value": "1AB23"
+        },
+        {
+          "scheme": "ein",
+          "value": "12-3456789",
+          "audiences": [
+            "current-employer"
+          ]
+        },
+        {
+          "scheme": "stateEntityNumber",
+          "value": "0801234567",
+          "jurisdiction": "US-TX",
+          "label": "Texas SOS file number"
+        },
+        {
+          "scheme": "stateTaxId",
+          "value": "32012345678",
+          "jurisdiction": "US-TX",
+          "label": "Texas taxpayer number"
+        }
+      ],
+      "classifications": [
+        {
+          "system": "naics",
+          "code": "541512",
+          "version": "2022",
+          "label": "Computer Systems Design Services"
+        }
       ]
     },
     "northwind": {
@@ -80,6 +138,32 @@
       "url": "https://northwind.example",
       "domains": [
         "northwind.example"
+      ],
+      "identifiers": [
+        {
+          "scheme": "ein",
+          "value": "98-7654321",
+          "audiences": [
+            "former-employers"
+          ]
+        },
+        {
+          "scheme": "duns",
+          "value": "123456789",
+          "to": "2022-04-04",
+          "status": "replaced"
+        },
+        {
+          "scheme": "uei",
+          "value": "VN1AJFAD19J9",
+          "from": "2022-04-04"
+        },
+        {
+          "scheme": "stateEntityNumber",
+          "value": "603123456",
+          "jurisdiction": "US-WA",
+          "label": "Washington UBI"
+        }
       ]
     },
     "red-cross-example": {
@@ -183,7 +267,7 @@
         "managerName": "Jordan Example",
         "workLocation": "Austin HQ, Floor 4",
         "hireDate": "2026-11-03",
-        "lastSynced": "2026-11-07T22:30:36.425Z"
+        "lastSynced": "2026-11-08T05:26:18.147Z"
       },
       "citations": [
         {
@@ -207,7 +291,7 @@
           "value": "Senior Software Engineer II, Platform",
           "citations": [
             {
-              "source": "writeback-current-employer-2026-11-07"
+              "source": "writeback-current-employer-2026-11-08"
             }
           ],
           "accepted": true,
@@ -228,7 +312,7 @@
           "value": "Platform Engineering",
           "citations": [
             {
-              "source": "writeback-current-employer-2026-11-07"
+              "source": "writeback-current-employer-2026-11-08"
             }
           ],
           "accepted": true,
@@ -239,7 +323,7 @@
           "value": "Technology",
           "citations": [
             {
-              "source": "writeback-current-employer-2026-11-07"
+              "source": "writeback-current-employer-2026-11-08"
             }
           ],
           "accepted": true,
@@ -250,7 +334,7 @@
           "value": "CC-4410",
           "citations": [
             {
-              "source": "writeback-current-employer-2026-11-07"
+              "source": "writeback-current-employer-2026-11-08"
             }
           ],
           "accepted": true,
@@ -261,7 +345,7 @@
           "value": "E-100871",
           "citations": [
             {
-              "source": "writeback-current-employer-2026-11-07"
+              "source": "writeback-current-employer-2026-11-08"
             }
           ],
           "accepted": true,
@@ -272,7 +356,7 @@
           "value": "Jordan Example",
           "citations": [
             {
-              "source": "writeback-current-employer-2026-11-07"
+              "source": "writeback-current-employer-2026-11-08"
             }
           ],
           "accepted": true,
@@ -283,7 +367,7 @@
           "value": "Austin HQ, Floor 4",
           "citations": [
             {
-              "source": "writeback-current-employer-2026-11-07"
+              "source": "writeback-current-employer-2026-11-08"
             }
           ],
           "accepted": true,
@@ -294,7 +378,7 @@
           "value": "2026-11-03",
           "citations": [
             {
-              "source": "writeback-current-employer-2026-11-07"
+              "source": "writeback-current-employer-2026-11-08"
             }
           ],
           "accepted": true,
@@ -315,7 +399,7 @@
           "value": "2026-11-03",
           "citations": [
             {
-              "source": "writeback-current-employer-2026-11-07"
+              "source": "writeback-current-employer-2026-11-08"
             }
           ],
           "accepted": true,
@@ -451,12 +535,42 @@
       "date": "2026-10-31",
       "defaultQuality": "primary"
     },
-    "writeback-current-employer-2026-11-07": {
+    "writeback-current-employer-2026-11-08": {
       "title": "Acme Example Corp system of record (SCIM write-back)",
       "kind": "record",
-      "date": "2026-11-07",
+      "date": "2026-11-08",
       "author": "acme.example",
       "defaultQuality": "primary"
     }
-  }
+  },
+  "timeline": [
+    {
+      "id": "break-2018",
+      "type": "careerBreak",
+      "reason": "caregiving",
+      "status": "approved",
+      "confidence": "high",
+      "title": "Career break: family caregiving",
+      "startDate": "2018-06",
+      "endDate": "2019-02",
+      "summary": "Full-time caregiver for a family member; kept skills current with Kubernetes certification study."
+    }
+  ],
+  "publications": [
+    {
+      "id": "build-cache-patent",
+      "status": "approved",
+      "confidence": "high",
+      "kind": "patent",
+      "title": "Content-addressed build cache with remote invalidation",
+      "number": "US 11,000,000 B2 (example)",
+      "authors": [
+        "Sam Rivera",
+        "A. Colleague"
+      ],
+      "role": "coInventor",
+      "date": "2023-05",
+      "publisher": "northwind"
+    }
+  ]
 }

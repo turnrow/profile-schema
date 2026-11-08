@@ -1,6 +1,6 @@
 {
   "target": "schemaorg",
-  "description": "schema.org JSON-LD for a public profile page: ProfilePage with a Person as mainEntity. Public, approved, high-confidence entries only. Place it in <script type=\"application/ld+json\">.",
+  "description": "schema.org JSON-LD for a public profile page: ProfilePage with a Person as mainEntity. Public, approved, high-confidence entries only. Place it in <script type=\"application/ld+json\">. Output is HTML-safe (<, > and & escaped), so it can be placed in a <script> element as is.",
   "include": {
     "visibility": [
       "public"
@@ -375,5 +375,6 @@
       }
     }
   },
-  "orgNameStyle": "atTheTime"
+  "orgNameStyle": "atTheTime",
+  "htmlSafe": true
 }

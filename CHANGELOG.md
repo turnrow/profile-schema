@@ -1,5 +1,36 @@
 # Changelog
 
+## 2.4.0 (2026-11-07): review hardening, localization and model gaps
+
+A critical review of 2.0–2.3 from several angles: security, privacy, localization, coverage of real careers, and release hygiene. Backwards compatible: earlier files remain valid, except links that weren't http(s), which are now refused (see Security).
+
+### Security
+- **schema.org output is HTML-safe.** `<`, `>`, `&`, U+2028 and U+2029 are escaped, so the JSON-LD can sit in a `<script>` element. Before, profile text containing `</script>` could break out of the element and inject script into the page. Any mapping can opt in with `htmlSafe: true`.
+- **Links must be http(s).** Every URL field rejects `javascript:`, `data:` and other schemes; media, images and pronunciation audio may also be `bundle:` paths. The JSON Resume importer drops links that aren't web addresses.
+- **Symbolic links can't escape a bundle.** Bundle files are checked after resolving symbolic links, so a link inside the bundle can't make the validator read a file elsewhere.
+- **Write-back checks incoming values.** Malformed dates, oversized text, control characters and unknown statuses are rejected one by one (action `rejected`, with a reason), and a write-back never returns a profile that fails validation.
+
+### Privacy
+- `person.visibility` sets the visibility of individual person fields: headline, job title, summary, short bio, image, location, pronouns, industry, website and profiles. Hidden fields are removed before any mapping reads them. A grant to a named audience still shares the field with that audience.
+- Warnings when a career break for health reasons, or a security clearance, is public.
+- JSON-LD objects left with nothing but `@type` (because their content was hidden) are dropped instead of rendered empty.
+
+### Localization
+- Dates and numbers are formatted with `Intl` in the output's locale ("mar 2024", "März 2024", "12.500").
+- The fixed words in outputs ("Present", "c.", "before", "(now …)", "doing business as", "Continued:", "Acquired by …" and the rest) come from translation tables for English, Spanish, French, German and Portuguese, falling back to English. English output is unchanged.
+
+### Model
+- **Dated names:** `names[].from` and `to`, for names changed by marriage or legal change. The `verification` mapping lists the names used during each job (`namesUsed`).
+- **Name pronunciation:** `names[].pronunciation` (respelling, IPA, audio), shown on the LinkedIn sheet and in the SCIM profile extension.
+- **Career breaks:** a `careerBreak` timeline type with a reason (caregiving, parental leave, education, travel, health, relocation, layoff, sabbatical, military, volunteering, personal). Listed on the LinkedIn sheet.
+- **Credentials by jurisdiction:** `jurisdiction` (a Texas PE licence, a state bar) and `compactStates`.
+- **Publications:** kinds `patent`, `patentApplication`, `dataset`, `software`, `thesis` and `report`, plus `doi`, `isbn`, `number`, `authors` and `role` (author, co-author, inventor…).
+
+### Project
+- `SECURITY.md` explains how to report a vulnerability or a privacy problem. `ROADMAP.md` lists what the review found but this release doesn't do.
+- Git tags and GitHub releases for every version.
+- 13 new tests (106 total).
+
 ## 2.3.0 (2026-11-07): registry and tax identifiers
 
 Backwards compatible: earlier files remain valid.
