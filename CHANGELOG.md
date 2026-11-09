@@ -8,7 +8,7 @@ Built while modelling a real founder's record (a CV, a newspaper article, his ow
 - **Occupation codes** (`occupations`) on work, service, positions and responsibilities: U.S. SOC (kept by the Bureau of Labor Statistics), O*NET-SOC, ISCO, ESCO, NOC, ANZSCO, with `match` (primary, secondary, related) and an internal `rationale`.
 - **Skill codes** (`codes`) on skills: O*NET content-model elements (skills, knowledge, software), ESCO, Lightcast. `escoUri` still works.
 - **Industry codes:** organizations' existing NAICS `classifications` are now checked.
-- **Bundled lists** in `data/`: SOC 2018, O*NET-SOC and O*NET 30.3 elements (CC BY 4.0), NAICS 2022. Unknown codes are errors; group-level SOC codes, wrong titles, two primaries and mismatched O*NET/SOC pairs are warnings; other editions are accepted unchecked.
+- **Bundled lists** in `data/`: SOC 2018, O*NET-SOC and O*NET 31.0 (August 2026) elements (CC BY 4.0), NAICS 2022, built by `scripts/build-code-lists.mjs`, which records the SHA-256 of each input file in the output. Unknown codes are errors; group-level SOC codes, wrong titles, two primaries and mismatched O*NET/SOC pairs are warnings; other editions are accepted unchecked.
 - **Outputs:** schema.org `occupationalCategory` and coded `knowsAbout` terms; SOC codes per job in the `verification` mapping.
 
 ### Privacy and consent

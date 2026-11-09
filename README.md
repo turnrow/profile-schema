@@ -156,7 +156,7 @@ Jobs, positions and responsibilities can carry **occupation codes**; organizatio
 |---|---|---|---|
 | Work, service, a position, a responsibility | `occupations` | `soc` (U.S. SOC, kept by the Bureau of Labor Statistics), `onetSoc` (O*NET-SOC), `isco`, `esco`, `noc`, `anzsco` | SOC 2018 (all 1,447 codes) and the O*NET-SOC 2019 taxonomy (1,016 codes) |
 | Organizations | `classifications` | `naics`, `sic`, `nace`, `isic`, `anzsic` | NAICS 2022 (2,125 codes) |
-| Skills | `codes` | `onet` (O*NET content-model elements: skills 2.A/2.B, knowledge 2.C, software 2.E), `esco`, `lightcast` | O*NET 30.3 elements |
+| Skills | `codes` | `onet` (O*NET content-model elements: skills 2.A/2.B, knowledge 2.C, software 2.E), `esco`, `lightcast` | O*NET 31.0 elements |
 
 ```json
 {
@@ -243,7 +243,7 @@ An audience's `writeBack.authority` can change these defaults field by field. Wr
 | [`lib/identifiers.mjs`](lib/identifiers.mjs) | Identifier privacy defaults, LEI check digits, normalization. |
 | [`lib/history.mjs`](lib/history.mjs) | Organization names and domains on a date, parents, successors, and how a job's positions and responsibilities line up. |
 | [`lib/codes.mjs`](lib/codes.mjs) | Looks up and checks occupation, industry and skill codes against the bundled lists. |
-| [`data/`](data/) | SOC 2018, O*NET-SOC and O*NET content-model elements (30.3), NAICS 2022. |
+| [`data/`](data/) | SOC 2018, O*NET-SOC and O*NET content-model elements (31.0), NAICS 2022. |
 | [`lib/audience.mjs`](lib/audience.mjs) | Resolves audiences on a date, checks requesters against policy and looks up field authority. |
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |

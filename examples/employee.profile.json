@@ -368,7 +368,7 @@
         {
           "system": "onet",
           "code": "2.B.4.g",
-          "version": "30.3"
+          "version": "31.0"
         }
       ]
     },
@@ -383,7 +383,7 @@
         {
           "system": "onet",
           "code": "2.E.11.e",
-          "version": "30.3",
+          "version": "31.0",
           "match": "related"
         }
       ]
@@ -398,7 +398,7 @@
         {
           "system": "onet",
           "code": "2.B.1.e",
-          "version": "30.3"
+          "version": "31.0"
         }
       ]
     },

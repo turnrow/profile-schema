@@ -77,7 +77,7 @@ test("NAICS codes on organizations and O*NET codes on skills are checked", () =>
   p.skills[0].codes = [{ system: "onet", code: "2.B.9.z" }];
   const r = validateProfile(p);
   assert.ok(has(r.errors, /naics 999999: 999999 is not a NAICS 2022 code/));
-  assert.ok(has(r.errors, /onet 2\.B\.9\.z: .* not a O\*NET 30\.3 code/));
+  assert.ok(has(r.errors, /onet 2\.B\.9\.z: .* not a O\*NET 31\.0 code/));
 });
 
 test("JSON-LD carries occupational categories and coded skills; verification carries SOC codes", () => {
