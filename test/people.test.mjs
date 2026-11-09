@@ -153,3 +153,43 @@ test("a time without an offset is refused", () => {
   assert.equal(validateProfile(withRec({ date: "2023-05-02T14:30" })).valid, false);
   assert.equal(validateProfile(withRec({ date: "2023-05-02" })).valid, true);
 });
+
+// ---------- endorsements ----------
+
+import { endorsementCount } from "../lib/people.mjs";
+
+function withEndorsements() {
+  const p = withPeople();
+  const base = { author: "maria-chen", date: "2024-02-01", relationship: { type: "manager", work: "acme-platform" }, status: "approved", confidence: "medium", consent: { given: true, on: "2026-11-02", scope: "full" } };
+  p.endorsements = [
+    { id: "e1", target: "platform", ...base },
+    { id: "e2", target: "platform", ...base, status: "pending", openQuestion: "Confirm with Maria" },
+    { id: "e3", target: "platform", ...base, consent: undefined, visibility: "private" },
+    { id: "e4", target: "kubernetes", ...base, text: "Ran our cluster migration.", credential: { url: "https://badges.example/endorsements/123" } },
+  ];
+  return p;
+}
+
+test("endorsements validate", () => {
+  const r = validateProfile(withEndorsements());
+  assert.equal(r.valid, true, r.errors.join("\n"));
+});
+
+test("an endorsement's target must be a skill, credential or badge", () => {
+  const p = withEndorsements();
+  p.endorsements[0].target = "acme-platform";
+  assert.ok(has(validateProfile(p).errors, /endorsements\/e1: target "acme-platform" is not a skill, credential or badge/));
+});
+
+test("endorsementCount counts only approved, consented endorsements", () => {
+  const p = withEndorsements();
+  assert.equal(endorsementCount(p, "platform"), 1);
+  assert.equal(endorsementCount(p, "kubernetes"), 1);
+  assert.equal(endorsementCount(p, "mentoring"), 0);
+});
+
+test("a public endorsement without consent is an error in 2.6", () => {
+  const p = withEndorsements();
+  delete p.endorsements[0].consent;
+  assert.ok(has(validateProfile(p).errors, /endorsements\/e1: public, but the author's consent is not recorded/));
+});

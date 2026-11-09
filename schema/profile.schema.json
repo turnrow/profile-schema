@@ -190,6 +190,12 @@
       "items": {
         "$ref": "#/$defs/recommendation"
       }
+    },
+    "endorsements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/endorsement"
+      }
     }
   },
   "$defs": {
@@ -4117,6 +4123,60 @@
         },
         "consent": {
           "$ref": "#/$defs/authorConsent"
+        }
+      }
+    },
+    "endorsement": {
+      "description": "Someone vouching for a skill, credential or badge. Counted only when approved and consented.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
+      "type": "object",
+      "required": [
+        "author",
+        "target",
+        "date"
+      ],
+      "unevaluatedProperties": false,
+      "properties": {
+        "author": {
+          "$ref": "#/$defs/id"
+        },
+        "target": {
+          "$ref": "#/$defs/id",
+          "description": "A skills, credentials or badges id."
+        },
+        "date": {
+          "$ref": "#/$defs/dateOrDateTime"
+        },
+        "text": {
+          "$ref": "#/$defs/text"
+        },
+        "relationship": {
+          "$ref": "#/$defs/relationshipTo"
+        },
+        "consent": {
+          "$ref": "#/$defs/authorConsent"
+        },
+        "credential": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "url"
+          ],
+          "description": "An Open Badges 3.0 EndorsementCredential for this endorsement.",
+          "properties": {
+            "url": {
+              "type": "string",
+              "pattern": "^https?://[^\\s]+$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         }
       }
     }
