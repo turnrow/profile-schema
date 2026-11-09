@@ -104,3 +104,133 @@ test("an endorsement can target a badge", () => {
   p.endorsements = [{ id: "e1", author: "m", target: "k8s-badge", date: "2024-05-01", visibility: "private" }];
   assert.equal(validateProfile(p).valid, true, validateProfile(p).errors.join("\n"));
 });
+
+// ---------- import ----------
+
+import { deflateSync, crc32 } from "node:zlib";
+import { parseBadge, verifyBadge } from "../lib/badges.mjs";
+
+const u32 = (n) => { const b = Buffer.alloc(4); b.writeUInt32BE(n); return b; };
+const chunk = (type, data) => Buffer.concat([u32(data.length), Buffer.from(type, "latin1"), data, u32(crc32(Buffer.concat([Buffer.from(type, "latin1"), data])))]);
+const bakedPng = (keyword, text) => Buffer.concat([
+  Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+  chunk("IHDR", Buffer.concat([u32(1), u32(1), Buffer.from([8, 2, 0, 0, 0])])),
+  chunk("iTXt", Buffer.concat([Buffer.from(`${keyword}\0\0\0\0\0`, "latin1"), Buffer.from(text, "utf8")])),
+  chunk("IDAT", deflateSync(Buffer.from([0, 255, 0, 0]))), chunk("IEND", Buffer.alloc(0))]);
+const b64u = (o) => Buffer.from(JSON.stringify(o)).toString("base64url");
+const OB2 = {
+  "@context": "https://w3id.org/openbadges/v2", type: "Assertion", id: "https://badges.example/assertions/7",
+  recipient: { type: "email", hashed: true, identity: "sha256$abc" }, issuedOn: "2021-06-01T00:00:00Z", expires: "2031-06-01T00:00:00Z",
+  verification: { type: "hosted" },
+  badge: { type: "BadgeClass", id: "https://badges.example/badges/safety", name: "Site Safety Lead", description: "Leads site safety.", criteria: { narrative: "Completed 40 hours." },
+    image: "https://badges.example/badges/safety.png", tags: ["safety"], issuer: { type: "Issuer", id: "https://badges.example/issuer", name: "Builders Guild" },
+    alignment: [{ targetName: "Construction Managers", targetUrl: "https://www.onetonline.org/link/summary/11-9021.00", targetFramework: "O*NET", targetCode: "11-9021.00" }] },
+};
+
+test("import: Open Badges 3.0 JSON-LD", () => {
+  const bytes = Buffer.from(JSON.stringify(OB3, null, 2));
+  const { entry, original, ext } = parseBadge(bytes);
+  assert.equal(entry.credential.format, "ob3-jsonld");
+  assert.equal(entry.credential.url, "https://badges.example/credentials/42");
+  assert.equal(entry.achievement.achievementType, "Badge");
+  assert.equal(entry.achievement.alignment[0].targetCode, "15-1244.00");
+  assert.equal(entry.issuerId, "https://badges.example/issuers/acme");
+  assert.deepEqual(entry.issuer, { name: "Acme Academy" });
+  assert.equal(entry.validFrom, "2024-03-01T00:00:00Z");
+  assert.equal(entry.status, "draft");
+  assert.deepEqual(entry.verification, { status: "unverified" });
+  assert.ok(original.equals(bytes));
+  assert.equal(ext, ".json");
+});
+
+test("import: VC-JWT and an Open Badges 2.0 signed assertion", () => {
+  const vcJwt = `${b64u({ alg: "EdDSA" })}.${b64u({ iss: "did:web:badges.example", vc: OB3 })}.c2ln`;
+  const a = parseBadge(Buffer.from(vcJwt));
+  assert.equal(a.entry.credential.format, "ob3-jwt");
+  assert.equal(a.entry.achievement.name, "Kubernetes Platform Practitioner");
+  assert.equal(a.ext, ".jwt");
+  const jws = `${b64u({ alg: "RS256" })}.${b64u({ ...OB2, verification: { type: "signed", creator: "https://badges.example/key" } })}.c2ln`;
+  const b = parseBadge(Buffer.from(jws));
+  assert.equal(b.entry.credential.format, "ob2-signed");
+  assert.equal(b.entry.achievement.name, "Site Safety Lead");
+});
+
+test("import: Open Badges 2.0 hosted assertion, with its BadgeClass and issuer", () => {
+  const { entry } = parseBadge(Buffer.from(JSON.stringify(OB2)));
+  assert.equal(entry.credential.format, "ob2-hosted");
+  assert.equal(entry.credential.url, "https://badges.example/assertions/7");
+  assert.equal(entry.achievement.id, "https://badges.example/badges/safety");
+  assert.equal(entry.achievement.criteria.narrative, "Completed 40 hours.");
+  assert.deepEqual(entry.achievement.tag, ["safety"]);
+  assert.equal(entry.achievement.image.url, "https://badges.example/badges/safety.png");
+  assert.equal(entry.validFrom, "2021-06-01T00:00:00Z");
+  assert.equal(entry.validUntil, "2031-06-01T00:00:00Z");
+  assert.deepEqual(entry.issuer, { name: "Builders Guild" });
+});
+
+test("import: baked PNG (2.0 JSON and 3.0) and baked SVG", () => {
+  const png2 = bakedPng("openbadges", JSON.stringify(OB2));
+  const a = parseBadge(png2);
+  assert.equal(a.entry.credential.format, "ob2-baked");
+  assert.equal(a.ext, ".png");
+  assert.ok(a.original.equals(png2), "the image is kept byte for byte");
+  const png3 = bakedPng("openbadgecredential", JSON.stringify(OB3));
+  assert.equal(parseBadge(png3).entry.credential.format, "ob3-jsonld");
+  const svg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:openbadges="https://openbadges.org" width="10" height="10"><openbadges:assertion verify="https://badges.example/assertions/7"><![CDATA[${JSON.stringify(OB2)}]]></openbadges:assertion></svg>`);
+  const c = parseBadge(svg);
+  assert.equal(c.entry.credential.format, "ob2-baked");
+  assert.equal(c.entry.achievement.name, "Site Safety Lead");
+  assert.equal(c.ext, ".svg");
+});
+
+test("a baked PNG holding only a URL becomes ob2-hosted with the PNG as its file, without fetching", () => {
+  const png = bakedPng("openbadges", "https://badges.example/assertions/7");
+  const { entry, original } = parseBadge(png, { name: "Site Safety Lead" });
+  assert.equal(entry.credential.format, "ob2-hosted");
+  assert.equal(entry.credential.url, "https://badges.example/assertions/7");
+  assert.equal(entry.achievement.name, "Site Safety Lead");
+  assert.ok(original.equals(png));
+});
+
+test("anything else is refused with a plain message", () => {
+  assert.throws(() => parseBadge(Buffer.from("hello")), /not an Open Badge/);
+});
+
+test("verifyBadge never fetches unless a fetcher is passed; hosted assertions are re-fetched and compared", async () => {
+  const { entry, original } = parseBadge(Buffer.from(JSON.stringify(OB2)));
+  assert.deepEqual(await verifyBadge(entry, original), { status: "unverified", method: "not checked: no fetcher" });
+  const calls = [];
+  const fetch = async (url) => { calls.push(url); return { ok: true, json: async () => OB2 }; };
+  const ok = await verifyBadge(entry, original, { fetch, now: "2026-11-09T10:00:00Z" });
+  assert.deepEqual(ok, { status: "verified", method: "ob2-hosted: re-fetched and matched", checkedAt: "2026-11-09T10:00:00Z" });
+  assert.deepEqual(calls, ["https://badges.example/assertions/7"]);
+  const revoked = await verifyBadge(entry, original, { fetch: async () => ({ ok: true, json: async () => ({ ...OB2, revoked: true }) }), now: "2026-11-09T10:00:00Z" });
+  assert.equal(revoked.status, "revoked");
+  const jsonld = parseBadge(Buffer.from(JSON.stringify(OB3)));
+  assert.deepEqual(await verifyBadge(jsonld.entry, jsonld.original, { fetch }), { status: "unverified", method: "not implemented for ob3-jsonld" });
+});
+
+import { spawnSync } from "node:child_process";
+const CLI = new URL("../bin/profile.mjs", import.meta.url).pathname;
+const cli = (...args) => spawnSync(process.execPath, [CLI, ...args], { encoding: "utf8" });
+
+test("badges import writes the original into the bundle and a draft entry that validates", () => {
+  const dir = mkdtempSync(join(tmpdir(), "tp-bimp-"));
+  const p = read("../examples/employee.profile.json");
+  p.schemaVersion = "2.6.0";
+  writeFileSync(join(dir, "profile.json"), JSON.stringify(p));
+  const src = join(dir, "..", `k8s-${Date.now()}.json`);
+  const bytes = Buffer.from(JSON.stringify(OB3));
+  writeFileSync(src, bytes);
+  const r = cli("badges", "import", dir, src, "--id", "k8s");
+  assert.equal(r.status, 0, r.stderr);
+  const after = JSON.parse(readFileSync(join(dir, "profile.json"), "utf8"));
+  const b = after.badges.find((x) => x.id === "k8s");
+  assert.equal(b.credential.file, "bundle:badges/k8s.json");
+  assert.equal(b.credential.sha256, sha256(bytes));
+  assert.ok(readFileSync(join(dir, "badges", "k8s.json")).equals(bytes));
+  assert.equal(validateProfile(after, { bundleDir: dir }).valid, true);
+  const url = cli("badges", "import", dir, "https://badges.example/credentials/42", "--id", "k8s2");
+  assert.equal(url.status, 2);
+  assert.match(url.stderr, /a URL needs --fetch/);
+});
