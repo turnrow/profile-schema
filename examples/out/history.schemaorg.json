@@ -17,6 +17,287 @@
         "addressRegion": "TX",
         "addressCountry": "US"
       }
-    }
+    },
+    "hasOccupation": [
+      {
+        "@type": "Occupation",
+        "name": "Solutions Architect",
+        "description": "HP Enterprise Services, Feb 2010 – Mar 2011",
+        "occupationalCategory": [
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1244",
+            "name": "Network and Computer Systems Administrators",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1211",
+            "name": "Computer Systems Analysts",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1299",
+            "name": "Computer Occupations, All Other",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1299.08",
+            "name": "Computer Systems Engineers/Architects",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "O*NET-SOC 2019",
+              "url": "https://www.onetcenter.org/taxonomy.html"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "25-3021",
+            "name": "Self-Enrichment Teachers",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Occupation",
+        "name": "Technology Consultant III",
+        "description": "EDS, an HP Company, Jan 2009 – Jan 2010",
+        "occupationalCategory": [
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1244",
+            "name": "Network and Computer Systems Administrators",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1211",
+            "name": "Computer Systems Analysts",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1299",
+            "name": "Computer Occupations, All Other",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1299.08",
+            "name": "Computer Systems Engineers/Architects",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "O*NET-SOC 2019",
+              "url": "https://www.onetcenter.org/taxonomy.html"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "25-3021",
+            "name": "Self-Enrichment Teachers",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Occupation",
+        "name": "Senior Systems Engineer",
+        "description": "EDS, Apr 2007 – Dec 2008",
+        "occupationalCategory": [
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1244",
+            "name": "Network and Computer Systems Administrators",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1211",
+            "name": "Computer Systems Analysts",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1299",
+            "name": "Computer Occupations, All Other",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1299.08",
+            "name": "Computer Systems Engineers/Architects",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "O*NET-SOC 2019",
+              "url": "https://www.onetcenter.org/taxonomy.html"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "25-3021",
+            "name": "Self-Enrichment Teachers",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Occupation",
+        "name": "Systems Engineer",
+        "description": "EDS, Jun 2005 – Mar 2007",
+        "occupationalCategory": [
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1244",
+            "name": "Network and Computer Systems Administrators",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1211",
+            "name": "Computer Systems Analysts",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1299",
+            "name": "Computer Occupations, All Other",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1299.08",
+            "name": "Computer Systems Engineers/Architects",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "O*NET-SOC 2019",
+              "url": "https://www.onetcenter.org/taxonomy.html"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "25-3021",
+            "name": "Self-Enrichment Teachers",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Occupation",
+        "name": "Network Engineer",
+        "description": "Buchanan Associates, Jul 1999 – May 2005",
+        "occupationalCategory": [
+          {
+            "@type": "CategoryCode",
+            "codeValue": "15-1244",
+            "name": "Network and Computer Systems Administrators",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Occupation",
+        "name": "Senior Associate",
+        "description": "PricewaterhouseCoopers, Jul 1998 – Jun 1999",
+        "occupationalCategory": [
+          {
+            "@type": "CategoryCode",
+            "codeValue": "13-2011",
+            "name": "Accountants and Auditors",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Occupation",
+        "name": "Associate",
+        "description": "Coopers \u0026 Lybrand, Mar 1996 – Jun 1998",
+        "occupationalCategory": [
+          {
+            "@type": "CategoryCode",
+            "codeValue": "13-2011",
+            "name": "Accountants and Auditors",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          }
+        ]
+      }
+    ]
   }
 }

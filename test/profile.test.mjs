@@ -179,7 +179,8 @@ test("qualified dates are not presented as exact in JSON Resume but read natural
   assert.equal(lab.startDate, undefined);
   const li = convert(p, loadMapping("linkedin")).text;
   assert.match(li, /c\. 1996 – May 2009/);
-  assert.match(li, /1990\/91 – 1995/);
+  // "between 1990 and 1991", not 1990/91: a slash reads as a typo and a dash as a span.
+  assert.match(li, /between 1990 and 1991 – 1995/);
 });
 
 test("locale switches translated text and falls back to the default", () => {

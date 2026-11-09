@@ -1,10 +1,9 @@
 {
   "target": "jsonresume",
-  "description": "JSON Resume (schema 1.7.x, jsonresume.org). Approved entries visible to the public or a network, with high or medium confidence. Qualified dates (about, before, between) are left out because JSON Resume can only state exact dates. Jobs with several positions become one work item per position (JSON Resume has no nested positions); employers are named as they were then, with today's name added when it changed.",
+  "description": "JSON Resume (schema 1.7.x, jsonresume.org). Approved entries visible to the public or a network, with high or medium confidence. Qualified dates (about, before, between) are left out because JSON Resume can only state exact dates. Jobs with several positions become one work item per position (JSON Resume has no nested positions); employers are named as they were then, with today's name added when it changed. Public entries only since 2.5; pass --visibility public,network for a version that also carries network-level entries.",
   "include": {
     "visibility": [
-      "public",
-      "network"
+      "public"
     ],
     "status": [
       "approved"

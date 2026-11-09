@@ -37,10 +37,7 @@
       {
         "@type": "Organization",
         "name": "Tidewater Trails",
-        "url": "https://example.com",
-        "alternateName": [
-          "Tidewater Trails"
-        ]
+        "url": "https://example.com"
       }
     ],
     "hasOccupation": [
@@ -53,6 +50,11 @@
         "@type": "Occupation",
         "name": "Director of Development",
         "description": "Harborline Resorts, Jun 2009 – Dec 2023"
+      },
+      {
+        "@type": "Occupation",
+        "name": "Research Biologist",
+        "description": "Coastal Ecology Lab, c. 1996 – May 2009"
       }
     ],
     "alumniOf": [
@@ -72,6 +74,15 @@
         },
         "dateCreated": "2005-04",
         "expires": "2030-04"
+      },
+      {
+        "@type": "EducationalOccupationalCredential",
+        "name": "Divemaster",
+        "credentialCategory": "certification",
+        "recognizedBy": {
+          "@type": "Organization",
+          "name": "Example Diving Association"
+        }
       }
     ],
     "award": [
@@ -85,7 +96,8 @@
     ],
     "knowsLanguage": [
       "en",
-      "es"
+      "es",
+      "pt"
     ],
     "subjectOf": [
       {

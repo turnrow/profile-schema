@@ -20,9 +20,10 @@
         "2.1.0",
         "2.2.0",
         "2.3.0",
-        "2.4.0"
+        "2.4.0",
+        "2.5.0"
       ],
-      "description": "2.4.0 hardens links and privacy, adds person field visibility, dated names, career breaks and more; earlier files remain valid."
+      "description": "2.5.0 adds occupation (SOC, O*NET-SOC, ISCO, ESCO), industry and skill codes, internal notes, open-recipient audiences and a media base URL; earlier files remain valid."
     },
     "meta": {
       "$ref": "#/$defs/meta"
@@ -475,6 +476,10 @@
           },
           "uniqueItems": true,
           "description": "Named audiences that may receive this entry even if its visibility would otherwise exclude it (ids from the top-level audiences map)."
+        },
+        "note": {
+          "$ref": "#/$defs/text",
+          "description": "Internal note: a ruling, a caveat, where a figure came from. Never rendered in any output or release."
         }
       }
     },
@@ -659,6 +664,10 @@
         "to": {
           "$ref": "#/$defs/partialDate",
           "description": "When it stopped applying."
+        },
+        "note": {
+          "$ref": "#/$defs/text",
+          "description": "Internal note: a ruling, a caveat, where a figure came from. Never rendered in any output or release."
         }
       }
     },
@@ -775,6 +784,12 @@
         },
         "notes": {
           "type": "string"
+        },
+        "mediaBaseUrl": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://[^\\s]+/$",
+          "description": "Where the bundle's files are published, ending in /. bundle:media/x.jpg is rendered as <mediaBaseUrl>media/x.jpg; without it, bundle: links are left out of outputs."
         }
       }
     },
@@ -1228,6 +1243,10 @@
               }
             }
           }
+        },
+        "note": {
+          "$ref": "#/$defs/text",
+          "description": "Internal note: a ruling, a caveat, where a figure came from. Never rendered in any output or release."
         }
       }
     },
@@ -1333,6 +1352,13 @@
         "employerOfRecord": {
           "$ref": "#/$defs/orgRef",
           "description": "Who legally employed and paid you, when different from where you worked (a staffing agency, a PEO, a parent company). Background checks verify against this."
+        },
+        "occupations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/occupationCode"
+          },
+          "description": "Occupation codes for this work. A responsibility or position may carry its own when it differs from the job's."
         }
       }
     },
@@ -1395,6 +1421,13 @@
           "items": {
             "$ref": "#/$defs/metric"
           }
+        },
+        "occupations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/occupationCode"
+          },
+          "description": "Occupation codes for this work. A responsibility or position may carry its own when it differs from the job's."
         }
       }
     },
@@ -1890,8 +1923,15 @@
         "escoUri": {
           "type": "string",
           "format": "uri",
-          "description": "ESCO skill URI, for Europass and EU job boards.",
+          "description": "ESCO skill URI, for Europass and EU job boards. Prefer codes with system esco; kept for files written before 2.5.",
           "pattern": "^https?://[^\\s]+$"
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/skillCode"
+          },
+          "description": "Skill, knowledge or software codes (O*NET, ESCO, Lightcast)."
         }
       }
     },
@@ -2200,9 +2240,10 @@
         "dnsTxt",
         "wellKnown",
         "signedRequest",
-        "emailDomain"
+        "emailDomain",
+        "invitation"
       ],
-      "description": "How a requester proves it acts for an organization. oidc/saml: a token from the organization's identity provider. dnsTxt/wellKnown: the organization's domain names the application. signedRequest: signed with a key published at the domain. emailDomain: an address at the domain (weakest; never enough for write-back)."
+      "description": "How a requester proves it acts for an organization. oidc/saml: a token from the organization's identity provider. dnsTxt/wellKnown: the organization's domain names the application. signedRequest: signed with a key published at the domain. emailDomain: an address at the domain (weakest; never enough for write-back). invitation: the requester holds a single-use invitation the subject issued."
     },
     "personGrant": {
       "enum": [
@@ -2380,6 +2421,23 @@
               }
             }
           }
+        },
+        "organizations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/orgRef"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Several fixed organizations (a list of funds, say). Any one of them qualifies."
+        },
+        "recipients": {
+          "enum": [
+            "listed",
+            "anyVerified"
+          ],
+          "default": "listed",
+          "description": "listed: only the organizations named or resolved for this audience. anyVerified: anyone who passes one of the audience's verification methods (a data room with signed invitations, say). anyVerified needs explicit methods and never accepts emailDomain alone."
         }
       },
       "allOf": [
@@ -2415,6 +2473,30 @@
                 ]
               }
             ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "recipients": {
+                "const": "anyVerified"
+              }
+            },
+            "required": [
+              "recipients"
+            ]
+          },
+          "then": {
+            "required": [
+              "verification"
+            ],
+            "properties": {
+              "verification": {
+                "required": [
+                  "methods"
+                ]
+              }
+            }
           }
         }
       ]
@@ -2453,6 +2535,10 @@
             },
             "verifiedBy": {
               "$ref": "#/$defs/verificationMethod"
+            },
+            "name": {
+              "type": "string",
+              "description": "Who received it, for anyVerified audiences."
             }
           }
         },
@@ -2649,6 +2735,17 @@
         },
         "openQuestion": {
           "type": "string"
+        },
+        "occupations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/occupationCode"
+          },
+          "description": "Occupation codes for this work. A responsibility or position may carry its own when it differs from the job's."
+        },
+        "note": {
+          "$ref": "#/$defs/text",
+          "description": "Internal note: a ruling, a caveat, where a figure came from. Never rendered in any output or release."
         }
       }
     },
@@ -2749,6 +2846,17 @@
         },
         "openQuestion": {
           "type": "string"
+        },
+        "occupations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/occupationCode"
+          },
+          "description": "Occupation codes for this work. A responsibility or position may carry its own when it differs from the job's."
+        },
+        "note": {
+          "$ref": "#/$defs/text",
+          "description": "Internal note: a ruling, a caveat, where a figure came from. Never rendered in any output or release."
         }
       }
     },
@@ -3243,6 +3351,201 @@
             "required": [
               "jurisdiction"
             ]
+          }
+        }
+      ]
+    },
+    "occupationCode": {
+      "type": "object",
+      "required": [
+        "system",
+        "code"
+      ],
+      "additionalProperties": false,
+      "description": "An occupation code. soc: the U.S. Standard Occupational Classification kept by the Bureau of Labor Statistics (2018 edition, codes like 11-9021). onetSoc: the O*NET-SOC taxonomy built on it (11-9021.00). isco: ILO ISCO-08 unit groups (1323). esco: an ESCO occupation URI. The validator checks soc, onetSoc and their titles against the bundled code lists.",
+      "properties": {
+        "system": {
+          "enum": [
+            "soc",
+            "onetSoc",
+            "isco",
+            "esco",
+            "noc",
+            "anzsco"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "version": {
+          "type": "string",
+          "description": "Edition: 2018 for SOC, 2019 for the O*NET-SOC taxonomy, 08 for ISCO, 2021 for NOC."
+        },
+        "label": {
+          "$ref": "#/$defs/text",
+          "description": "The official title. Filled from the code list when left out."
+        },
+        "match": {
+          "enum": [
+            "primary",
+            "secondary",
+            "related"
+          ],
+          "default": "primary",
+          "description": "primary: the code that best describes the work. secondary: a real part of it (a construction manager who also estimates). related: the nearest code when none fits exactly."
+        },
+        "rationale": {
+          "$ref": "#/$defs/text",
+          "description": "Why this code, when it isn't obvious. Internal; never rendered."
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "system": {
+                "const": "soc"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "code": {
+                "pattern": "^[1-5][0-9]-[0-9]{4}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "system": {
+                "const": "onetSoc"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "code": {
+                "pattern": "^[1-5][0-9]-[0-9]{4}\\.[0-9]{2}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "system": {
+                "const": "isco"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "code": {
+                "pattern": "^[0-9]{1,4}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "system": {
+                "const": "esco"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "code": {
+                "pattern": "^https?://[^\\s]+$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "skillCode": {
+      "type": "object",
+      "required": [
+        "system",
+        "code"
+      ],
+      "additionalProperties": false,
+      "description": "A skill, knowledge or software code. onet: an O*NET content-model element (2.B.5.b Management of Financial Resources, 2.C.3.d Building and Construction, 2.E.1.e Project management software). esco: an ESCO skill URI. lightcast: a Lightcast Open Skills id. The validator checks onet element ids against the bundled list.",
+      "properties": {
+        "system": {
+          "enum": [
+            "onet",
+            "esco",
+            "lightcast"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "version": {
+          "type": "string",
+          "description": "O*NET database release, e.g. 30.3."
+        },
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "match": {
+          "enum": [
+            "primary",
+            "secondary",
+            "related"
+          ],
+          "default": "primary",
+          "description": "primary: the code that best describes the work. secondary: a real part of it (a construction manager who also estimates). related: the nearest code when none fits exactly."
+        },
+        "rationale": {
+          "$ref": "#/$defs/text"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "system": {
+                "const": "onet"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "code": {
+                "pattern": "^[1-6]\\.[A-Z](\\.[0-9]+)?(\\.[a-z])?(\\.[0-9]+)?(\\.[a-z])?$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "system": {
+                "const": "esco"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "code": {
+                "pattern": "^https?://[^\\s]+$"
+              }
+            }
           }
         }
       ]

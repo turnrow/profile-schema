@@ -25,7 +25,7 @@ It starts from [JSON Resume](https://jsonresume.org) and adds an evidence model 
 - **where it stands in review** (status: draft, pending, approved, disputed or retired),
 - **who may see it** (visibility: public, network or private).
 
-Outputs choose what they accept. The public JSON-LD takes only approved, high-confidence, public facts, so an unconfirmed number or a private phone number never reaches the open web by accident.
+Outputs choose what they accept. The public JSON-LD takes only approved, public facts at high or medium confidence, so an unconfirmed number or a private phone number never reaches the open web by accident. Confidence is honest: from 2.5, something resting only on your own word (a CV, your own account) can be medium at most; high needs a document, a publication or another person.
 
 ```sh
 npm install
@@ -33,6 +33,8 @@ node bin/profile.mjs validate examples/sample.profile.json
 node bin/profile.mjs open     examples/sample.profile.json          # what still needs confirming
 node bin/profile.mjs convert  examples/sample.profile.json schemaorg  # or jsonresume, linkedin, brief, timeline
 node bin/profile.mjs convert  examples/sample.profile.json brief --locale es
+node bin/profile.mjs convert  examples/sample.profile.json jsonresume --visibility public,network  # override which entries go in
+node bin/profile.mjs convert  my-bundle/ schemaorg --media-base https://example.com/me/   # publish bundle: images
 node bin/profile.mjs import   my-resume.json --out my.profile.json   # start from an existing JSON Resume
 ```
 
@@ -146,6 +148,34 @@ A job is one relationship with an employer. **Positions** are the titles held wi
 
 JSON Resume and schema.org have no nested positions, so they get one entry per position. The LinkedIn sheet groups positions under the company, the way LinkedIn shows them. A job without positions behaves as a single position. For staffing agencies, PEOs and parent companies, `employerOfRecord` records who legally employed you.
 
+## Occupation, industry and skill codes
+
+Jobs, positions and responsibilities can carry **occupation codes**; organizations carry **industry codes**; skills carry **skill codes**. They let a profile line up with labour-market data, job boards and background-check forms without retyping anything.
+
+| Where | Field | Systems | Checked against |
+|---|---|---|---|
+| Work, service, a position, a responsibility | `occupations` | `soc` (U.S. SOC, kept by the Bureau of Labor Statistics), `onetSoc` (O*NET-SOC), `isco`, `esco`, `noc`, `anzsco` | SOC 2018 (all 1,447 codes) and the O*NET-SOC 2019 taxonomy (1,016 codes) |
+| Organizations | `classifications` | `naics`, `sic`, `nace`, `isic`, `anzsic` | NAICS 2022 (2,125 codes) |
+| Skills | `codes` | `onet` (O*NET content-model elements: skills 2.A/2.B, knowledge 2.C, software 2.E), `esco`, `lightcast` | O*NET 30.3 elements |
+
+```json
+{
+  "id": "acme-platform", "organization": "acme", "title": "Platform Engineering Lead",
+  "occupations": [
+    { "system": "soc", "code": "11-3021" },
+    { "system": "onetSoc", "code": "11-3021.00" },
+    { "system": "soc", "code": "15-1252", "match": "secondary" }
+  ]
+}
+```
+
+- **`match`** says how well a code fits: `primary` (the default), `secondary` (a real part of the work, like estimating for a construction manager), or `related` (the nearest code when none fits).
+- **Codes can sit at any level.** A responsibility that differs from its job (installing a company's server system during a project-management job) gets its own code; a position can differ from the rest of the job (systems engineer years, then architect years). Outputs gather a job's codes from all three.
+- **Validation:** unknown codes are errors. Warnings cover a SOC group used where a detailed occupation exists, a `label` that differs from the official title, two primary codes in one system, and an O*NET-SOC code that isn't under the primary SOC code. Codes from an edition the package doesn't bundle (SOC 2028 when it arrives, say) are accepted unchecked. `label` can be left out: outputs fill in the official title.
+- **Outputs:** schema.org gets `occupationalCategory` (a `CategoryCode` with its code set) on each occupation and `DefinedTerm`s for coded skills; the `verification` mapping lists each job's SOC codes; the LinkedIn sheet and JSON Resume have no place for them.
+
+The lists are in [`data/`](data/), with their sources and licences in [`data/README.md`](data/README.md). O*NET data is © the O*NET Resource Center, used under CC BY 4.0.
+
 ## Audiences: share different things with different recipients
 
 Public, network and private cover the open web, signed-in views and nothing. Real recipients are narrower: your employer's directory, a recruiter, a client, a past employer verifying dates. **Audiences** name them and grant each one exactly what it should see.
@@ -167,6 +197,7 @@ Public, network and private cover the open web, signed-in views and nothing. Rea
 ```
 
 - **Qualification by relationship:** "current employer" resolves to whichever job is current, so it follows you to each new job, and access ends when the job does (`expires: "onSeparation"`). `former` covers past employers; `organization` or `workRef` names one directly.
+- **Several recipients, or anyone you invite:** `organizations` lists several (a short list of funds, any one of which qualifies). `recipients: "anyVerified"` admits whoever passes one of the audience's verification methods, such as a single-use `invitation` you issued for a data room. The release names the recipient (`--recipient "Example Ventures"`), and an email address alone never qualifies.
 - **Recognising the recipient:** organizations list their `domains`. The application verifies the requester (OIDC or SAML token from the employer's identity provider, a DNS TXT record or `.well-known` file, or a signed request), and `checkRequester` decides whether that method and domain qualify. A matching email address alone is the weakest proof and can never authorize write-back.
 - **Grants:** an audience receives only the person-level fields and sections it lists. Entries are included when their visibility is in `baseVisibility`, and an entry can name an audience to share something otherwise private with that recipient only (a first-aid certificate for the employer's safety roster, say).
 - **The employer's own record:** `work[].employerRecord` holds the official title, department, manager and internal ids as the employer records them. It goes only to an audience bound to that job, never to anyone else. Your own wording (`title`) stays alongside it.
@@ -179,7 +210,7 @@ node bin/profile.mjs release examples/employee.profile.json current-employer \
   --out directory.json --receipt receipt.json --record
 ```
 
-A release is the scoped payload plus a **consent receipt**: recipient, purpose, what was shared, expiry and the SHA-256 of the payload. `--record` appends it to the profile's `releases` log. Stopping a release stops future updates; copies already delivered stay with the recipient, and the receipt says so. The `scim` mapping produces a SCIM 2.0 User with the Enterprise User extension (employee number, department, division, cost centre, manager), the format directories and identity providers already accept.
+A release is refused unless `meta.subjectConsent.given` is true. It is the scoped payload plus a **consent receipt**: recipient, purpose, what was shared, expiry and the SHA-256 of the payload. `--record` appends it to the profile's `releases` log. Stopping a release stops future updates; copies already delivered stay with the recipient, and the receipt says so. The `scim` mapping produces a SCIM 2.0 User with the Enterprise User extension (employee number, department, division, cost centre, manager), the format directories and identity providers already accept.
 
 ### Write-back: corrections from the employer
 
@@ -211,6 +242,8 @@ An audience's `writeBack.authority` can change these defaults field by field. Wr
 | [`lib/i18n.mjs`](lib/i18n.mjs) | Translations of the fixed words in outputs, and locale-aware dates and numbers. |
 | [`lib/identifiers.mjs`](lib/identifiers.mjs) | Identifier privacy defaults, LEI check digits, normalization. |
 | [`lib/history.mjs`](lib/history.mjs) | Organization names and domains on a date, parents, successors, and how a job's positions and responsibilities line up. |
+| [`lib/codes.mjs`](lib/codes.mjs) | Looks up and checks occupation, industry and skill codes against the bundled lists. |
+| [`data/`](data/) | SOC 2018, O*NET-SOC and O*NET content-model elements (30.3), NAICS 2022. |
 | [`lib/audience.mjs`](lib/audience.mjs) | Resolves audiences on a date, checks requesters against policy and looks up field authority. |
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
@@ -309,13 +342,15 @@ Some things don't belong in a file meant for sharing, so the schema has no place
 
 ## Privacy and consent
 
-The schema makes privacy enforceable, but it doesn't decide what is appropriate. Before publishing anything public about a real person, record their consent in `meta.subjectConsent` (the validator warns until you do). Keep real people's profiles out of public repositories unless they have agreed.
+The schema makes privacy enforceable, but it doesn't decide what is appropriate. Before publishing anything public about a real person, record their consent in `meta.subjectConsent`. The validator warns until you do, and `release` refuses to hand anything to anyone without it.
+
+Rulings, caveats and where a figure came from go in `note` fields (on entries, positions, responsibilities, metrics and organizations) and a code's `rationale`. They are internal: no output or release ever includes them. Keep real people's profiles out of public repositories unless they have agreed.
 
 Individual person fields (location, pronouns, photo and others) can be hidden from public outputs with `person.visibility`. Security notes, including the HTML-safe JSON-LD and the link rules, are in [SECURITY.md](SECURITY.md).
 
 ## Versioning
 
-`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 added organization history, positions and responsibilities; 2.3.0 added registry and tax identifiers; 2.4.0 hardens security and privacy, localizes outputs and fills model gaps. Earlier files remain valid. Each version is tagged and has a GitHub release.
+`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 added organization history, positions and responsibilities; 2.3.0 added registry and tax identifiers; 2.4.0 hardens security and privacy, localizes outputs and fills model gaps; 2.5.0 adds occupation, industry and skill codes, internal notes and open-recipient audiences, and refuses releases without consent. Earlier files remain valid; a 2.5.0 file is held to two stricter checks (see the changelog). Git tags and GitHub releases for each version are still to be created.
 
 ## Brand and design system
 

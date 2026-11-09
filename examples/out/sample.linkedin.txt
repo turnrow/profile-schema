@@ -38,16 +38,18 @@ Experience:
         Title: Research Biologist
         Dates: c. 1996 – May 2009
         Description: Field research on reef recovery; led survey dives and small-boat operations.
-Volunteering / service:
+Experience: military service (add each as an Experience entry):
+  - (1)
+    Title: Boat crew member
+    Company (search LinkedIn for): Coast Guard Auxiliary (fictional unit)
+    Employment type: Full-time
+    Dates: between 1990 and 1991 – 1995
+    Description: Search-and-rescue boat crew on weekends.
+Volunteering:
   - (1)
     Role: Board member
     Organization: Open Trails Foundation
     Dates: 2020 – Present
-  - (2)
-    Role: Boat crew member
-    Organization: Coast Guard Auxiliary (fictional unit)
-    Dates: 1990/91 – 1995
-    Description: Search-and-rescue boat crew on weekends.
 Education:
   - (1)
     School: State University (fictional)
@@ -67,11 +69,27 @@ Licenses & certifications:
     Name: Divemaster
     Issuing organization: Example Diving Association
     Issue date: before 1998
+Projects:
+  - (1)
+    Project name: Cartagena waterfront resort and marina
+    Dates: 2015 – 2019
+    Associated with: Harborline Resorts
+    Description: Development lead, $95M
 Honors & awards:
   - (1)
     Title: Waterfront Project of the Year
     Issuer: The Harbor Gazette
     Date: Oct 2019
+Languages:
+  - (1)
+    Language: English
+    Proficiency: Native or bilingual proficiency
+  - (2)
+    Language: Spanish
+    Proficiency: Native or bilingual proficiency
+  - (3)
+    Language: Portuguese
+    Proficiency: Professional working proficiency
 Skills (first 3 pinned):
   - Entrepreneurship
   - Travel & Tourism
@@ -84,3 +102,13 @@ Featured:
   - (2)
     Title: Harbor Gazette profile (PDF)
     Link or file: https://example.com/press/gazette-2019.pdf
+Featured: press about you (upload as a PDF or link):
+  - (1)
+    Title: The biologist who builds harbors
+    Publisher: The Harbor Gazette
+    Date: Oct 2019
+    Link or file: https://example.com/press/gazette-2019
+Before you paste:
+  - Experience "Research Biologist": the start date is uncertain (c. 1996); this target needs one exact date
+  - Experience (military) "Boat crew member": the start date is uncertain (between 1990 and 1991); this target needs one exact date
+  - Experience (military) "Boat crew member": the end date has a year but no month (1995); this target needs the month

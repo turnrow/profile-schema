@@ -1,6 +1,6 @@
 {
   "$schema": "../schema/profile.schema.json",
-  "schemaVersion": "2.4.0",
+  "schemaVersion": "2.5.0",
   "meta": {
     "defaultLocale": "en-US",
     "locales": [
@@ -267,6 +267,21 @@
           "source": "offer-letter",
           "quality": "primary"
         }
+      ],
+      "occupations": [
+        {
+          "system": "soc",
+          "code": "11-3021"
+        },
+        {
+          "system": "onetSoc",
+          "code": "11-3021.00"
+        },
+        {
+          "system": "soc",
+          "code": "15-1252",
+          "match": "secondary"
+        }
       ]
     },
     {
@@ -302,7 +317,17 @@
       "lock": {
         "by": "Sam Rivera",
         "on": "2026-10-31"
-      }
+      },
+      "occupations": [
+        {
+          "system": "soc",
+          "code": "15-1252"
+        },
+        {
+          "system": "onetSoc",
+          "code": "15-1252.00"
+        }
+      ]
     }
   ],
   "credentials": [
@@ -338,7 +363,14 @@
       "confidence": "high",
       "name": "Platform Engineering",
       "pinned": true,
-      "priority": 90
+      "priority": 90,
+      "codes": [
+        {
+          "system": "onet",
+          "code": "2.B.4.g",
+          "version": "30.3"
+        }
+      ]
     },
     {
       "id": "kubernetes",
@@ -346,14 +378,29 @@
       "confidence": "high",
       "name": "Kubernetes",
       "pinned": true,
-      "priority": 85
+      "priority": 85,
+      "codes": [
+        {
+          "system": "onet",
+          "code": "2.E.11.e",
+          "version": "30.3",
+          "match": "related"
+        }
+      ]
     },
     {
       "id": "mentoring",
       "status": "approved",
       "confidence": "high",
       "name": "Mentoring",
-      "priority": 60
+      "priority": 60,
+      "codes": [
+        {
+          "system": "onet",
+          "code": "2.B.1.e",
+          "version": "30.3"
+        }
+      ]
     },
     {
       "id": "side-project",
