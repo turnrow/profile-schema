@@ -196,6 +196,12 @@
       "items": {
         "$ref": "#/$defs/endorsement"
       }
+    },
+    "badges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/badge"
+      }
     }
   },
   "$defs": {
@@ -4177,6 +4183,238 @@
               "pattern": "^[a-f0-9]{64}$"
             }
           }
+        }
+      }
+    },
+    "badge": {
+      "description": "A badge or digital credential, described in Open Badges 3.0 terms. The issuer's original credential is kept unaltered in credential.file.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/entryBase"
+        }
+      ],
+      "type": "object",
+      "required": [
+        "achievement",
+        "credential"
+      ],
+      "unevaluatedProperties": false,
+      "properties": {
+        "achievement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:[^\\s]+$"
+            },
+            "achievementType": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "Achievement",
+                    "ApprenticeshipCertificate",
+                    "Assessment",
+                    "Assignment",
+                    "AssociateDegree",
+                    "Award",
+                    "Badge",
+                    "BachelorDegree",
+                    "Certificate",
+                    "CertificateOfCompletion",
+                    "Certification",
+                    "CommunityService",
+                    "Competency",
+                    "Course",
+                    "CoCurricular",
+                    "Degree",
+                    "Diploma",
+                    "DoctoralDegree",
+                    "Fieldwork",
+                    "GeneralEducationDevelopment",
+                    "JourneymanCertificate",
+                    "LearningProgram",
+                    "License",
+                    "Membership",
+                    "ProfessionalDoctorate",
+                    "QualityAssuranceCredential",
+                    "MasterCertificate",
+                    "MasterDegree",
+                    "MicroCredential",
+                    "ResearchDoctorate",
+                    "SecondarySchoolDiploma"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "pattern": "^ext:[A-Za-z0-9]+$"
+                }
+              ]
+            },
+            "name": {
+              "$ref": "#/$defs/text"
+            },
+            "description": {
+              "$ref": "#/$defs/text"
+            },
+            "criteria": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:[^\\s]+$"
+                },
+                "narrative": {
+                  "$ref": "#/$defs/text"
+                }
+              }
+            },
+            "image": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "media": {
+                  "$ref": "#/$defs/id"
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^(https?://|bundle:)[^\\s]+$"
+                },
+                "caption": {
+                  "$ref": "#/$defs/text"
+                }
+              }
+            },
+            "alignment": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "targetName",
+                  "targetUrl"
+                ],
+                "properties": {
+                  "targetName": {
+                    "type": "string"
+                  },
+                  "targetUrl": {
+                    "type": "string",
+                    "pattern": "^https?://[^\\s]+$"
+                  },
+                  "targetDescription": {
+                    "type": "string"
+                  },
+                  "targetFramework": {
+                    "type": "string",
+                    "description": "O*NET, SOC, ESCO, or another framework's name."
+                  },
+                  "targetCode": {
+                    "type": "string"
+                  },
+                  "targetType": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "tag": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "issuer": {
+          "$ref": "#/$defs/orgRef"
+        },
+        "issuerId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:[^\\s]+$",
+          "description": "The issuer profile's URI or DID, as in the credential."
+        },
+        "validFrom": {
+          "$ref": "#/$defs/dateOrDateTime"
+        },
+        "validUntil": {
+          "$ref": "#/$defs/dateOrDateTime"
+        },
+        "awardedFor": {
+          "$ref": "#/$defs/id",
+          "description": "The job, course or project it was earned in."
+        },
+        "credential": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "format"
+          ],
+          "properties": {
+            "format": {
+              "enum": [
+                "ob3-jsonld",
+                "ob3-jwt",
+                "ob2-hosted",
+                "ob2-signed",
+                "ob2-baked"
+              ]
+            },
+            "url": {
+              "type": "string",
+              "pattern": "^https?://[^\\s]+$"
+            },
+            "file": {
+              "type": "string",
+              "pattern": "^bundle:[^\\s]+$",
+              "description": "The original credential, byte for byte (JSON, JWT, or the baked image)."
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "platform": {
+              "enum": [
+                "credly",
+                "canvas-credentials",
+                "accredible",
+                "parchment",
+                "other"
+              ]
+            }
+          }
+        },
+        "verification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "verified",
+                "unverified",
+                "failed",
+                "revoked",
+                "expired"
+              ]
+            },
+            "method": {
+              "type": "string"
+            },
+            "checkedAt": {
+              "$ref": "#/$defs/dateOrDateTime"
+            }
+          }
+        },
+        "credentialRef": {
+          "$ref": "#/$defs/id",
+          "description": "The credentials entry this badge represents, so it is counted once."
         }
       }
     }
