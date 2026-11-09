@@ -2,7 +2,7 @@
 
 The validator checks occupation, industry and skill codes against these lists, and outputs fill in official titles from them. Each file names its source inside (`publisher`, `url`, `edition`).
 
-| File | What | Source | Licence |
+| File | What | Source | License |
 |---|---|---|---|
 | `soc-2018.json` | 2018 Standard Occupational Classification: 23 major groups, 98 minor groups, 459 broad occupations, 867 detailed occupations | U.S. Bureau of Labor Statistics, [bls.gov/soc/2018](https://www.bls.gov/soc/2018/) | U.S. government work, public domain |
 | `onet-soc.json` | O*NET-SOC 2019 taxonomy: 1,016 occupation codes and titles | O*NET 31.0 database (August 2026), [onetcenter.org](https://www.onetcenter.org/database.html) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |

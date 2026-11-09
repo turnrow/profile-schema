@@ -1,0 +1,37 @@
+Headline: Port operations planner | Berth and yard scheduling
+Location: Long Beach, California
+Experience:
+  - (1)
+    Company (search LinkedIn for): Port of Example
+    Company at the time: Port of Example
+    Employment type: Full-time
+    Positions:
+      - (1)
+        Title: Senior Operations Planner
+        Dates: Mar 2019 – Present
+        Description: Plans berth, crane and yard operations for the container terminal.
+Licenses & certifications:
+  - (1)
+    Name: Harbor Operations Planner
+    Issuing organization: Example Maritime Academy
+    Issue date: Mar 2024
+    Credential URL: https://badges.example/credentials/harbor-ops-118
+  - (2)
+    Name: Site Safety Lead
+    Issuing organization: Example Builders Guild
+    Issue date: Jun 2021
+    Expiration date: Jun 2031
+Skills (first 3 pinned):
+  - Berth planning
+  - Yard scheduling
+Recommendations (LinkedIn shows only those written on LinkedIn; request the others there):
+  - (1)
+    From: Sam Okafor, Shift Lead at Port of Example
+    Relationship: peer
+    Date: Feb 2024
+    Text: Every shift lead now plans with the tool she built
+  - (2)
+    From: Maria Chen, Director of Terminal Operations at Port of Example
+    Relationship: manager
+    Date: May 2023
+    Text: Ines rebuilt our harbor planning program from nothing. She is the most careful planner I know, and the crews trusted her completely.

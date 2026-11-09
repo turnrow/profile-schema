@@ -1,0 +1,371 @@
+{
+  "$schema": "../../schema/profile.schema.json",
+  "schemaVersion": "2.6.0",
+  "meta": {
+    "defaultLocale": "en-US",
+    "updated": "2026-11-07T00:00:00Z",
+    "owner": "Ines Ortega",
+    "canonicalUrl": "https://ines-ortega.example/",
+    "mediaBaseUrl": "https://ines-ortega.example/files/",
+    "subjectConsent": {
+      "given": true,
+      "on": "2026-11-02"
+    },
+    "notes": "FICTIONAL SAMPLE made by scripts/make-fixtures.mjs; do not edit by hand. Shows people, recommendations (full and highlights-only consent), an endorsement, two badges (Open Badges 3.0 JSON-LD and a baked Open Badges 2.0 PNG) and a bundled headshot."
+  },
+  "person": {
+    "name": "Ines Ortega",
+    "names": [
+      {
+        "type": "preferred",
+        "full": "Ines Ortega",
+        "given": "Ines",
+        "family": "Ortega"
+      }
+    ],
+    "pronouns": "she/her",
+    "headline": "Port operations planner | Berth and yard scheduling",
+    "jobTitle": "Senior Operations Planner",
+    "shortBio": "Plans the moves that keep a container terminal running: berths, cranes and yard space.",
+    "location": {
+      "label": "Long Beach, California",
+      "locality": "Long Beach",
+      "region": "CA",
+      "countryCode": "US"
+    },
+    "images": [
+      {
+        "media": "headshot",
+        "purpose": "primary",
+        "from": "2024-01"
+      }
+    ]
+  },
+  "organizations": {
+    "port-example": {
+      "name": "Port of Example",
+      "kind": "government",
+      "url": "https://port.example"
+    },
+    "harbor-logistics": {
+      "name": "Harbor Logistics Example",
+      "kind": "company",
+      "url": "https://harbor-logistics.example"
+    },
+    "maritime-academy": {
+      "name": "Example Maritime Academy",
+      "kind": "school",
+      "url": "https://badges.example/issuers/maritime-academy"
+    },
+    "builders-guild": {
+      "name": "Example Builders Guild",
+      "kind": "nonprofit"
+    }
+  },
+  "people": {
+    "maria-chen": {
+      "name": "Maria Chen",
+      "names": [
+        {
+          "full": "Maria Lopez",
+          "type": "birth",
+          "to": "2019-05"
+        },
+        {
+          "full": "Maria Chen",
+          "type": "preferred",
+          "from": "2019-06"
+        }
+      ],
+      "identifiers": [
+        {
+          "scheme": "linkedin",
+          "value": "https://www.linkedin.com/in/example-maria-chen"
+        }
+      ],
+      "roles": [
+        {
+          "title": "Director of Terminal Operations",
+          "organization": "port-example",
+          "from": "2018-01",
+          "to": "2024-08"
+        },
+        {
+          "title": "Chief Operating Officer",
+          "organization": "harbor-logistics",
+          "from": "2024-09"
+        }
+      ],
+      "contacts": [
+        {
+          "type": "email",
+          "value": "maria.chen@port.example",
+          "from": "2018-01",
+          "to": "2024-08"
+        },
+        {
+          "type": "email",
+          "value": "maria@harbor-logistics.example",
+          "from": "2024-09"
+        }
+      ],
+      "images": [
+        {
+          "url": "https://ines-ortega.example/files/people/maria-chen.jpg",
+          "asOf": "2025-01"
+        }
+      ]
+    },
+    "sam-okafor": {
+      "name": "Sam Okafor",
+      "roles": [
+        {
+          "title": "Shift Lead",
+          "organization": "port-example",
+          "from": "2017-04"
+        }
+      ],
+      "contacts": [
+        {
+          "type": "phone",
+          "value": "+1-555-0100"
+        }
+      ]
+    },
+    "priya-raman": {
+      "name": "Priya Raman",
+      "roles": [
+        {
+          "title": "Account Director",
+          "organization": "harbor-logistics",
+          "from": "2020-02"
+        }
+      ]
+    }
+  },
+  "work": [
+    {
+      "id": "port-planning",
+      "status": "approved",
+      "confidence": "high",
+      "priority": 90,
+      "organization": "port-example",
+      "title": "Senior Operations Planner",
+      "employmentType": "fullTime",
+      "startDate": "2019-03",
+      "current": true,
+      "summary": "Plans berth, crane and yard operations for the container terminal.",
+      "metrics": [
+        {
+          "id": "crane-idle",
+          "label": "less crane idle time",
+          "value": "33%",
+          "from": "2020-01",
+          "to": "2020-12"
+        }
+      ],
+      "occupations": [
+        {
+          "system": "soc",
+          "code": "13-1081"
+        },
+        {
+          "system": "onetSoc",
+          "code": "13-1081.00"
+        }
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "id": "berth-planning",
+      "status": "approved",
+      "confidence": "high",
+      "name": "Berth planning",
+      "pinned": true,
+      "priority": 90
+    },
+    {
+      "id": "yard-scheduling",
+      "status": "approved",
+      "confidence": "high",
+      "name": "Yard scheduling",
+      "priority": 80
+    }
+  ],
+  "media": [
+    {
+      "id": "headshot",
+      "title": "Ines Ortega, headshot",
+      "url": "bundle:media/headshot.png",
+      "mediaType": "image/png",
+      "alt": "Illustrated placeholder portrait of Ines Ortega",
+      "kind": "headshot",
+      "uuid": "6f1c2a52-3b7e-4c1a-9d4e-2a7b5c8e9f01",
+      "width": 64,
+      "height": 64,
+      "byteSize": 230,
+      "sha256": "110478f0407d8c9c31250477d2d79034c6ffd7845ad50c2885c79a2fabb7f5c0",
+      "capturedOn": "2024-01",
+      "license": "CC0-1.0",
+      "status": "approved",
+      "confidence": "high"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "rec-maria",
+      "status": "approved",
+      "confidence": "high",
+      "priority": 85,
+      "author": "maria-chen",
+      "date": "2023-05-02T14:30:00-07:00",
+      "relationship": {
+        "type": "manager",
+        "work": "port-planning",
+        "description": "Managed Ines directly"
+      },
+      "authorAt": {
+        "title": "Director of Terminal Operations",
+        "organization": "port-example"
+      },
+      "text": "Ines rebuilt our harbor planning program from nothing. She is the most careful planner I know, and the crews trusted her completely.",
+      "highlights": [
+        {
+          "id": "h1",
+          "text": "She is the most careful planner I know, and the crews trusted her completely.",
+          "featured": true
+        }
+      ],
+      "source": {
+        "platform": "linkedin",
+        "url": "https://www.linkedin.com/in/example-ines-ortega/details/recommendations/",
+        "retrievedOn": "2026-11-01"
+      },
+      "consent": {
+        "given": true,
+        "on": "2026-11-02",
+        "scope": "full",
+        "by": "email"
+      }
+    },
+    {
+      "id": "rec-sam",
+      "status": "approved",
+      "confidence": "high",
+      "author": "sam-okafor",
+      "date": "2024-02-12",
+      "relationship": {
+        "type": "peer",
+        "work": "port-planning"
+      },
+      "text": "Ines turned a three-day berth schedule into a three-hour one. Every shift lead now plans with the tool she built, and our crane idle time fell by a third in her first year.",
+      "highlights": [
+        {
+          "id": "h1",
+          "text": "Every shift lead now plans with the tool she built",
+          "featured": true
+        }
+      ],
+      "source": {
+        "platform": "email",
+        "retrievedOn": "2026-11-01"
+      },
+      "consent": {
+        "given": true,
+        "on": "2026-11-02",
+        "scope": "highlights",
+        "by": "email"
+      }
+    }
+  ],
+  "endorsements": [
+    {
+      "id": "end-priya-berth",
+      "status": "approved",
+      "confidence": "medium",
+      "author": "priya-raman",
+      "target": "berth-planning",
+      "date": "2025-03-04",
+      "relationship": {
+        "type": "client"
+      },
+      "text": "Her berth plans held up through peak season.",
+      "consent": {
+        "given": true,
+        "on": "2026-11-02",
+        "scope": "full",
+        "by": "email"
+      }
+    }
+  ],
+  "badges": [
+    {
+      "id": "harbor-ops-badge",
+      "status": "approved",
+      "confidence": "high",
+      "achievement": {
+        "id": "https://badges.example/achievements/harbor-ops",
+        "achievementType": "Badge",
+        "name": "Harbor Operations Planner",
+        "description": "Plans berth, crane and yard operations for a container terminal.",
+        "criteria": {
+          "narrative": "Passed the practical planning assessment."
+        },
+        "alignment": [
+          {
+            "targetName": "Logisticians",
+            "targetUrl": "https://www.onetonline.org/link/summary/13-1081.00",
+            "targetFramework": "O*NET",
+            "targetCode": "13-1081.00"
+          }
+        ]
+      },
+      "issuer": "maritime-academy",
+      "issuerId": "https://badges.example/issuers/maritime-academy",
+      "validFrom": "2024-03-01T00:00:00Z",
+      "credential": {
+        "format": "ob3-jsonld",
+        "url": "https://badges.example/credentials/harbor-ops-118",
+        "file": "bundle:badges/harbor-ops-badge.json",
+        "sha256": "de5467e27a17890d8a1b67c82c0fe62c0b43157bd8c21896fe60a32839cf69e6"
+      },
+      "verification": {
+        "status": "unverified"
+      },
+      "awardedFor": "port-planning",
+      "priority": 80
+    },
+    {
+      "id": "site-safety-badge",
+      "status": "approved",
+      "confidence": "high",
+      "achievement": {
+        "id": "https://badges.example/badges/site-safety",
+        "name": "Site Safety Lead",
+        "description": "Leads site safety on a working port.",
+        "criteria": {
+          "narrative": "Completed 40 supervised hours."
+        },
+        "image": {
+          "url": "https://badges.example/badges/site-safety.png"
+        },
+        "tag": [
+          "safety"
+        ]
+      },
+      "issuer": "builders-guild",
+      "issuerId": "https://badges.example/issuers/builders-guild",
+      "validFrom": "2021-06-01T00:00:00Z",
+      "validUntil": "2031-06-01T00:00:00Z",
+      "credential": {
+        "format": "ob2-baked",
+        "file": "bundle:badges/site-safety-badge.png",
+        "sha256": "1c321b7d6c4d5f826d7c1c050f05996edf37dc7dfde834550b52e52a8922b282"
+      },
+      "verification": {
+        "status": "unverified"
+      }
+    }
+  ]
+}

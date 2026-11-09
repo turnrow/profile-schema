@@ -1,0 +1,12 @@
+{
+  "person": "Ines Ortega",
+  "roles": [
+    {
+      "id": "port-planning-role",
+      "title": "Senior Operations Planner",
+      "organization": "Port of Example",
+      "when": "Mar 2019 – Present",
+      "start": "2019-03"
+    }
+  ]
+}

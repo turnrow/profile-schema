@@ -1,0 +1,24 @@
+{
+  "name": "Ines Ortega",
+  "title": "Senior Operations Planner",
+  "photo": "https://ines-ortega.example/files/media/headshot.png",
+  "photoAlt": "Illustrated placeholder portrait of Ines Ortega",
+  "bio": "Plans the moves that keep a container terminal running: berths, cranes and yard space.",
+  "proofPoints": [
+    {
+      "role": "Senior Operations Planner, Port of Example",
+      "facts": [
+        "33% less crane idle time (Jan 2020–Dec 2020)"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "by": "Maria Chen, Director of Terminal Operations at Port of Example",
+      "quote": "She is the most careful planner I know, and the crews trusted her completely."
+    }
+  ],
+  "badges": [
+    "Harbor Operations Planner"
+  ]
+}

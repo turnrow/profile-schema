@@ -1,8 +1,59 @@
 # Changelog
 
+## 2.6.0 (2026-11-09): photos, other people, recommendations, endorsements and badges
+
+Earlier files remain valid. A file that declares 2.6.0 is held to stricter checks, listed under each heading below.
+
+### Photos
+- **Media entries** gain:
+  - `uuid`, `version` and `supersedes` (versions of one asset);
+  - `kind`, `width`, `height`, `byteSize` and `focalPoint`;
+  - `renditions`, `capturedOn` and `metadata`;
+  - `credit`, `copyrightHolder`, `license`, `consent`, `contentCredentials` and `longDescription`.
+- **`person.images`** dates which photo is in force. Jobs, positions and responsibilities can name their own photos (`media`). Outputs use the photo in force on their date.
+- **`profile media add`** copies, hashes and measures a photo. Location metadata is refused unless `--strip-gps` blanks it in place.
+- **Stricter in 2.6.0:** a bundled image with GPS coordinates is an error (a warning before). An image without alt text warns. Overlapping `person.images` for one purpose warn.
+
+### People, recommendations and endorsements
+- **`people`**: recommenders, endorsers, references and managers. Their names, roles, identifiers, contacts and photos are dated. Contacts are private by default and never rendered. `references[].person` links a reference to a people entry.
+- **`recommendations`** hold:
+  - the verbatim text, and highlights checked to be verbatim;
+  - a date or date-time (with an offset);
+  - the relationship, linked to the job or service;
+  - `authorAt`, the source and the author's consent.
+
+  `authorAt` is checked against the author's dated roles.
+- **`endorsements`** of a skill, credential or badge, with an optional Open Badges 3.0 EndorsementCredential.
+- **Consent scope** (`full`, `highlights`, `nameOnly`, `anonymous`) is applied in every output. An item without the author's consent is never rendered.
+- **Stricter in 2.6.0:** a non-private recommendation or endorsement without `consent.given` is an error (a warning before).
+
+### Badges
+- **`badges`**, described in Open Badges 3.0 terms:
+  - achievement, type, criteria and alignments;
+  - issuer and validity;
+  - the issuer's original credential kept byte for byte, with its hash;
+  - verification status;
+  - `credentialRef` and `awardedFor`.
+- **`profile badges import`** reads Open Badges 3.0 (JSON-LD, VC-JWT), Open Badges 2.0 (hosted, signed) and baked PNG and SVG. A URL is fetched only with `--fetch`.
+- **`verifyBadge`** re-fetches Open Badges 2.0 hosted assertions, and only when given a fetcher. Signature checks for the other formats are not implemented yet and say so.
+- Alignments to O*NET and SOC are checked like occupation codes.
+- **Stricter in 2.6.0:** "verified" needs the method and the time it was checked.
+
+### Outputs and releases
+- **schema.org:** `ProfilePage.review` (Recommendation). Badges appear as `EducationalOccupationalCredential` with `credentialCategory: "badge"`.
+- **JSON Resume:** recommendations go to `references` and badges to `certificates`. The output still validates against the upstream schema.
+- **LinkedIn sheet:** badges under Licenses & certifications, and a Credential URL for credentials too. A Recommendations list.
+- **brief:** up to two featured quotes and three badges.
+- **Audiences:** new section grants `recommendations`, `endorsements` and `badges`, and a new person grant `personContacts`. A release carries only the people its items refer to, without their contacts or email identifiers unless that grant is present.
+- A date-time formats as its date in every output.
+
+### Repository
+- `examples/recommended/`: a fictional bundle made entirely by `scripts/make-fixtures.mjs`. CI regenerates it and its outputs and fails on any difference.
+- US English throughout the documentation and the schema's descriptions.
+
 ## 2.5.0 (2026-11-09): occupation, industry and skill codes; fixes from building a real profile
 
-Built while modelling a real founder's record (a CV, a newspaper article, his own account, a pitch deck and a live LinkedIn profile). Earlier files remain valid. A file that declares 2.5.0 is held to one stricter check: high confidence can't rest on self-reported evidence alone.
+Built while modeling a real founder's record (a CV, a newspaper article, his own account, a pitch deck and a live LinkedIn profile). Earlier files remain valid. A file that declares 2.5.0 is held to one stricter check: high confidence can't rest on self-reported evidence alone.
 
 ### Codes
 - **Occupation codes** (`occupations`) on work, service, positions and responsibilities: U.S. SOC (kept by the Bureau of Labor Statistics), O*NET-SOC, ISCO, ESCO, NOC, ANZSCO, with `match` (primary, secondary, related) and an internal `rationale`.
@@ -59,7 +110,7 @@ A critical review of 2.0–2.3 from several angles: security, privacy, localizat
 - **Dated names:** `names[].from` and `to`, for names changed by marriage or legal change. The `verification` mapping lists the names used during each job (`namesUsed`).
 - **Name pronunciation:** `names[].pronunciation` (respelling, IPA, audio), shown on the LinkedIn sheet and in the SCIM profile extension.
 - **Career breaks:** a `careerBreak` timeline type with a reason (caregiving, parental leave, education, travel, health, relocation, layoff, sabbatical, military, volunteering, personal). Listed on the LinkedIn sheet.
-- **Credentials by jurisdiction:** `jurisdiction` (a Texas PE licence, a state bar) and `compactStates`.
+- **Credentials by jurisdiction:** `jurisdiction` (a Texas PE license, a state bar) and `compactStates`.
 - **Publications:** kinds `patent`, `patentApplication`, `dataset`, `software`, `thesis` and `report`, plus `doi`, `isbn`, `number`, `authors` and `role` (author, co-author, inventor…).
 
 ### Project
@@ -84,7 +135,7 @@ Backwards compatible: earlier files remain valid.
   - a warning when the same identifier appears on two organizations (probably one entity: merge them and use names and events);
   - a warning when an EIN is made public.
 - `organizations[].classifications`: NAICS, SIC, NACE, ISIC and ANZSIC codes.
-- **Personal government ids are refused:** `person.identifiers` rejects keys like ssn, itin, passport or driver's licence. A profile is meant to be shared, and those numbers don't belong in it.
+- **Personal government ids are refused:** `person.identifiers` rejects keys like ssn, itin, passport or driver's license. A profile is meant to be shared, and those numbers don't belong in it.
 - `mappings/verification.json`, for employment-verification releases. Each job gives:
   - the employer's legal name at the time, its trading name and today's name;
   - its EIN and DUNS as of the job's start, today's UEI, and state entity numbers;
@@ -141,7 +192,7 @@ Backwards compatible: 2.0.0 files remain valid.
   - field authority rules for write-back.
 - Entries can name audiences (`audiences: [...]`) to share something otherwise private with one recipient only.
 - `organizations[].domains`, used to recognise a requester.
-- `work[].employerRecord`: the employer's own record of the job (official title, department, division, cost centre, employee number, position, manager, work location, status, hire date). It is released only to an audience bound to that job.
+- `work[].employerRecord`: the employer's own record of the job (official title, department, division, cost center, employee number, position, manager, work location, status, hire date). It is released only to an audience bound to that job.
 - **Releases** (`releases`, `lib/release.mjs`, `turnrow-profile release`): builds an audience-scoped payload in any mapping's format, with a consent receipt (recipient, purpose, what was shared, expiry, SHA-256 of the payload) and a record for the profile's release log.
 - **SCIM 2.0 mapping** (`mappings/scim.json`): the core User, the Enterprise User extension, and a `urn:turnrow:…:profile:2.0:User` extension (pronouns, preferred title, skills, languages and more), for employee directories and identity providers.
 - **Write-back** (`lib/writeback.mjs`, `turnrow-profile writeback`): an employer's SCIM User becomes claims cited to its system of record (primary evidence).

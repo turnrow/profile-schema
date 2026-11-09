@@ -14,4 +14,7 @@ This project handles personal data, so privacy problems count as security proble
 - **Audiences decide policy, not identity.** `checkRequester` decides whether a verified requester qualifies. Verifying the OIDC/SAML token, DNS record or signature is the calling application's job.
 - **Write-back** treats the employer's data as claims: values are checked, history is kept, locked values aren't changed and person fields are only suggested. It doesn't verify signatures on the payload.
 - **Bundles**: paths and symbolic links can't leave the bundle folder, and checksums are verified when given.
+- **Other people's data.** Contacts of recommenders, endorsers and references are private by default, never rendered, and released only with the `personContacts` grant. Their words appear only with their recorded consent, and only to the extent its scope allows.
+- **Photos.** `media add` refuses images with GPS coordinates unless asked to strip them, and a 2.6.0 bundle with a located image is invalid. Other metadata (camera, orientation) is kept; check it before publishing.
+- **Badges.** Imported credentials are stored unaltered and hashed, but their signatures are not checked yet: an imported badge is a draft until someone confirms it. `badges import` reaches the network only with `--fetch`.
 - **Personal government ids** are refused by key and by shape. That's a guard, not a guarantee: don't put them in a profile.

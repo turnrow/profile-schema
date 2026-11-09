@@ -789,7 +789,7 @@
             "$$.credentials",
             {
               "$literal": {
-                "label": "Licence or certification",
+                "label": "License or certification",
                 "required": [
                   "issuer"
                 ],

@@ -26,10 +26,12 @@ jobs:
         run: npm run validate:examples
       - name: Example outputs are up to date
         run: |
-          for ex in sample history; do
+          node scripts/make-fixtures.mjs
+          for ex in sample history recommended; do
+            src="examples/$ex.profile.json"; [ -d "examples/$ex" ] && src="examples/$ex"
             for m in jsonresume schemaorg linkedin brief timeline; do
               ext=json; [ "$m" = linkedin ] && ext=txt
-              node bin/profile.mjs convert "examples/$ex.profile.json" "$m" --on 2026-11-07 --out "examples/out/$ex.$m.$ext"
+              node bin/profile.mjs convert "$src" "$m" --on 2026-11-07 --out "examples/out/$ex.$m.$ext"
             done
           done
-          git diff --exit-code -- examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'
+          git diff --exit-code -- examples/recommended examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'
