@@ -22,11 +22,17 @@
         "$.person.jobTitle"
       ]
     },
-    "photo": "$.person.image.url",
-    "photoAlt": {
-      "$fn": "text",
+    "photo": {
+      "$fn": "imageFor",
       "args": [
-        "$.person.image.alt"
+        "url",
+        "square"
+      ]
+    },
+    "photoAlt": {
+      "$fn": "imageFor",
+      "args": [
+        "alt"
       ]
     },
     "bio": {

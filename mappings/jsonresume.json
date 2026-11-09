@@ -23,7 +23,13 @@
           "$.person.headline"
         ]
       },
-      "image": "$.person.image.url",
+      "image": {
+        "$fn": "imageFor",
+        "args": [
+          "url",
+          "square"
+        ]
+      },
       "email": {
         "$fn": "visible",
         "args": [
