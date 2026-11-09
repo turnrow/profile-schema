@@ -96,10 +96,13 @@ test("JSON-LD carries occupational categories and coded skills; verification car
   assert.deepEqual(acme.occupationCodes.map((c) => c.soc), ["11-3021", "15-1252"], "primary first");
 });
 
-test("a position's own codes reach JSON-LD for that job", () => {
+test("each position in JSON-LD carries its own codes, not the whole job's", () => {
   const ld = convert(history(), loadMapping("schemaorg"), { on: ON }).output;
-  const all = ld.mainEntity.hasOccupation.flatMap((o) => o.occupationalCategory ?? []).map((c) => c.codeValue);
-  assert.ok(all.includes("15-1244") && all.includes("15-1299.08"));
+  const codes = (name) => ld.mainEntity.hasOccupation.find((o) => o.name === name).occupationalCategory.map((c) => c.codeValue);
+  assert.ok(codes("Systems Engineer").includes("15-1244"));
+  assert.ok(!codes("Systems Engineer").includes("15-1299.08"), "the architect code belongs to the later position");
+  assert.deepEqual(codes("Solutions Architect").slice(0, 2), ["15-1299", "15-1299.08"]);
+  assert.ok(codes("Technology Consultant III").includes("15-1211"));
 });
 
 // ---------- notes ----------
@@ -234,6 +237,7 @@ test("anyVerified audiences: invitation works, an email address never does", () 
   assert.equal(r.record.recipient.name, "Example Ventures");
   assert.equal(r.receipt.recipient.name, "Example Ventures");
   assert.throws(() => buildRelease(p, "dataroom", loadMapping("brief"), { requester: { method: "emailDomain", domain: "x.example" }, on: ON }), /not accepted|never qualifies/);
+  assert.throws(() => buildRelease(p, "dataroom", loadMapping("brief"), { on: ON }), /needs a verified, named requester/);
   p.audiences.dataroom.verification.methods = ["invitation", "emailDomain"];
   assert.ok(has(validateProfile(p).errors, /anyVerified audience cannot accept emailDomain/));
 });
@@ -262,4 +266,12 @@ test("the CLI reports errors plainly, and --record writes into a bundle's profil
 
   const badVis = cli("convert", dir, "brief", "--visibility", "everyone");
   assert.equal(badVis.status, 2);
+});
+
+test("related codes stay out of JSON-LD and verification: they are a nearest fit, not a claim", () => {
+  const ld = convert(history(), loadMapping("schemaorg"), { on: ON }).output;
+  const all = ld.mainEntity.hasOccupation.flatMap((o) => o.occupationalCategory ?? []).map((c) => c.codeValue);
+  assert.ok(!all.includes("25-3021"));
+  const ver = convert(history(), loadMapping("verification"), { on: ON }).output;
+  assert.ok(!ver.employment.flatMap((e) => e.occupationCodes ?? []).some((c) => c.match === "related"));
 });

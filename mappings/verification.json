@@ -220,6 +220,12 @@
               ]
             },
             "match": "$.match"
+          },
+          "$where": {
+            "match": [
+              "primary",
+              "secondary"
+            ]
           }
         }
       }

@@ -26,26 +26,6 @@
         "occupationalCategory": [
           {
             "@type": "CategoryCode",
-            "codeValue": "15-1244",
-            "name": "Network and Computer Systems Administrators",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "15-1211",
-            "name": "Computer Systems Analysts",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
-            }
-          },
-          {
-            "@type": "CategoryCode",
             "codeValue": "15-1299",
             "name": "Computer Occupations, All Other",
             "inCodeSet": {
@@ -62,16 +42,6 @@
               "@type": "CategoryCodeSet",
               "name": "O*NET-SOC 2019",
               "url": "https://www.onetcenter.org/taxonomy.html"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "25-3021",
-            "name": "Self-Enrichment Teachers",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
             }
           }
         ]
@@ -83,16 +53,6 @@
         "occupationalCategory": [
           {
             "@type": "CategoryCode",
-            "codeValue": "15-1244",
-            "name": "Network and Computer Systems Administrators",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
-            }
-          },
-          {
-            "@type": "CategoryCode",
             "codeValue": "15-1211",
             "name": "Computer Systems Analysts",
             "inCodeSet": {
@@ -103,28 +63,8 @@
           },
           {
             "@type": "CategoryCode",
-            "codeValue": "15-1299",
-            "name": "Computer Occupations, All Other",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "15-1299.08",
-            "name": "Computer Systems Engineers/Architects",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "O*NET-SOC 2019",
-              "url": "https://www.onetcenter.org/taxonomy.html"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "25-3021",
-            "name": "Self-Enrichment Teachers",
+            "codeValue": "15-1244",
+            "name": "Network and Computer Systems Administrators",
             "inCodeSet": {
               "@type": "CategoryCodeSet",
               "name": "2018 SOC",
@@ -147,46 +87,6 @@
               "name": "2018 SOC",
               "url": "https://www.bls.gov/soc/2018/"
             }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "15-1211",
-            "name": "Computer Systems Analysts",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "15-1299",
-            "name": "Computer Occupations, All Other",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "15-1299.08",
-            "name": "Computer Systems Engineers/Architects",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "O*NET-SOC 2019",
-              "url": "https://www.onetcenter.org/taxonomy.html"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "25-3021",
-            "name": "Self-Enrichment Teachers",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
-            }
           }
         ]
       },
@@ -199,46 +99,6 @@
             "@type": "CategoryCode",
             "codeValue": "15-1244",
             "name": "Network and Computer Systems Administrators",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "15-1211",
-            "name": "Computer Systems Analysts",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "15-1299",
-            "name": "Computer Occupations, All Other",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "2018 SOC",
-              "url": "https://www.bls.gov/soc/2018/"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "15-1299.08",
-            "name": "Computer Systems Engineers/Architects",
-            "inCodeSet": {
-              "@type": "CategoryCodeSet",
-              "name": "O*NET-SOC 2019",
-              "url": "https://www.onetcenter.org/taxonomy.html"
-            }
-          },
-          {
-            "@type": "CategoryCode",
-            "codeValue": "25-3021",
-            "name": "Self-Enrichment Teachers",
             "inCodeSet": {
               "@type": "CategoryCodeSet",
               "name": "2018 SOC",

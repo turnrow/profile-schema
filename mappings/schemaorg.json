@@ -248,9 +248,9 @@
           },
           "occupationalCategory": {
             "$each": {
-              "$fn": "allOccupations",
+              "$fn": "positionOccupations",
               "args": [
-                "$.work"
+                "$"
               ]
             },
             "$where": {
@@ -259,6 +259,10 @@
                 "onetSoc",
                 "isco",
                 "esco"
+              ],
+              "match": [
+                "primary",
+                "secondary"
               ]
             },
             "$map": {
