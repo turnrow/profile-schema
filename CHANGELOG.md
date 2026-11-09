@@ -47,6 +47,15 @@ Earlier files remain valid. A file that declares 2.6.0 is held to stricter check
 - **Audiences:** new section grants `recommendations`, `endorsements` and `badges`, and a new person grant `personContacts`. A release carries only the people its items refer to, without their contacts or email identifiers unless that grant is present.
 - A date-time formats as its date in every output.
 
+### Hardening (from the whole-branch review)
+- `media add` and `badges import` refuse an id that isn't a plain id, and never overwrite or delete a file they didn't create.
+- `media add` versions only `<id>` and `<id>-vN`, so "head" is no longer taken for a version of "head-vintage".
+- The anonymous scope shows the author's title alone, without the employer.
+- A private or draft photo is never used as the output's image.
+- Bundle links on other people's photos and on badge images are checked: existence, escape, hash and GPS.
+- Damaged PNG and JPEG files are reported as unreadable instead of crashing validation. Stripping GPS never writes outside the EXIF block, and the result is re-checked.
+- A recommendation or endorsement shared with a named audience needs the author's consent too. Releases leave out any recommendation or endorsement without consent, so the consent receipt lists only what was sent.
+
 ### Repository
 - `examples/recommended/`: a fictional bundle made entirely by `scripts/make-fixtures.mjs`. CI regenerates it and its outputs and fails on any difference.
 - US English throughout the documentation and the schema's descriptions.

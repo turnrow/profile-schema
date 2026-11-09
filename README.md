@@ -340,7 +340,7 @@ A recommendation needs the author's consent before it is shown anywhere. `consen
 | `full` | The text and the author's name. |
 | `highlights` | The featured highlights only, with the name. |
 | `nameOnly` | The author's name and title, and no text. |
-| `anonymous` | The text, credited to the author's title alone ("Director of Terminal Operations at Port of Example", or "A colleague"). |
+| `anonymous` | The text, credited to the author's title alone ("Director of Terminal Operations", or "A colleague"); the employer is left out too, since a title at a named employer can identify someone. |
 
 Outputs:
 - schema.org: `Recommendation` on the profile page;
