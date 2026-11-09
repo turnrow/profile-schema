@@ -164,3 +164,72 @@ test("person.image still works when there are no dated images", () => {
   const ld = convert(p, loadMapping("schemaorg"), { on: ON }).output;
   assert.equal(ld.mainEntity.image.contentUrl, p.person.image.url);
 });
+
+// ---------- media add ----------
+
+import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
+const CLI = new URL("../bin/profile.mjs", import.meta.url).pathname;
+const cli = (...args) => spawnSync(process.execPath, [CLI, ...args], { encoding: "utf8" });
+const sha256 = (b) => createHash("sha256").update(b).digest("hex");
+function newBundle() {
+  const dir = mkdtempSync(join(tmpdir(), "tp-add-"));
+  const p = sample();
+  p.schemaVersion = "2.6.0";
+  delete p.person.image;
+  writeFileSync(join(dir, "profile.json"), JSON.stringify(p, null, 2));
+  return dir;
+}
+const profileIn = (dir) => JSON.parse(readFileSync(join(dir, "profile.json"), "utf8"));
+
+test("media add copies into media/, records hash, size, dimensions and uuid, and adds a dated person image", () => {
+  const dir = newBundle();
+  const src = join(dir, "..", `pic-${Date.now()}.png`);
+  writeFileSync(src, png());
+  const r = cli("media", "add", dir, src, "--id", "me", "--alt", "Portrait of Ines", "--kind", "headshot", "--purpose", "primary", "--from", "2024-01");
+  assert.equal(r.status, 0, r.stderr);
+  const p = profileIn(dir);
+  const m = p.media.find((x) => x.id === "me");
+  assert.equal(m.url, "bundle:media/me.png");
+  assert.equal(m.sha256, sha256(png()));
+  assert.deepEqual([m.byteSize, m.width, m.height, m.mediaType, m.kind], [png().length, 1, 1, "image/png", "headshot"]);
+  assert.match(m.uuid, /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+  assert.deepEqual(p.person.images, [{ media: "me", purpose: "primary", from: "2024-01" }]);
+  assert.ok(readFileSync(join(dir, "media", "me.png")).equals(png()));
+  assert.equal(validateProfile(p, { bundleDir: dir }).valid, true);
+});
+
+test("media add refuses a file with GPS unless --strip-gps, and then stores a stripped copy", () => {
+  const dir = newBundle();
+  const src = join(dir, "..", `gps-${Date.now()}.jpg`);
+  writeFileSync(src, jpegWithGps().file);
+  const refused = cli("media", "add", dir, src, "--id", "me", "--alt", "Portrait");
+  assert.equal(refused.status, 2);
+  assert.match(refused.stderr, /location \(GPS\) metadata in exif; re-run with --strip-gps/);
+  assert.equal(profileIn(dir).media.some((x) => x.id === "me"), false, "nothing written");
+  const ok = cli("media", "add", dir, src, "--id", "me", "--alt", "Portrait", "--strip-gps");
+  assert.equal(ok.status, 0, ok.stderr);
+  const m = profileIn(dir).media.find((x) => x.id === "me");
+  const stored = readFileSync(join(dir, "media", "me.jpg"));
+  assert.equal(readImageInfo(stored).gps, false);
+  assert.notEqual(m.sha256, sha256(jpegWithGps().file));
+  assert.equal(m.sha256, sha256(stored));
+  assert.equal(m.metadata.make, "Acme");
+});
+
+test("media add with an existing id adds a new version that keeps the uuid", () => {
+  const dir = newBundle();
+  const src = join(dir, "..", `v-${Date.now()}.png`);
+  writeFileSync(src, png());
+  cli("media", "add", dir, src, "--id", "me", "--alt", "Portrait", "--purpose", "primary", "--from", "2020");
+  writeFileSync(src, png({ xmp: "<x:xmpmeta/>" }));
+  const r = cli("media", "add", dir, src, "--id", "me", "--alt", "Portrait, newer", "--purpose", "primary", "--from", "2025-03");
+  assert.equal(r.status, 0, r.stderr);
+  const p = profileIn(dir);
+  const [v1, v2] = ["me", "me-v2"].map((id) => p.media.find((x) => x.id === id));
+  assert.equal(v2.supersedes, "me");
+  assert.equal(v2.uuid, v1.uuid);
+  assert.equal(v2.version, "2");
+  assert.equal(v2.url, "bundle:media/me-v2.png");
+  assert.deepEqual(p.person.images.map((x) => x.media), ["me", "me-v2"]);
+});

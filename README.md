@@ -36,6 +36,7 @@ node bin/profile.mjs convert  examples/sample.profile.json brief --locale es
 node bin/profile.mjs convert  examples/sample.profile.json jsonresume --visibility public,network  # override which entries go in
 node bin/profile.mjs convert  my-bundle/ schemaorg --media-base https://example.com/me/   # publish bundle: images
 node bin/profile.mjs import   my-resume.json --out my.profile.json   # start from an existing JSON Resume
+node bin/profile.mjs media add my-bundle/ headshot.jpg --id headshot --alt "…" --purpose primary --from 2024-01 [--strip-gps]   # add a photo, hashed and versioned
 ```
 
 The sample is a **fictional** person built to exercise every feature. Its outputs are in [`examples/out/`](examples/out/).
