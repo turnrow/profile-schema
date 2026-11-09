@@ -191,7 +191,7 @@ test("LinkedIn sheet: projects, publications, languages, military under Experien
   assert.match(li, /Experience: military service \(add each as an Experience entry\):[\s\S]*Company \(search LinkedIn for\)/);
   assert.match(li, /Volunteering:[\s\S]*Role: Volunteer/);
   assert.doesNotMatch(li.split("Volunteering:")[1].split("Education:")[0], /Two years/, "military isn't volunteering");
-  assert.match(li, /Projects:[\s\S]*Project name: Harbor pier[\s\S]*Project lead, \$2M/);
+  assert.match(li, /Projects:[\s\S]*Project name: Harbor pier[\s\S]*Project lead · \$2M project/);
   assert.match(li, /Languages:[\s\S]*Proficiency: Native or bilingual proficiency/);
   assert.match(li, /Experience \(military\) ".*": needs a title \(rank or rate\) or role/);
   assert.match(li, /the start date has a year but no month \(1990\)/);
@@ -274,4 +274,15 @@ test("related codes stay out of JSON-LD and verification: they are a nearest fit
   assert.ok(!all.includes("25-3021"));
   const ver = convert(history(), loadMapping("verification"), { on: ON }).output;
   assert.ok(!ver.employment.flatMap((e) => e.occupationCodes ?? []).some((c) => c.match === "related"));
+});
+
+test("open on an invalid file says so instead of reporting nothing open", () => {
+  const dir = mkdtempSync(join(tmpdir(), "tp-"));
+  const p = employee();
+  p.work[0].occupations = [{ system: "soc", code: "bad" }];
+  writeFileSync(join(dir, "profile.json"), JSON.stringify(p));
+  const r = cli("open", dir);
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /is not valid/);
+  assert.doesNotMatch(r.stdout, /Nothing waiting/);
 });

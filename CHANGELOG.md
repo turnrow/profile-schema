@@ -34,7 +34,7 @@ Built while modelling a real founder's record (a CV, a newspaper article, his ow
 ### Command line
 - Errors are one plain line (`error: …`; `TURNROW_DEBUG=1` for the stack). A refused release exits 4.
 - `release --record` on a bundle folder writes the record into its `profile.json`. Before, it tried to write to the folder path and failed.
-- `open` also lists open questions on approved entries (as `question`), and `validate` counts them separately.
+- `open` also lists open questions on approved entries (as `question`), and `validate` counts them separately. `open` on an invalid file now reports the errors; before, it said "Nothing waiting on confirmation".
 
 ## 2.4.0 (2026-11-07): review hardening, localization and model gaps
 

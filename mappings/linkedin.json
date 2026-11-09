@@ -407,32 +407,32 @@
               "$fn": "joinLines",
               "args": [
                 {
-                  "$fn": "concat",
+                  "$fn": "join",
                   "args": [
-                    {
-                      "$fn": "text",
-                      "args": [
-                        "$.role"
-                      ]
-                    },
-                    {
-                      "$if": "$.value",
-                      "$then": {
-                        "$fn": "concat",
+                    [
+                      {
+                        "$fn": "text",
                         "args": [
-                          {
-                            "$if": "$.role",
-                            "$then": ", "
-                          },
-                          {
-                            "$fn": "money",
-                            "args": [
-                              "$.value"
-                            ]
-                          }
+                          "$.role"
                         ]
+                      },
+                      {
+                        "$if": "$.value",
+                        "$then": {
+                          "$fn": "concat",
+                          "args": [
+                            {
+                              "$fn": "money",
+                              "args": [
+                                "$.value"
+                              ]
+                            },
+                            " project"
+                          ]
+                        }
                       }
-                    }
+                    ],
+                    " · "
                   ]
                 },
                 "$.summary",

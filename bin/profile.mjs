@@ -72,6 +72,8 @@ try {
       if (!rest[0]) usage();
       const { profile, bundleDir } = loadProfile(rest[0]);
       const r = validateProfile(profile, { bundleDir });
+      // An invalid file stops validation early, so "nothing open" would be a false all-clear.
+      if (!r.valid) { console.error(`✗ ${rest[0]} is not valid; fix it first:\n  ` + r.errors.join("\n  ")); process.exit(1); }
       if (!r.openItems.length) console.log("Nothing waiting on confirmation.");
       const order = { disputed: 0, pending: 1, question: 2 };
       for (const o of [...r.openItems].sort((a, b) => order[a.status] - order[b.status])) {
