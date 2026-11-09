@@ -316,51 +316,109 @@
         }
       },
       "hasCredential": {
-        "$each": "$$.credentials",
-        "$where": {
-          "active": [
-            true,
-            null
-          ]
-        },
-        "$map": {
-          "@type": "EducationalOccupationalCredential",
-          "name": {
-            "$fn": "text",
-            "args": [
-              "$.name"
-            ]
-          },
-          "credentialCategory": "$.kind",
-          "recognizedBy": {
-            "@type": "Organization",
-            "name": {
-              "$fn": "org",
-              "args": [
-                "$.issuer"
+        "$fn": "concatLists",
+        "args": [
+          {
+            "$each": "$$.credentials",
+            "$where": {
+              "active": [
+                true,
+                null
               ]
             },
-            "url": {
-              "$fn": "org",
-              "args": [
-                "$.issuer",
-                "url"
-              ]
+            "$map": {
+              "@type": "EducationalOccupationalCredential",
+              "name": {
+                "$fn": "text",
+                "args": [
+                  "$.name"
+                ]
+              },
+              "credentialCategory": "$.kind",
+              "recognizedBy": {
+                "@type": "Organization",
+                "name": {
+                  "$fn": "org",
+                  "args": [
+                    "$.issuer"
+                  ]
+                },
+                "url": {
+                  "$fn": "org",
+                  "args": [
+                    "$.issuer",
+                    "url"
+                  ]
+                }
+              },
+              "dateCreated": {
+                "$fn": "isoExact",
+                "args": [
+                  "$.issued"
+                ]
+              },
+              "expires": {
+                "$fn": "isoExact",
+                "args": [
+                  "$.expires"
+                ]
+              }
             }
           },
-          "dateCreated": {
-            "$fn": "isoExact",
-            "args": [
-              "$.issued"
-            ]
-          },
-          "expires": {
-            "$fn": "isoExact",
-            "args": [
-              "$.expires"
-            ]
+          {
+            "$each": {
+              "$fn": "badgesNotListed",
+              "args": [
+                "$$.badges"
+              ]
+            },
+            "$map": {
+              "@type": "EducationalOccupationalCredential",
+              "name": {
+                "$fn": "text",
+                "args": [
+                  "$.achievement.name"
+                ]
+              },
+              "description": {
+                "$fn": "text",
+                "args": [
+                  "$.achievement.description"
+                ]
+              },
+              "credentialCategory": "badge",
+              "url": "$.credential.url",
+              "recognizedBy": {
+                "@type": "Organization",
+                "name": {
+                  "$fn": "org",
+                  "args": [
+                    "$.issuer"
+                  ]
+                },
+                "url": {
+                  "$fn": "org",
+                  "args": [
+                    "$.issuer",
+                    "url"
+                  ]
+                }
+              },
+              "dateCreated": {
+                "$fn": "isoLoose",
+                "args": [
+                  "$.validFrom"
+                ]
+              },
+              "expires": {
+                "$fn": "isoLoose",
+                "args": [
+                  "$.validUntil"
+                ]
+              }
+            }
           }
-        }
+        ]
       },
       "award": {
         "$each": "$$.awards",
@@ -472,6 +530,82 @@
           ]
         },
         "$map": "$.url"
+      }
+    },
+    "review": {
+      "$each": {
+        "$fn": "consented",
+        "args": [
+          "$$.recommendations"
+        ]
+      },
+      "$sort": "-date",
+      "$map": {
+        "@type": "Recommendation",
+        "itemReviewed": {
+          "@type": "Person",
+          "@id": {
+            "$fn": "concat",
+            "args": [
+              "$$.meta.canonicalUrl",
+              "#person"
+            ]
+          },
+          "name": "$$.person.name"
+        },
+        "author": {
+          "@type": "Person",
+          "name": {
+            "$fn": "authorLabel",
+            "args": [
+              "$",
+              "name"
+            ]
+          },
+          "jobTitle": {
+            "$fn": "authorLabel",
+            "args": [
+              "$",
+              "title"
+            ]
+          },
+          "worksFor": {
+            "@type": "Organization",
+            "name": {
+              "$fn": "authorLabel",
+              "args": [
+                "$",
+                "organization"
+              ]
+            }
+          }
+        },
+        "datePublished": {
+          "$fn": "isoLoose",
+          "args": [
+            "$.date"
+          ]
+        },
+        "reviewBody": {
+          "$fn": "recommendationText",
+          "args": [
+            "$"
+          ]
+        },
+        "description": {
+          "$if": {
+            "$fn": "recommendationText",
+            "args": [
+              "$"
+            ]
+          },
+          "$else": {
+            "$fn": "authorLabel",
+            "args": [
+              "$"
+            ]
+          }
+        }
       }
     }
   },

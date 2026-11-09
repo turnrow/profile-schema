@@ -256,55 +256,91 @@
       }
     },
     "certificates": {
-      "$each": "$$.credentials",
-      "$where": {
-        "active": [
-          true,
-          null
-        ]
-      },
-      "$map": {
-        "name": {
-          "$fn": "concat",
-          "args": [
-            {
-              "$fn": "text",
+      "$fn": "concatLists",
+      "args": [
+        {
+          "$each": "$$.credentials",
+          "$where": {
+            "active": [
+              true,
+              null
+            ]
+          },
+          "$map": {
+            "name": {
+              "$fn": "concat",
               "args": [
-                "$.name"
+                {
+                  "$fn": "text",
+                  "args": [
+                    "$.name"
+                  ]
+                },
+                {
+                  "$if": "$.ratings",
+                  "$then": {
+                    "$fn": "concat",
+                    "args": [
+                      " (",
+                      {
+                        "$fn": "join",
+                        "args": [
+                          "$.ratings"
+                        ]
+                      },
+                      ")"
+                    ]
+                  }
+                }
               ]
             },
-            {
-              "$if": "$.ratings",
-              "$then": {
-                "$fn": "concat",
-                "args": [
-                  " (",
-                  {
-                    "$fn": "join",
-                    "args": [
-                      "$.ratings"
-                    ]
-                  },
-                  ")"
-                ]
-              }
-            }
-          ]
+            "issuer": {
+              "$fn": "org",
+              "args": [
+                "$.issuer"
+              ]
+            },
+            "date": {
+              "$fn": "isoExact",
+              "args": [
+                "$.issued"
+              ]
+            },
+            "url": "$.url"
+          }
         },
-        "issuer": {
-          "$fn": "org",
-          "args": [
-            "$.issuer"
-          ]
-        },
-        "date": {
-          "$fn": "isoExact",
-          "args": [
-            "$.issued"
-          ]
-        },
-        "url": "$.url"
-      }
+        {
+          "$each": {
+            "$fn": "badgesNotListed",
+            "args": [
+              "$$.badges"
+            ]
+          },
+          "$sort": "-validFrom",
+          "$map": {
+            "name": {
+              "$fn": "text",
+              "args": [
+                "$.achievement.name"
+              ]
+            },
+            "issuer": {
+              "$fn": "org",
+              "args": [
+                "$.issuer"
+              ]
+            },
+            "date": {
+              "$fn": "date",
+              "args": [
+                "$.validFrom",
+                "full"
+              ]
+            },
+            "url": "$.credential.url"
+          }
+        }
+      ]
     },
     "publications": {
       "$each": "$$.publications",
@@ -375,19 +411,65 @@
       }
     },
     "references": {
-      "$each": "$$.references",
-      "$where": {
-        "consentToPublish": true
-      },
-      "$map": {
-        "name": "$.name",
-        "reference": {
-          "$fn": "text",
-          "args": [
-            "$.quote"
-          ]
+      "$fn": "concatLists",
+      "args": [
+        {
+          "$each": "$$.references",
+          "$where": {
+            "consentToPublish": true
+          },
+          "$map": {
+            "name": "$.name",
+            "reference": {
+              "$fn": "text",
+              "args": [
+                "$.quote"
+              ]
+            }
+          }
+        },
+        {
+          "$each": {
+            "$fn": "consented",
+            "args": [
+              "$$.recommendations"
+            ]
+          },
+          "$sort": "-date",
+          "$map": {
+            "name": {
+              "$fn": "authorLabel",
+              "args": [
+                "$"
+              ]
+            },
+            "reference": {
+              "$fn": "coalesce",
+              "args": [
+                {
+                  "$fn": "recommendationText",
+                  "args": [
+                    "$"
+                  ]
+                },
+                {
+                  "$fn": "join",
+                  "args": [
+                    {
+                      "$fn": "recommendationText",
+                      "args": [
+                        "$",
+                        "highlights"
+                      ]
+                    },
+                    " … "
+                  ]
+                }
+              ]
+            }
+          }
         }
-      }
+      ]
     },
     "projects": {
       "$each": "$$.projects",
