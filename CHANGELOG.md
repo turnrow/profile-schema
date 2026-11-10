@@ -9,6 +9,11 @@
 - **`--target google-csv`** reads the Google Admin console's user export and writes the bulk-update CSV to upload: only the rows and columns that change, with the names, organizational unit and `****` password Google requires on every row.
 - **`--target ldif`** reads an LDIF export (OpenLDAP or Active Directory) and writes `changetype: modify` records for `ldapmodify`. The tool opens no connection.
 - A connector that can read a field but not write it says so in the report.
+
+### Directory APIs
+- **`--target google | entra | okta | onelogin`**: `directory diff` compares against a saved list of users from each directory's API. `--map field=attribute` sends a person's own field to an attribute the administrator names.
+- **`directory apply <change-set.json>`** prints the requests a change set would send. With `--apply --approved <sha256> --out <folder>` it sends them: only the approved change set, no older than seven days; each user is read again and a field is changed only if the directory still holds the approved value; it stops at the first error; it writes a log and a rollback change set. The access token comes from an environment variable and is written nowhere.
+- Not run against a real tenant.
 - Design: `docs/superpowers/specs/2026-11-10-directory-sync-design.md`, with the decisions made without a brainstorm listed for confirmation.
 - For code: `readProfileFolder`, `matchUser`, `diffDirectory`, `changeReport`, `DIRECTORY_CONNECTORS`, `DIRECTORY_FIELDS`.
 

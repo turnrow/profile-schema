@@ -25,6 +25,7 @@ import { renderResumePdf, PdfError } from "../lib/pdf.mjs";
 import { gedzip, gedzipMedia, readBundleMedia, GEDZIP_MEDIA } from "../lib/gedcom.mjs";
 import { bundleFileReader } from "../lib/ob3.mjs";
 import { CONNECTORS, readProfileFolder, diffDirectory, changeReport, userFileName } from "../lib/directory/index.mjs";
+import { withMap, planRequests, applyChangeSet, ApplyRefusedError } from "../lib/directory/api.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS, resolveMapping } from "../index.mjs";
 
 const HELP = `turnrow-profile: validate, convert and share Turnrow Profiles.
@@ -45,6 +46,8 @@ Commands
   directory diff <folder> --against <export> --target <connector> --out <folder>
                                            compare a folder of profiles with a directory export and write the
                                            changes, a report to approve and who was left out (changes nothing)
+  directory apply <change-set.json>        show the requests an approved change set would send to a directory API;
+                                           with --apply, --approved <sha256> and --out <folder>, send them and keep a log
   help, version
 
 A profile is a .json file; a bundle is a folder holding profile.json and its media/ and badges/.
@@ -63,6 +66,10 @@ Options
   badges import:  --id <id>   --fetch (needed before a URL is fetched)
   directory diff: --target <${Object.keys(CONNECTORS).join("|")}>   --method <…> --domain <the employer's domain>
               --audience <id> (default: each profile's directory audience)   --record (add each release to its profile)
+              --map <field=attribute,…> (your own attributes, for entra, okta and onelogin)
+  directory apply: --approved <the sha256 of the change set, from the report>   --apply   --out <folder>   --max-age <days> (default 7)
+              The access token is read from an environment variable (GOOGLE_DIRECTORY_TOKEN, ENTRA_GRAPH_TOKEN, OKTA_TOKEN,
+              ONELOGIN_TOKEN), never from the command line. Okta and OneLogin also need OKTA_ORG_URL or ONELOGIN_URL.
   pdf:        --pages <1|auto>   --photo | --no-photo (default: no photo)   --density <comfortable|compact>
               --paper <us-letter|a4>   --min-priority <0-100>   --layout <classic|academic|two-column>   --typst <path to typst>
 
@@ -78,8 +85,8 @@ function fail(message, code = 1) { console.error(`error: ${message}`); process.e
 // Flags are declared here so that a misspelled one is refused instead of silently ignored.
 const VALUE_FLAGS = ["--locale", "--out", "--format", "--domain", "--method", "--application", "--receipt", "--on", "--recipient",
   "--visibility", "--media-base", "--id", "--alt", "--kind", "--purpose", "--from",
-  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst", "--against", "--target", "--audience"];
-const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version", "--photo", "--no-photo", "--gedzip"];
+  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst", "--against", "--target", "--audience", "--approved", "--max-age", "--map"];
+const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version", "--photo", "--no-photo", "--gedzip", "--apply"];
 const flags = {};
 const argv = [];
 {
@@ -126,6 +133,10 @@ const asJson = takeBool("--json");
 const against = takeFlag("--against");
 const targetFlag = takeFlag("--target");
 const audienceFlag = takeFlag("--audience");
+const approved = takeFlag("--approved");
+const maxAge = takeFlag("--max-age");
+const mapFlag = takeFlag("--map");
+const applyFlag = takeBool("--apply");
 const visibility = visibilityFlag ? visibilityFlag.split(",").map((v) => v.trim()) : undefined;
 if (visibility && visibility.some((v) => !["public", "network", "private"].includes(v))) {
   fail(`--visibility takes public, network and/or private (got ${visibilityFlag})`, 2);
@@ -170,7 +181,7 @@ function writeNew(path, bytes, what) {
 function writeOut(path, text) { mkdirSync(dirname(resolve(path)), { recursive: true }); writeFileSync(path, text); }
 function emit(text) { if (out) writeOut(out, text); else process.stdout.write(text); }
 function usage() {
-  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import|directory diff> …\nRun "turnrow-profile help" for the commands and options.`);
+  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import|directory diff|directory apply> …\nRun "turnrow-profile help" for the commands and options.`);
   process.exit(2);
 }
 if (flags["--version"] || command === "version") {
@@ -295,8 +306,41 @@ try {
       break;
     }
     case "directory": {
+      if (rest[0] === "apply") {
+        if (!rest[1]) usage();
+        if (!existsSync(rest[1]) || statSync(rest[1]).isDirectory()) fail(`no such change set: ${rest[1]}`);
+        const text = readFileSync(rest[1], "utf8");
+        let changeSet;
+        try { changeSet = JSON.parse(text); } catch (err) { fail(`${rest[1]} is not valid JSON: ${err.message}`); }
+        const conn = CONNECTORS[changeSet.target];
+        if (!conn) fail(`${rest[1]} was made for "${changeSet.target}", which this version does not know`);
+        if (!conn.write) fail(`${conn.id} works by file: apply its file by hand (see the report)`, 2);
+        if (maxAge !== undefined && !/^\d+$/.test(maxAge)) fail(`--max-age takes a number of days (got ${maxAge})`, 2);
+        if (!applyFlag) {
+          // The default: show what would be sent, and send nothing.
+          let plan;
+          try { plan = planRequests(changeSet, conn, process.env); } catch (err) { fail(err.message, 2); }
+          emit(JSON.stringify(plan.map(({ method, url, body, person }) => ({ person, method, url, body })), null, 2) + "\n");
+          console.error(`${plan.length} request${plan.length === 1 ? "" : "s"} would be sent. Nothing was sent. To send them: --apply --approved <sha256 from the report> --out <folder>.`);
+          break;
+        }
+        if (!approved) fail("directory apply --apply needs --approved <sha256>: the hash of the change set, from the report you read", 2);
+        if (!out) fail("directory apply --apply needs --out <folder> for the log and the rollback file", 2);
+        const token = process.env[conn.tokenEnv];
+        if (!token) fail(`set ${conn.tokenEnv} to an access token for ${conn.label} (it is read from the environment so that it is never on a command line)`, 2);
+        let result;
+        try { result = await applyChangeSet({ text, connector: conn, approved, token, fetch: (url, init) => fetch(url, { ...init, redirect: "error" }), env: process.env, maxAgeDays: maxAge === undefined ? undefined : Number(maxAge), today: on }); }
+        catch (err) { if (err instanceof ApplyRefusedError) fail(err.message, 4); throw err; }
+        writeOut(join(out, "apply-log.jsonl"), result.log.map((l) => JSON.stringify(l)).join("\n") + (result.log.length ? "\n" : ""));
+        writeOut(join(out, "rollback-change-set.json"), JSON.stringify(result.rollback, null, 2) + "\n");
+        console.error(`${result.applied} field${result.applied === 1 ? "" : "s"} changed, ${result.skipped} skipped.${result.stoppedAt ? ` Stopped at ${result.stoppedAt}: the directory answered with an error, and nothing after it was sent.` : ""}`);
+        console.error(`The log and the rollback change set are in ${out}. They hold personal data.`);
+        if (result.stoppedAt) process.exit(1);
+        break;
+      }
       if (rest[0] !== "diff" || !rest[1]) usage();
-      const connector = CONNECTORS[targetFlag ?? ""];
+      let connector = CONNECTORS[targetFlag ?? ""];
+      if (connector) { try { connector = withMap(connector, mapFlag); } catch (err) { fail(err.message, 2); } }
       if (!connector) fail(`directory diff needs --target: one of ${Object.keys(CONNECTORS).join(", ")}`, 2);
       if (!against) fail("directory diff needs --against <export>: the directory's own export of its users", 2);
       if (!out) fail("directory diff needs --out <folder> for the change set, the report and the receipts", 2);
@@ -312,13 +356,15 @@ try {
       if (!profiles.length) fail(`${rest[1]} holds no profiles (files named *.profile.json, or bundle folders)`);
       // With --on the run is reproducible: releases are stamped with that day, not with the clock.
       const result = diffDirectory({ profiles, users, connector, requester, audience: audienceFlag, on, now: on ? `${on}T00:00:00.000Z` : undefined, exportSha256: createHash("sha256").update(exportBytes).digest("hex") });
-      const files = connector.render ? connector.render(result.changeSet) : [];
+      let files = connector.render ? connector.render(result.changeSet) : [];
+      // An API connector has no file to upload: applying is a separate command, which shows its requests first.
+      if (connector.write) files = [{ name: undefined, how: `run "directory apply ${join(out, "change-set.json")}" to see the requests; add --apply --approved ${result.sha256} --out <folder> to send them` }];
       const put = (name, text) => writeOut(join(out, name), text);
       put("change-set.json", result.text);
       put("refusals.json", JSON.stringify(result.changeSet.refusals, null, 2) + "\n");
       for (const c of result.changeSet.changes) put(join("changes", `${userFileName(c.user)}.json`), JSON.stringify(c, null, 2) + "\n");
       for (const r of result.receipts) put(join("receipts", `${userFileName(result.changeSet.changes.find((c) => c.user.id === r.user).user)}.json`), JSON.stringify(r.receipt, null, 2) + "\n");
-      for (const f of files) put(f.name, f.data);
+      for (const f of files) if (f.name) put(f.name, f.data);
       put("report.md", changeReport(result.changeSet, { sha256: result.sha256, files: files.map((f) => f.how) }));
       if (recordIt) {
         for (const r of result.records) {
