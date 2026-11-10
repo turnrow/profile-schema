@@ -1,0 +1,227 @@
+{
+  "target": "ob3",
+  "description": "Open Badges 3.0 (1EdTech): an unsigned Verifiable Presentation carrying the subject's original, issuer-signed badge credentials exactly as issued. It needs the bundle the originals are kept in. Only approved, public badges in good standing (not failed, revoked or expired) with an Open Badges 3.0 original are presented; Open Badges 2.0 badges are not Verifiable Credentials and are left out. Nothing is signed here: the profile never speaks as an issuer.",
+  "include": {
+    "visibility": [
+      "public"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high",
+      "medium"
+    ]
+  },
+  "format": "ob3vp",
+  "ruleExemptKeys": [
+    "id",
+    "credential",
+    "url",
+    "criteriaUrl",
+    "issuerId",
+    "achievementType",
+    "represents",
+    "achievements"
+  ],
+  "output": {
+    "holder": {
+      "id": "$.meta.canonicalUrl",
+      "name": "$.person.name"
+    },
+    "date": {
+      "$fn": "onDate",
+      "args": []
+    },
+    "name": {
+      "$fn": "label",
+      "args": [
+        "clrName",
+        {
+          "name": "$.person.name"
+        }
+      ]
+    },
+    "credentials": {
+      "$each": {
+        "$fn": "badgesInGoodStanding",
+        "args": [
+          "$$.badges"
+        ]
+      },
+      "$sort": "-validFrom",
+      "$map": {
+        "id": "$.id",
+        "credential": {
+          "$fn": "badgeCredential",
+          "args": [
+            "$"
+          ]
+        },
+        "represents": "$.credentialRef"
+      }
+    },
+    "achievements": {
+      "$fn": "concatLists",
+      "args": [
+        {
+          "$each": {
+            "$fn": "badgesInGoodStanding",
+            "args": [
+              "$$.badges"
+            ]
+          },
+          "$sort": "-validFrom",
+          "$map": {
+            "$if": {
+              "$fn": "badgeCredential",
+              "args": [
+                "$"
+              ]
+            },
+            "$then": null,
+            "$else": {
+              "id": "$.id",
+              "url": "$.achievement.id",
+              "achievementType": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.achievement.achievementType",
+                  "Badge"
+                ]
+              },
+              "name": {
+                "$fn": "text",
+                "args": [
+                  "$.achievement.name"
+                ]
+              },
+              "description": {
+                "$fn": "text",
+                "args": [
+                  "$.achievement.description"
+                ]
+              },
+              "criteria": {
+                "$fn": "text",
+                "args": [
+                  "$.achievement.criteria.narrative"
+                ]
+              },
+              "criteriaUrl": "$.achievement.criteria.id",
+              "issuerName": {
+                "$fn": "org",
+                "args": [
+                  "$.issuer"
+                ]
+              },
+              "issuerId": "$.issuerId",
+              "alignment": "$.achievement.alignment",
+              "tags": "$.achievement.tag",
+              "represents": "$.credentialRef"
+            }
+          }
+        },
+        {
+          "$each": "$$.credentials",
+          "$where": {
+            "active": [
+              true,
+              null
+            ]
+          },
+          "$map": {
+            "id": "$.id",
+            "achievementType": {
+              "$fn": "enumMap",
+              "args": [
+                "$.kind",
+                {
+                  "$literal": {
+                    "license": "License",
+                    "certification": "Certification",
+                    "membership": "Membership",
+                    "rating": "Certification",
+                    "clearance": "Achievement"
+                  }
+                }
+              ]
+            },
+            "name": {
+              "$fn": "text",
+              "args": [
+                "$.name"
+              ]
+            },
+            "description": {
+              "$fn": "text",
+              "args": [
+                "$.summary"
+              ]
+            },
+            "issuerName": {
+              "$fn": "org",
+              "args": [
+                "$.issuer"
+              ]
+            }
+          }
+        },
+        {
+          "$each": "$$.education",
+          "$where": {
+            "completed": [
+              true
+            ]
+          },
+          "$map": {
+            "id": "$.id",
+            "achievementType": {
+              "$fn": "enumMap",
+              "args": [
+                "$.kind",
+                {
+                  "$literal": {
+                    "degree": "Degree",
+                    "coursework": "Course",
+                    "continuingEducation": "Course",
+                    "training": "Course",
+                    "certificateProgram": "Certificate",
+                    "bootcamp": "LearningProgram"
+                  }
+                }
+              ]
+            },
+            "name": {
+              "$fn": "join",
+              "args": [
+                [
+                  "$.credential",
+                  {
+                    "$fn": "text",
+                    "args": [
+                      "$.area"
+                    ]
+                  }
+                ],
+                ", "
+              ]
+            },
+            "description": {
+              "$fn": "text",
+              "args": [
+                "$.summary"
+              ]
+            },
+            "issuerName": {
+              "$fn": "org",
+              "args": [
+                "$.institution"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

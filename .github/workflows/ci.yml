@@ -25,6 +25,9 @@ jobs:
       - uses: typst-community/setup-typst@v4
         with:
           typst-version: 0.15.1
+      # The Open Badges 3.0 and CLR 2.0 outputs are validated against 1EdTech's schemas; without them those tests are skipped.
+      - name: Fetch the 1EdTech JSON Schemas
+        run: node scripts/fetch-1edtech-schemas.mjs
       - run: npm test
       - name: Validate the example profiles
         run: npm run validate:examples
@@ -40,6 +43,9 @@ jobs:
             node bin/profile.mjs convert "$src" gedcom7 --on 2026-11-07 --out "examples/out/$ex.ged"
             node bin/profile.mjs convert "$src" gedcom551 --on 2026-11-07 --out "examples/out/$ex.551.ged"
             node bin/profile.mjs convert "$src" ats --on 2026-11-07 --out "examples/out/$ex.ats.txt"
+          done
+          for m in ob3 clr; do
+            node bin/profile.mjs convert examples/recommended "$m" --on 2026-11-07 --out "examples/out/recommended.$m.json"
           done
           node bin/profile.mjs review examples/sample.profile.json --on 2026-11-07 --out examples/out/sample.review.md
           git diff --exit-code -- examples/recommended examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'

@@ -2,6 +2,13 @@
 
 ## Unreleased (2.8): exports
 
+### Open Badges 3.0 and CLR 2.0
+- **`convert <bundle> ob3`** writes an unsigned Verifiable Presentation carrying the Open Badges 3.0 credentials exactly as their issuers signed them (a VC-JWT in an `EnvelopedVerifiableCredential`).
+- **`convert <bundle> clr`** writes a CLR 2.0 `ClrCredential` template: those credentials, plus Open Badges 2.0 badges, active licenses and certifications and completed education as achievements, for an institution or the holder to sign. A badge that stands for a credentials entry is counted once.
+- Only approved, public badges in good standing are carried: not ones that failed their check, were revoked, or have run out by `--on`. An original that no longer matches its recorded hash is refused. Nothing is signed.
+- Both are validated in the tests against 1EdTech's JSON Schemas, fetched by `scripts/fetch-1edtech-schemas.mjs` (pinned by hash, not kept in the repository).
+- For code: `bundleFileReader`, `renderPresentation`, `renderClr`, `originalCredential`, `NothingToExportError`, and `convert`'s `readBundleFile` option. The review file reads a bundle's originals the same way, and leaves these outputs out quietly when a profile has no such badge.
+
 ### Plain-text ATS résumé
 - **`convert <profile | bundle> ats`** writes the résumé view as one column of UTF-8 text for applicant tracking systems: plain capital headings, `MM/YYYY` dates with a plain hyphen, links written out, `- ` bullets, and no tables, columns, tabs or graphics.
 - It says what the PDF says: `ats` extends `resume` and follows its per-entry choices (`"followsTargets"`, new), so an entry left out of or reworded for the résumé is treated the same.

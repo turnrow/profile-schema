@@ -5,3 +5,6 @@ node_modules/
 review.md
 *.review.md
 !examples/out/sample.review.md
+
+# The 1EdTech JSON Schemas are fetched for the tests (scripts/fetch-1edtech-schemas.mjs), not redistributed.
+.cache/
