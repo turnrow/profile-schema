@@ -2,6 +2,12 @@
 
 ## Unreleased (2.8): exports
 
+### Plain-text ATS résumé
+- **`convert <profile | bundle> ats`** writes the résumé view as one column of UTF-8 text for applicant tracking systems: plain capital headings, `MM/YYYY` dates with a plain hyphen, links written out, `- ` bullets, and no tables, columns, tabs or graphics.
+- It says what the PDF says: `ats` extends `resume` and follows its per-entry choices (`"followsTargets"`, new), so an entry left out of or reworded for the résumé is treated the same.
+- `examples/out/*.ats.txt` are generated and checked in CI.
+- Fix (from #66): a résumé entry with no title of its own is titled by its organization, which no longer crashes the PDF.
+
 ### GEDCOM 5.5.1
 - **`convert <profile | bundle> gedcom551`** writes the same individual for programs that don't read 7.0: `GEDC VERS 5.5.1`, `FORM LINEAGE-LINKED`, `CHAR UTF-8`, a required `SUBM` record, languages by name, 5.5.1-shaped `OBJE` records, every `@` doubled, and lines within 255 bytes continued with `CONC` and `CONT`.
 - **Nothing is dropped silently.** A date's phrase, the confidence, and the title of a residence or event become notes; a value too long for its field is cut there and kept whole in a note.

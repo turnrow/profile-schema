@@ -249,6 +249,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Write an output | `convert <profile \| bundle> <mapping> [--out file]` |
 | Write a GEDCOM 7 file for genealogy software | `convert <profile \| bundle> gedcom7 --out me.ged` (add `--gedzip` for a `.gdz` with the media) |
 | Write GEDCOM 5.5.1 for older genealogy software | `convert <profile \| bundle> gedcom551 --out me.ged` |
+| Write a plain-text résumé for applicant tracking systems | `convert <profile \| bundle> ats --out resume.txt` |
 | Write an accessible résumé PDF | `pdf <profile \| bundle> --out resume.pdf` |
 | Start from a JSON Resume | `import <resume.json> --out my.profile.json` |
 | Share with an audience, with a consent receipt | `release <profile> <audience> --method … --domain …` |
@@ -256,7 +257,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
 
-Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `gedcom7`, `gedcom551`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
+Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
 
 Options that apply widely: `--out <file>` (folders are created as needed), `--locale <tag>` (a BCP 47 tag such as `es` or `pt-BR`) and `--on <yyyy-mm-dd>` (the date an output is made for; default today, UTC). An option can be written `--out file` or `--out=file`. A misspelled option stops the command.
 
@@ -392,7 +393,7 @@ node bin/profile.mjs pdf my-bundle/ --out resume.pdf --pages 1 --photo --locale 
   - **Arabic text does not come back out of the PDF intact.** The page looks right and passes PDF/UA-1 validation, but copied or extracted text has the letters of lam-alef pairs (as in الآن) reversed and vowel marks doubled. A screen reader may misread those words. Until that is fixed, don't rely on an Arabic PDF for accessibility. Hebrew extracts correctly.
   - **The Arabic and Hebrew wording was written by an AI** and has not been checked by a fluent reader.
   - **Translate the profile, not just the headings.** `--locale he` on an English profile gives Hebrew headings over English text set right to left, where punctuation and numbers land on the wrong side.
-- **Copying text out.** Dates sit at the end of their line. The PDF's own text order keeps each date with its entry, and that is what a screen reader follows, but tools that guess columns from position can move the dates. For applicant tracking systems, the plain-text résumé on the [roadmap](ROADMAP.md) is the safer file.
+- **Copying text out.** Dates sit at the end of their line. The PDF's own text order keeps each date with its entry, and that is what a screen reader follows, but tools that guess columns from position can move the dates. For applicant tracking systems, use the [plain-text résumé](#the-plain-text-résumé-ats).
 
 When one page isn't enough:
 
@@ -402,6 +403,18 @@ To fit one page, leave out the least important entries. Lowest priority first:
   - Awards: "Waterfront Project of the Year" (harbor-award, priority 40)
   …
 ```
+
+## The plain-text résumé (ATS)
+
+```sh
+node bin/profile.mjs convert examples/sample.profile.json ats --out resume.txt
+```
+
+Applicant tracking systems read a résumé with a parser, and parsers trip on layout. `ats` writes the [résumé view](#the-résumé-view) as one column of UTF-8 text: the name first, contact details on one line, links written out in full, headings in plain capitals on their own lines, dates as `MM/YYYY` with a plain hyphen, bullets as `- `, and no tables, columns, tabs or graphics. See [`examples/out/sample.ats.txt`](examples/out/sample.ats.txt).
+
+- **It says what the PDF says.** Both are written from the same view. An entry left out of, or reworded for, the résumé (`targets.resume`) is treated the same here; `targets.ats` can still make a choice of its own.
+- **Headings follow `--locale`.** For a system that expects English headings, write the English version.
+- No parser has been run on the output; the format follows what such systems are documented to read best.
 
 ## The review file
 
@@ -508,6 +521,7 @@ A mapping is JSON: an `include` filter and an `output` template.
   - Context: `locale`, `direction`, `onDate`, `now`.
 - Empty values are dropped, so missing data never renders as a blank field.
 - `"extends": "gedcom7"` takes everything from that bundled mapping and replaces only what this one sets. Use it when two outputs differ in how they are written, not in what they say.
+- `"followsTargets": ["resume"]` makes a mapping honor another output's per-entry choices (`targets.resume.omit` and overrides) as well as its own.
 - `"ruleExemptKeys": ["id"]` keeps the content rules from reading identifiers as prose (an id such as `state-u-ms` is not a claim to an MS). Exempt only keys a reader never sees.
 
 ### Other targets
