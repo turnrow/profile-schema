@@ -1,0 +1,5 @@
+First Name [Required],Last Name [Required],Email Address [Required],Password [Required],Password Hash Function [UPLOAD ONLY],Org Unit Path [Required],New Primary Email [UPLOAD ONLY],Work Phone,Employee ID,Employee Title,Department,Cost Center,Last Sign In [READ ONLY]
+Samantha,Rivera,sam.rivera@acme.example,****,,/Engineering,,,E-104233,Senior Software Engineer II,Platform Engineering,,2026/11/01 09:00:00
+Dana,Okoye,dana.okoye@acme.example,****,,/Design,,,E-104310,Product Designer II,Design,,2026/11/01 09:00:00
+Lee,Park,lee.park@acme.example,****,,/Finance,,,E-104377,Data Analyst I,Finance,,2026/11/01 09:00:00
+Avery,Chen,avery.chen@acme.example,****,,/Engineering,,,E-100001,Director of Engineering,Engineering,,2026/11/01 09:00:00

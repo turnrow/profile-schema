@@ -1,0 +1,89 @@
+{
+  "changeSetVersion": 1,
+  "target": "google-csv",
+  "madeFor": "2026-11-07",
+  "recipient": {
+    "domain": "acme.example",
+    "verifiedBy": "oidc"
+  },
+  "against": {
+    "sha256": "f73b0bc1bbf544486a456899b839207a956ed195842f9d0e4c76c1013fd5f40f",
+    "users": 4
+  },
+  "changes": [
+    {
+      "user": {
+        "id": "dana.okoye@acme.example",
+        "primaryEmail": "dana.okoye@acme.example",
+        "employeeNumber": "E-104310",
+        "keep": {
+          "givenName": "Dana",
+          "familyName": "Okoye",
+          "orgUnitPath": "/Design"
+        }
+      },
+      "person": "Dana Okoye",
+      "profile": "dana-okoye.profile.json",
+      "matchedBy": "employee number",
+      "release": {
+        "id": "release-e3352c73-1746-6086-face-b3772f6d3f92",
+        "audience": "current-employer",
+        "payloadSha256": "68eb769e8bc800ce99e0b74d9eecc61a508d65634d1645ef176b48ee5cfb0191"
+      },
+      "fields": [],
+      "notes": []
+    },
+    {
+      "user": {
+        "id": "sam.rivera@acme.example",
+        "primaryEmail": "sam.rivera@acme.example",
+        "employeeNumber": "E-104233",
+        "keep": {
+          "givenName": "Samantha",
+          "familyName": "Rivera",
+          "orgUnitPath": "/Engineering"
+        }
+      },
+      "person": "Sam Rivera",
+      "profile": "sam-rivera.profile.json",
+      "matchedBy": "employee number",
+      "release": {
+        "id": "release-a8c73600-c08c-b3c1-429b-8b1588004fa5",
+        "audience": "current-employer",
+        "payloadSha256": "5ebd9f45c8711c1a54a685e3d7bfb69fb1aff5cdc26fb6349ee67d698b945cb8"
+      },
+      "fields": [
+        {
+          "field": "givenName",
+          "attribute": "First Name [Required]",
+          "from": "Samantha",
+          "to": "Sam"
+        }
+      ],
+      "notes": [
+        {
+          "field": "department",
+          "attribute": "Department",
+          "directory": "Platform Engineering",
+          "profile": "Engineering",
+          "reason": "the employer is the authority for this field, so it is not changed; correct the profile through write-back, or the directory at its source"
+        }
+      ]
+    }
+  ],
+  "refusals": [
+    {
+      "profile": "jo-reyes.profile.json",
+      "person": "Jo Reyes",
+      "code": "noMatchingUser",
+      "reason": "no directory user has this person's employee number or e-mail address"
+    },
+    {
+      "profile": "lee-park.profile.json",
+      "person": "Lee Park",
+      "code": "noConsent",
+      "reason": "the subject has not given consent (meta.subjectConsent.given is not true)"
+    }
+  ],
+  "usersWithoutProfile": 2
+}

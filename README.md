@@ -515,7 +515,7 @@ An organization that keeps a folder of its people's profiles can see what those 
 | `changes/<user>.json` | One file per person. |
 | `refusals.json` | Who was left out, and the reason. |
 | `receipts/<user>.json` | The consent receipt for each person's release. |
-| the connector's own file | For `scim`: `scim-bulk.json`, one SCIM Bulk request. |
+| the connector's own file | The file to apply (see the connectors below). |
 
 See [`examples/out/directory/`](examples/out/directory/), made from the fictional people in [`examples/directory/`](examples/directory/).
 
@@ -531,7 +531,20 @@ The rule it follows: **a directory update is a release, to an employer, of field
 
 Profiles are read-only unless you pass `--record`, which adds each release to its profile as `release --record` does. With `--on <date>` a run is reproducible. A run's output holds personal data: keep it out of public repositories and shared folders.
 
-The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-directory-sync-design.md`](docs/superpowers/specs/2026-11-10-directory-sync-design.md). `scim` is the first connector; Google Workspace, Microsoft Entra ID, Okta, OneLogin and LDAP are planned on the same base.
+### Connectors
+
+| `--target` | Reads (`--against`) | Writes | Can change |
+|---|---|---|---|
+| `scim` | A list of SCIM 2.0 Users (JSON) | `scim-bulk.json`: one SCIM Bulk request | Every field the person is the authority for |
+| `google-csv` | The Admin console's user export (Directory > Users > Download users) | `google-bulk-update.csv`, to upload at Directory > Users > Bulk update users | First name, last name, work phone |
+| `ldif` | An LDIF export of people (OpenLDAP, Active Directory) | `directory-changes.ldif`: `changetype: modify` records for `ldapmodify` | `givenName`, `sn`, `displayName`, `telephoneNumber` |
+
+A connector that can read a field but not write it says so in the report, so the report never promises a change the file does not make.
+
+- **Google Workspace.** The file has only the rows and columns that change. Each row repeats what Google requires on every row (the names, the organizational unit, and `****`, which keeps the password); no column that renames, suspends or licenses a user is ever written. Google's file has no column for pronouns, a nickname or a photo: those need the Directory API, which is planned. Format source: Google's help page [Add or update multiple users from a CSV file](https://knowledge.workspace.google.com/admin/users/add-or-update-multiple-users-from-a-csv-file) (updated 2026-10-26). That page names the required columns; the optional ones read here (Work Phone, Employee ID, Employee Title, Department, Cost Center) are spelled as the console's template spells them, and headers are matched without regard to case. **Not checked against a real export or upload**: the example export is written by hand.
+- **LDAP and Active Directory.** The tool writes LDIF and opens no connection: apply the file with `ldapmodify` (try `ldapmodify -n` first) or `ldifde -i`. It reads `employeeNumber` or `employeeID`, `department` or `departmentNumber`, `mail` and `proxyAddresses`. Photos (`jpegPhoto`, `thumbnailPhoto`) are not written yet. **Not checked against a real directory.**
+
+The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-directory-sync-design.md`](docs/superpowers/specs/2026-11-10-directory-sync-design.md). Connectors that call a directory's API (Google, Microsoft Entra ID, Okta, OneLogin) are planned on the same base.
 
 ## The review file
 

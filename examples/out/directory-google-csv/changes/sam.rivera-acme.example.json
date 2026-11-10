@@ -1,0 +1,37 @@
+{
+  "user": {
+    "id": "sam.rivera@acme.example",
+    "primaryEmail": "sam.rivera@acme.example",
+    "employeeNumber": "E-104233",
+    "keep": {
+      "givenName": "Samantha",
+      "familyName": "Rivera",
+      "orgUnitPath": "/Engineering"
+    }
+  },
+  "person": "Sam Rivera",
+  "profile": "sam-rivera.profile.json",
+  "matchedBy": "employee number",
+  "release": {
+    "id": "release-a8c73600-c08c-b3c1-429b-8b1588004fa5",
+    "audience": "current-employer",
+    "payloadSha256": "5ebd9f45c8711c1a54a685e3d7bfb69fb1aff5cdc26fb6349ee67d698b945cb8"
+  },
+  "fields": [
+    {
+      "field": "givenName",
+      "attribute": "First Name [Required]",
+      "from": "Samantha",
+      "to": "Sam"
+    }
+  ],
+  "notes": [
+    {
+      "field": "department",
+      "attribute": "Department",
+      "directory": "Platform Engineering",
+      "profile": "Engineering",
+      "reason": "the employer is the authority for this field, so it is not changed; correct the profile through write-back, or the directory at its source"
+    }
+  ]
+}

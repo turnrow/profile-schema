@@ -1,0 +1,14 @@
+[
+  {
+    "profile": "jo-reyes.profile.json",
+    "person": "Jo Reyes",
+    "code": "noMatchingUser",
+    "reason": "no directory user has this person's employee number or e-mail address"
+  },
+  {
+    "profile": "lee-park.profile.json",
+    "person": "Lee Park",
+    "code": "noConsent",
+    "reason": "the subject has not given consent (meta.subjectConsent.given is not true)"
+  }
+]

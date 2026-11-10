@@ -1,0 +1,58 @@
+version: 1
+
+dn: OU=People,DC=acme,DC=example
+objectClass: organizationalUnit
+ou: People
+
+dn: CN=Samantha Rivera,OU=People,DC=acme,DC=example
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+givenName: Samantha
+sn: Rivera
+displayName: Samantha Rivera
+mail: sam.rivera@acme.example
+employeeID: E-104233
+title: Senior Software Engineer II
+department: Platform Engineering
+manager: CN=Avery Chen,OU=People,DC=acme,DC=example
+
+dn: CN=Dana Okoye,OU=People,DC=acme,DC=example
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+givenName: Dana
+sn: Okoye
+displayName: Dana Okoye
+mail: dana.okoye@acme.example
+employeeID: E-104310
+title: Product Designer II
+department: Design
+
+dn: CN=Lee Park,OU=People,DC=acme,DC=example
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+givenName: Lee
+sn: Park
+displayName: Lee Park
+mail: lee.park@acme.example
+employeeID: E-104377
+title: Data Analyst I
+department: Finance
+
+dn: CN=Avery Chen,OU=People,DC=acme,DC=example
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+givenName: Avery
+sn: Chen
+displayName: Avery Chen
+mail: avery.chen@acme.example
+employeeID: E-100001
+title: Director of Engineering
+department: Engineering
