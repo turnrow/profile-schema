@@ -2482,9 +2482,10 @@
         "email",
         "phone",
         "website",
-        "profiles"
+        "profiles",
+        "personContacts"
       ],
-      "description": "A person-level field an audience may receive."
+      "description": "A person-level field an audience may receive. personContacts (2.6) also shares the contact details of the other people the release refers to (recommenders, endorsers, references); without it their contacts are withheld."
     },
     "audience": {
       "type": "object",

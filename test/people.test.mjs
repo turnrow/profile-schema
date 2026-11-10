@@ -193,3 +193,84 @@ test("a public endorsement without consent is an error in 2.6", () => {
   delete p.endorsements[0].consent;
   assert.ok(has(validateProfile(p).errors, /endorsements\/e1: public, but the author's consent is not recorded/));
 });
+
+// ---------- recommendations in outputs and releases (Task 8) ----------
+
+import { scopeProfile } from "../index.mjs";
+
+const OUTPUTS = ["jsonresume", "schemaorg", "linkedin", "brief"];
+const outputsOf = (p) => OUTPUTS.map((m) => convert(p, loadMapping(m), { on: ON }).text);
+const scoped = (scope) => withRec({ consent: { given: true, on: "2026-11-02", scope } });
+
+test("scope highlights: no mapping output contains the full text", () => {
+  const texts = outputsOf(scoped("highlights"));
+  for (const t of texts) assert.doesNotMatch(t, /rebuilt our harbor program/);
+  assert.match(texts[2], /the team trusted her completely/, "LinkedIn shows the featured highlight");
+});
+
+test("scope anonymous: no output contains the author's name", () => {
+  const texts = outputsOf(scoped("anonymous"));
+  for (const t of texts) assert.doesNotMatch(t, /Maria|Lopez|Chen/);
+  assert.match(texts[2], /Engineering Manager/, "shown by title");
+});
+
+test("scope nameOnly: the author is named, the text is not", () => {
+  const texts = outputsOf(scoped("nameOnly"));
+  for (const t of texts) assert.doesNotMatch(t, /harbor program|trusted her/);
+  assert.match(texts[2], /Maria Chen/);
+});
+
+test("a recommendation without consent never reaches an output, whatever its visibility", () => {
+  const p = withRec({ consent: undefined });
+  p.schemaVersion = "2.5.0"; // 2.5 only warns
+  for (const t of outputsOf(p)) assert.doesNotMatch(t, /harbor program|trusted her/);
+});
+
+test("schema.org: Recommendation with author Person and reviewBody", () => {
+  const p = withRec(); p.meta.canonicalUrl = "https://ines.example/";
+  const out = convert(p, loadMapping("schemaorg"), { on: ON }).output;
+  const r = out.review.find((x) => x["@type"] === "Recommendation");
+  assert.equal(r.author["@type"], "Person");
+  assert.equal(r.author.name, "Maria Chen");
+  assert.equal(r.author.jobTitle, "Engineering Manager");
+  assert.equal(r.reviewBody, BODY);
+  assert.equal(r.datePublished, "2023-05-02T14:30:00-05:00");
+  assert.equal(r.itemReviewed["@id"], out.mainEntity["@id"]);
+});
+
+test("JSON Resume: references from recommendations", () => {
+  const out = convert(withRec(), loadMapping("jsonresume"), { on: ON }).output;
+  const r = out.references.find((x) => /Maria Chen/.test(x.name));
+  assert.match(r.name, /Engineering Manager/);
+  assert.equal(r.reference, BODY);
+});
+
+test("LinkedIn: a Recommendations section listing text per consent", () => {
+  const t = convert(withRec(), loadMapping("linkedin"), { on: ON }).text;
+  assert.match(t, /Recommendations/);
+  assert.match(t, /Maria Chen, Engineering Manager at Acme/);
+  assert.match(t, /rebuilt our harbor program/);
+});
+
+test("release without personContacts carries no contacts; people travel only when referenced", () => {
+  const p = withRec();
+  p.people.unrelated = { name: "Not Referenced" };
+  p.audiences["current-employer"].sections.push("recommendations");
+  const { scoped: s } = scopeProfile(p, "current-employer", { on: ON });
+  assert.deepEqual(Object.keys(s.people), ["maria-chen"]);
+  assert.equal(s.people["maria-chen"].contacts, undefined);
+  assert.equal(s.recommendations.length, 1);
+  p.audiences["current-employer"].person.push("personContacts");
+  const { scoped: s2 } = scopeProfile(p, "current-employer", { on: ON });
+  assert.equal(s2.people["maria-chen"].contacts.length, 2);
+  assert.ok(s2.people["maria-chen"].contacts.every((c) => c.visibility === "audience"));
+  assert.equal(validateProfile(p).valid, true, validateProfile(p).errors.join("\n"));
+});
+
+test("an email kept as an identifier is a contact too: withheld without personContacts", () => {
+  const p = withRec();
+  p.people["maria-chen"].identifiers.push({ scheme: "email", value: "maria@acme.example" });
+  p.audiences["current-employer"].sections.push("recommendations");
+  const { scoped: s } = scopeProfile(p, "current-employer", { on: ON });
+  assert.deepEqual(s.people["maria-chen"].identifiers.map((i) => i.scheme), ["linkedin"]);
+});

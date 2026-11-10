@@ -234,3 +234,43 @@ test("badges import writes the original into the bundle and a draft entry that v
   assert.equal(url.status, 2);
   assert.match(url.stderr, /a URL needs --fetch/);
 });
+
+// ---------- badges in outputs (Task 8) ----------
+
+import { loadMapping as lm, convert } from "../index.mjs";
+
+test("schema.org: a badge is an EducationalOccupationalCredential with credentialCategory badge", () => {
+  const out = convert(withBadge(), lm("schemaorg"), { on: "2026-11-07" }).output;
+  const c = out.mainEntity.hasCredential.find((x) => x.credentialCategory === "badge");
+  assert.equal(c["@type"], "EducationalOccupationalCredential");
+  assert.equal(c.name, "Kubernetes Platform Practitioner");
+  assert.equal(c.url, "https://badges.example/credentials/42");
+  assert.equal(c.recognizedBy.name, "Acme Academy");
+});
+
+test("JSON Resume: certificates from badges, still valid against the upstream schema", async () => {
+  const out = convert(withBadge(), lm("jsonresume"), { on: "2026-11-07" }).output;
+  const c = out.certificates.find((x) => x.name === "Kubernetes Platform Practitioner");
+  assert.equal(c.issuer, "Acme Academy");
+  assert.equal(c.date, "2024-03-01");
+  assert.equal(c.url, "https://badges.example/credentials/42");
+  const { default: Ajv } = await import("ajv");
+  const { default: addFormats } = await import("ajv-formats");
+  const ajv = new Ajv({ strict: false, allErrors: true }); addFormats(ajv);
+  const v = ajv.compile(read("../upstream/jsonresume/schema.json"));
+  assert.ok(v(out), JSON.stringify(v.errors));
+});
+
+test("LinkedIn: badges under Licenses & certifications with the credential URL", () => {
+  const t = convert(withBadge(), lm("linkedin"), { on: "2026-11-07" }).text;
+  const sec = t.split(/\n(?=\S.*\n)/).find((s) => s.startsWith("Licenses & certifications")) ?? t;
+  assert.match(sec, /Kubernetes Platform Practitioner/);
+  assert.match(t, /Credential URL: https:\/\/badges\.example\/credentials\/42/);
+});
+
+test("a badge that stands for a credential entry isn't listed twice", () => {
+  const p = withBadge((b) => ({ ...b, credentialRef: "aws-sa" }));
+  p.credentials = [...(p.credentials ?? []), { id: "aws-sa", name: "Kubernetes Platform Practitioner", issuer: "acme-academy", status: "approved", confidence: "high" }];
+  const out = convert(p, lm("jsonresume"), { on: "2026-11-07" }).output;
+  assert.equal(out.certificates.filter((c) => c.name.startsWith("Kubernetes Platform Practitioner")).length, 1);
+});

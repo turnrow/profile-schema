@@ -320,60 +320,102 @@
       }
     },
     "Licenses & certifications": {
-      "$each": "$$.credentials",
-      "$where": {
-        "active": [
-          true,
-          null
-        ]
-      },
-      "$map": {
-        "Name": {
-          "$fn": "concat",
-          "args": [
-            {
-              "$fn": "text",
+      "$fn": "concatLists",
+      "args": [
+        {
+          "$each": "$$.credentials",
+          "$where": {
+            "active": [
+              true,
+              null
+            ]
+          },
+          "$map": {
+            "Name": {
+              "$fn": "concat",
               "args": [
-                "$.name"
-              ]
-            },
-            {
-              "$if": "$.ratings",
-              "$then": {
-                "$fn": "concat",
-                "args": [
-                  " – ",
-                  {
-                    "$fn": "join",
+                {
+                  "$fn": "text",
+                  "args": [
+                    "$.name"
+                  ]
+                },
+                {
+                  "$if": "$.ratings",
+                  "$then": {
+                    "$fn": "concat",
                     "args": [
-                      "$.ratings"
+                      " – ",
+                      {
+                        "$fn": "join",
+                        "args": [
+                          "$.ratings"
+                        ]
+                      }
                     ]
                   }
-                ]
-              }
-            }
-          ]
+                }
+              ]
+            },
+            "Issuing organization": {
+              "$fn": "org",
+              "args": [
+                "$.issuer"
+              ]
+            },
+            "Issue date": {
+              "$fn": "dateText",
+              "args": [
+                "$.issued"
+              ]
+            },
+            "Credential ID": {
+              "$fn": "visible",
+              "args": [
+                "$.credentialId",
+                "$.credentialIdVisibility"
+              ]
+            },
+            "Credential URL": "$.url"
+          }
         },
-        "Issuing organization": {
-          "$fn": "org",
-          "args": [
-            "$.issuer"
-          ]
-        },
-        "Issue date": {
-          "$fn": "dateText",
-          "args": [
-            "$.issued"
-          ]
-        },
-        "Credential ID": {
-          "$fn": "visible",
-          "args": [
-            "$.credentialId",
-            "$.credentialIdVisibility"
-          ]
+        {
+          "$each": {
+            "$fn": "badgesNotListed",
+            "args": [
+              "$$.badges"
+            ]
+          },
+          "$sort": "-validFrom",
+          "$map": {
+            "Name": {
+              "$fn": "text",
+              "args": [
+                "$.achievement.name"
+              ]
+            },
+            "Issuing organization": {
+              "$fn": "org",
+              "args": [
+                "$.issuer"
+              ]
+            },
+            "Issue date": {
+              "$fn": "dateText",
+              "args": [
+                "$.validFrom"
+              ]
+            },
+            "Expiration date": {
+              "$fn": "dateText",
+              "args": [
+                "$.validUntil"
+              ]
+            },
+            "Credential URL": "$.credential.url"
+          }
         }
-      }
+      ]
     },
     "Projects": {
       "$each": "$$.projects",
@@ -544,6 +586,51 @@
         "args": [
           "$.name"
         ]
+      }
+    },
+    "Recommendations (LinkedIn shows only those written on LinkedIn; request the others there)": {
+      "$each": {
+        "$fn": "consented",
+        "args": [
+          "$$.recommendations"
+        ]
+      },
+      "$sort": "-date",
+      "$map": {
+        "From": {
+          "$fn": "authorLabel",
+          "args": [
+            "$"
+          ]
+        },
+        "Relationship": "$.relationship.type",
+        "Date": {
+          "$fn": "dateText",
+          "args": [
+            "$.date"
+          ]
+        },
+        "Text": {
+          "$fn": "recommendationText",
+          "args": [
+            "$"
+          ]
+        },
+        "Highlights": {
+          "$if": {
+            "$fn": "recommendationText",
+            "args": [
+              "$"
+            ]
+          },
+          "$else": {
+            "$fn": "recommendationText",
+            "args": [
+              "$",
+              "highlights"
+            ]
+          }
+        }
       }
     },
     "Featured": {

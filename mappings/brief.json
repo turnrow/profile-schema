@@ -109,6 +109,52 @@
           }
         ]
       }
+    },
+    "recommendations": {
+      "$each": {
+        "$fn": "consented",
+        "args": [
+          "$$.recommendations"
+        ]
+      },
+      "$sort": "-date",
+      "$limit": 2,
+      "$map": {
+        "by": {
+          "$fn": "authorLabel",
+          "args": [
+            "$"
+          ]
+        },
+        "quote": {
+          "$fn": "first",
+          "args": [
+            {
+              "$fn": "recommendationText",
+              "args": [
+                "$",
+                "highlights"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "badges": {
+      "$each": {
+        "$fn": "badgesNotListed",
+        "args": [
+          "$$.badges"
+        ]
+      },
+      "$sort": "-priority",
+      "$limit": 3,
+      "$map": {
+        "$fn": "text",
+        "args": [
+          "$.achievement.name"
+        ]
+      }
     }
   },
   "orgNameStyle": "both"
