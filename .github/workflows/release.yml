@@ -40,7 +40,10 @@ jobs:
               found { print }
             ' CHANGELOG.md > "notes-$v.md"
             echo "Backfilling v$v at $sha"
-            gh release create "v$v" --target "$sha" --title "Profile Schema $v" --notes-file "notes-$v.md" --latest=false
+            # The workflow token can't create every tag (GitHub refuses some with "Resource not accessible
+            # by integration"); a refused backfill is reported and left for a person, not a failed run.
+            gh release create "v$v" --target "$sha" --title "Profile Schema $v" --notes-file "notes-$v.md" --latest=false \
+              || echo "::warning::Could not create v$v at $sha; create it by hand (Releases → Draft a new release, tag v$v, target $sha)."
           done
       - name: Read the version
         id: version
