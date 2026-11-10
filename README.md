@@ -303,6 +303,7 @@ Every entry has the same shape, whatever its section: `id`, `priority`, `title`,
 - **Dates come twice:** `dates` in the reader's language ("mar 2024 – Actualidad") and `datesNumeric` as `MM/YYYY` for applicant tracking systems. Uncertain dates keep their qualifier in both ("c. 1996").
 - **`priority`** (0–100, default 50) is on every entry, so a one-page layout knows what to drop first.
 - **Study that didn't end in a degree** reads "… (not completed)", or names the subject alone.
+- **Publications** name their authors (or inventors, for a patent) in published order, carry a patent or report number, and link a DOI. Press coverage about the person is left out: it is not their work.
 - **Other people's words** appear only with their consent, and only to its scope.
 - Headings and levels are translated in English, Spanish, French, German and Portuguese; other locales fall back to English words with their own date formats.
 
@@ -322,13 +323,15 @@ node bin/profile.mjs pdf my-bundle/ --out resume.pdf --pages 1 --photo --locale 
 | `--min-priority <n>` | Leave out entries whose `priority` is below `n` (0–100). |
 | `--density compact` | Smaller type and margins. Default `comfortable`. |
 | `--paper a4` | Default `us-letter`. |
+| `--layout academic` | An academic CV: education first, then experience and publications, titled "curriculum vitae". Default `classic`. |
 | `--photo` | Show the photo in force, with its alt text. Off by default; many employers ask for résumés without one. The photo must be stored in the bundle. |
 | `--locale`, `--on` | The language of headings and dates, and the date the résumé is made for. |
 
 - **Accessible by construction.** The document title and language are set; the name, sections and entries are real headings in order; reading order is visual order (one column); links are underlined and named; the photo carries its alt text; decorative rules are marked as decoration; no line is stranded at the top or bottom of a page. Text is Atkinson Hyperlegible Next in the brand colors, each at WCAG AAA contrast (7:1).
-- **Validated in CI.** Every example is rendered in eight variants (with a photo, in Spanish on A4, on one page, and so on) and checked against PDF/UA-1 by [veraPDF](https://verapdf.org), the reference validator. A violation fails the build. Typst and veraPDF are pinned to exact versions. To run it yourself: `node scripts/render-example-pdfs.mjs pdf-out`, then `verapdf -f ua1 pdf-out > report.xml` and `node scripts/check-pdfua.mjs report.xml`.
+- **Validated in CI.** Every example is rendered in nine variants (with a photo, in Spanish on A4, on one page, and so on) and checked against PDF/UA-1 by [veraPDF](https://verapdf.org), the reference validator. A violation fails the build. Typst and veraPDF are pinned to exact versions. To run it yourself: `node scripts/render-example-pdfs.mjs pdf-out`, then `verapdf -f ua1 pdf-out > report.xml` and `node scripts/check-pdfua.mjs report.xml`.
 - **Still check it.** A validator can't judge reading order, what a description says, or plain language. The [pull request template](.github/pull_request_template.md) lists those checks, and CI keeps the rendered PDFs (the `resume-pdfs` artifact) to do them on. Listen to your own résumé with a screen reader before sending it widely.
-- **One layout so far:** `classic` ([`templates/resume/classic.typ`](templates/resume/classic.typ)). A template holds layout only; to make your own, copy it and read the same view.
+- **Layouts:** `classic` and `academic`. Both use one template ([`templates/resume/classic.typ`](templates/resume/classic.typ)); `academic` arranges the same view differently before the template sees it. A template holds layout only; to make your own, copy it and read the same view.
+- **Copying text out.** Dates sit at the end of their line. The PDF's own text order keeps each date with its entry, and that is what a screen reader follows, but tools that guess columns from position can move the dates. For applicant tracking systems, the plain-text résumé on the [roadmap](ROADMAP.md) is the safer file.
 
 When one page isn't enough:
 

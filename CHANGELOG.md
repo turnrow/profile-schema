@@ -3,6 +3,8 @@
 ## Unreleased (2.7): review file, résumé view and accessible PDF
 
 ### Résumé PDF
+- **`--layout academic`:** an academic CV. Education first, then experience and publications; the document is titled a curriculum vitae. It arranges the same view and uses the same one-column template, and is validated in CI like the rest.
+- **Publications in the résumé view** now name their authors or inventors, carry a patent or report number, and link a DOI when there is no other link.
 - **veraPDF in CI.** A new job renders every example in eight variants and validates each against PDF/UA-1 with veraPDF (pinned by version and digest). Any violation, a file veraPDF can't read, or fewer validations than PDFs fails the build. The PDFs and the report are kept as the `resume-pdfs` artifact.
 - **A pull request template** with the accessibility checks a tool can't make: screen reader, reading order, plain language, meaning not by appearance alone, contrast and zoom. A failing rule is fixed, never exempted.
 - `scripts/render-example-pdfs.mjs` and `scripts/check-pdfua.mjs` do the same outside CI.

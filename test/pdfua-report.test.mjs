@@ -63,11 +63,12 @@ test("the command exits 1 on a failure and 0 on a pass", () => {
   assert.equal(run(report(pass("/data/a.pdf")), "--expect", "2").status, 1);
 });
 
-test("the rendered variants cover a photo, another language, A4, one page and network visibility", () => {
+test("the rendered variants cover a photo, another language, A4, one page, network visibility and each layout", () => {
   const all = Object.values(VARIANTS).map(([, o]) => o);
   assert.ok(all.some((o) => o.photo));
   assert.ok(all.some((o) => o.locale && o.paper === "a4"));
   assert.ok(all.some((o) => o.pages === "1"));
   assert.ok(all.some((o) => o.visibility?.includes("network")));
-  assert.ok(Object.keys(VARIANTS).length >= 8);
+  assert.ok(all.some((o) => o.layout === "academic"));
+  assert.ok(Object.keys(VARIANTS).length >= 9);
 });

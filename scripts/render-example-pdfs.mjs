@@ -21,6 +21,7 @@ export const VARIANTS = {
   "sample-network": ["examples/sample.profile.json", { visibility: ["public", "network"] }],
   "history": ["examples/history.profile.json", {}],
   "employee": ["examples/employee.profile.json", {}],
+  "employee-academic": ["examples/employee.profile.json", { layout: "academic" }],
   "recommended": ["examples/recommended", {}],
   "recommended-photo": ["examples/recommended", { photo: true }],
 };
