@@ -40,3 +40,37 @@ jobs:
           done
           node bin/profile.mjs review examples/sample.profile.json --on 2026-11-07 --out examples/out/sample.review.md
           git diff --exit-code -- examples/recommended examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'
+
+  pdf:
+    name: Résumé PDFs conform to PDF/UA-1
+    runs-on: ubuntu-latest
+    env:
+      # Pinned by version and by digest, so the validator can't change under a green build.
+      VERAPDF_IMAGE: verapdf/cli:v1.30.3@sha256:d74b7026c18a0f171e73c153b617fe6520e1511feb24ca98a348b2bb897669fb
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: typst-community/setup-typst@v4
+        with:
+          typst-version: 0.15.1
+      - name: Render every example PDF
+        run: node scripts/render-example-pdfs.mjs pdf-out
+      - name: Validate with veraPDF (PDF/UA-1)
+        run: |
+          count=$(ls pdf-out/*.pdf | wc -l)
+          # veraPDF's exit code is not documented, so the report decides; "|| true" keeps a non-zero exit from hiding it.
+          docker run --rm -v "$PWD/pdf-out:/data:ro" "$VERAPDF_IMAGE" -f ua1 /data > verapdf-report.xml || true
+          node scripts/check-pdfua.mjs verapdf-report.xml --expect "$count"
+      - name: Keep the PDFs and the report for the manual checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resume-pdfs
+          path: |
+            pdf-out/
+            verapdf-report.xml
+          if-no-files-found: warn

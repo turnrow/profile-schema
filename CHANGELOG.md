@@ -3,6 +3,9 @@
 ## Unreleased (2.7): review file, résumé view and accessible PDF
 
 ### Résumé PDF
+- **veraPDF in CI.** A new job renders every example in eight variants and validates each against PDF/UA-1 with veraPDF (pinned by version and digest). Any violation, a file veraPDF can't read, or fewer validations than PDFs fails the build. The PDFs and the report are kept as the `resume-pdfs` artifact.
+- **A pull request template** with the accessibility checks a tool can't make: screen reader, reading order, plain language, meaning not by appearance alone, contrast and zoom. A failing rule is fixed, never exempted.
+- `scripts/render-example-pdfs.mjs` and `scripts/check-pdfua.mjs` do the same outside CI.
 - **`pdf <profile | bundle> --out resume.pdf`** lays out the résumé view with a Typst template (`templates/resume/classic.typ`) and writes a tagged PDF that declares PDF/UA-1. Typst is found on `PATH` or named with `--typst`; without it the command says where to get it.
 - **`--pages 1`** is a hard limit: when the résumé runs longer, nothing is written and the least important entries are listed. `--min-priority`, `--density compact` and `--paper a4` adjust the fit.
 - **`--photo`** shows the photo in force with its alt text. It is off by default and takes only a photo stored in the bundle, with the same path guards as validation.

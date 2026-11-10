@@ -326,7 +326,8 @@ node bin/profile.mjs pdf my-bundle/ --out resume.pdf --pages 1 --photo --locale 
 | `--locale`, `--on` | The language of headings and dates, and the date the résumé is made for. |
 
 - **Accessible by construction.** The document title and language are set; the name, sections and entries are real headings in order; reading order is visual order (one column); links are underlined and named; the photo carries its alt text; decorative rules are marked as decoration; no line is stranded at the top or bottom of a page. Text is Atkinson Hyperlegible Next in the brand colors, each at WCAG AAA contrast (7:1).
-- **Still check it.** Typst refuses to write a PDF/UA-1 file it knows is wrong, but a tool can't judge reading order or plain language. Listen to it with a screen reader before sending it widely. Automated veraPDF validation is on the [roadmap](ROADMAP.md).
+- **Validated in CI.** Every example is rendered in eight variants (with a photo, in Spanish on A4, on one page, and so on) and checked against PDF/UA-1 by [veraPDF](https://verapdf.org), the reference validator. A violation fails the build. Typst and veraPDF are pinned to exact versions. To run it yourself: `node scripts/render-example-pdfs.mjs pdf-out`, then `verapdf -f ua1 pdf-out > report.xml` and `node scripts/check-pdfua.mjs report.xml`.
+- **Still check it.** A validator can't judge reading order, what a description says, or plain language. The [pull request template](.github/pull_request_template.md) lists those checks, and CI keeps the rendered PDFs (the `resume-pdfs` artifact) to do them on. Listen to your own résumé with a screen reader before sending it widely.
 - **One layout so far:** `classic` ([`templates/resume/classic.typ`](templates/resume/classic.typ)). A template holds layout only; to make your own, copy it and read the same view.
 
 When one page isn't enough:
