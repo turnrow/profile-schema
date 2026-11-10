@@ -82,3 +82,74 @@ test("a contact explicitly marked public is still a third party's: validation wa
   p.people["maria-chen"].contacts[1].visibility = "public";
   assert.ok(has(validateProfile(p).warnings, /people\/maria-chen\.contacts\[1\] is public/));
 });
+
+// ---------- recommendations ----------
+
+import { verbatim } from "../lib/people.mjs";
+
+const BODY = "Ines rebuilt our harbor program from nothing.  She is the most “careful” planner I know,\nand the team trusted her completely.";
+function withRec(extra = {}) {
+  const p = withPeople();
+  p.recommendations = [{
+    id: "rec-maria", author: "maria-chen", date: "2023-05-02T14:30:00-05:00",
+    relationship: { type: "manager", work: "acme-platform", description: "Managed Ines directly" },
+    authorAt: { title: "Engineering Manager", organization: "acme" },
+    text: BODY,
+    highlights: [{ id: "h1", text: "She is the most “careful” planner I know, and the team trusted her completely.", featured: true }],
+    source: { platform: "linkedin", url: "https://www.linkedin.com/in/example/details/recommendations/", retrievedOn: "2026-11-01" },
+    consent: { given: true, on: "2026-11-02", scope: "full", by: "email" },
+    status: "approved", confidence: "high", citations: [],
+    ...extra,
+  }];
+  return p;
+}
+
+test("a recommendation validates", () => {
+  const r = validateProfile(withRec());
+  assert.equal(r.valid, true, r.errors.join("\n"));
+});
+
+test("verbatim: whitespace runs and Unicode normalization don't matter; wording and quote style do", () => {
+  assert.equal(verbatim("the team  trusted\nher", "and the team trusted her completely").ok, true);
+  assert.equal(verbatim("Café", "at the Café").ok, true, "NFC");
+  const quotes = verbatim('the most "careful" planner', BODY);
+  assert.equal(quotes.ok, false);
+  assert.equal(quotes.at, 9, "first differing character: the straight quote");
+  assert.equal(verbatim("the most reliable planner", BODY).ok, false);
+});
+
+test("a highlight that isn't verbatim is an error naming where it differs", () => {
+  const p = withRec();
+  p.recommendations[0].highlights[0].text = "She is the best planner I know.";
+  assert.ok(has(validateProfile(p).errors, /recommendations\/rec-maria › highlight h1: not verbatim from the text \(differs at character 12: "best planner/));
+});
+
+test("a public recommendation without the author's consent is an error in 2.6, a warning in 2.5", () => {
+  const p = withRec({ consent: undefined });
+  assert.ok(has(validateProfile(p).errors, /recommendations\/rec-maria: public, but the author's consent is not recorded/));
+  p.schemaVersion = "2.5.0";
+  const r = validateProfile(p);
+  assert.ok(has(r.warnings, /author's consent is not recorded/));
+  assert.ok(!has(r.errors, /consent/));
+  const priv = withRec({ consent: undefined, visibility: "private" });
+  assert.equal(validateProfile(priv).valid, true, "a private one needs no consent");
+});
+
+test("authorAt that disagrees with the author's roles on the date warns", () => {
+  const p = withRec({ authorAt: { title: "VP Engineering", organization: "globex" } });
+  const w = validateProfile(p).warnings;
+  assert.ok(has(w, /authorAt says "VP Engineering" at globex, but people\/maria-chen was "Engineering Manager" at acme on 2023-05-02/));
+});
+
+test("relationship.work must be a work entry; author and capture must exist", () => {
+  const p = withRec({ author: "nobody", relationship: { type: "manager", work: "nope" }, source: { platform: "email", capture: "missing" } });
+  const e = validateProfile(p).errors;
+  assert.ok(has(e, /unknown person "nobody"/));
+  assert.ok(has(e, /relationship\.work "nope" is not a work entry/));
+  assert.ok(has(e, /source\.capture: unknown media "missing"/));
+});
+
+test("a time without an offset is refused", () => {
+  assert.equal(validateProfile(withRec({ date: "2023-05-02T14:30" })).valid, false);
+  assert.equal(validateProfile(withRec({ date: "2023-05-02" })).valid, true);
+});
