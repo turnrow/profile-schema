@@ -1,7 +1,7 @@
 // Render every example as a résumé PDF, in the variants worth checking, into a folder.
 // CI validates what this writes with veraPDF; reviewers use the same files for the manual pass.
 //   node scripts/render-example-pdfs.mjs <out-folder> [--typst <path>]
-import { readFileSync, mkdirSync } from "node:fs";
+import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { renderResumePdf } from "../index.mjs";
@@ -22,9 +22,23 @@ export const VARIANTS = {
   "history": ["examples/history.profile.json", {}],
   "employee": ["examples/employee.profile.json", {}],
   "employee-academic": ["examples/employee.profile.json", { layout: "academic" }],
+  "sample-two-column": ["examples/sample.profile.json", { layout: "two-column" }],
+  "employee-two-column": ["examples/employee.profile.json", { layout: "two-column" }],
   "recommended": ["examples/recommended", {}],
   "recommended-photo": ["examples/recommended", { photo: true }],
 };
+
+/** The headings of a résumé view in the order they should be read: name, summary, then each section and its entries. */
+export function readingOrder(view) {
+  const out = [view.person.name];
+  if (view.summary?.text) out.push(view.summary.heading);
+  for (const s of view.sections ?? []) {
+    out.push(s.heading);
+    // A job with several titles is headed by its employer; everything else by its own title.
+    for (const e of s.entries) out.push((e.positions?.length ?? 0) > 1 ? e.organization ?? e.title : e.title);
+  }
+  return out;
+}
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   mkdirSync(outDir, { recursive: true });
@@ -32,7 +46,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const isBundle = !src.endsWith(".json");
     const profile = JSON.parse(readFileSync(join(root, src, isBundle ? "profile.json" : ""), "utf8"));
     const out = join(outDir, `${name}.pdf`);
-    renderResumePdf(profile, { out, on: ON, typst, bundleDir: isBundle ? join(root, src) : undefined, ...options });
+    const { view } = renderResumePdf(profile, { out, on: ON, typst, bundleDir: isBundle ? join(root, src) : undefined, ...options });
+    // What a reader should meet, in order; scripts/check-reading-order.mjs holds the PDF's text to it.
+    // Kept in a subfolder so the folder of PDFs holds nothing but PDFs for the validator.
+    mkdirSync(join(outDir, "order"), { recursive: true });
+    writeFileSync(join(outDir, "order", `${name}.json`), JSON.stringify(readingOrder(view), null, 2) + "\n");
     console.log(`wrote ${out}`);
   }
 }

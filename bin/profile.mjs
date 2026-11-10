@@ -55,7 +55,7 @@ Options
   media add:  --id <id> --alt <text>   --kind <kind>   --purpose <purpose>   --from <yyyy-mm>   --strip-gps
   badges import:  --id <id>   --fetch (needed before a URL is fetched)
   pdf:        --pages <1|auto>   --photo | --no-photo (default: no photo)   --density <comfortable|compact>
-              --paper <us-letter|a4>   --min-priority <0-100>   --layout <classic|academic>   --typst <path to typst>
+              --paper <us-letter|a4>   --min-priority <0-100>   --layout <classic|academic|two-column>   --typst <path to typst>
 
 Exit codes
   0 success   1 invalid profile, or an error   2 wrong usage   3 output breaks a content rule   4 release refused

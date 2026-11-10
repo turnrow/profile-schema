@@ -3,6 +3,8 @@
 ## Unreleased (2.7): review file, résumé view and accessible PDF
 
 ### Résumé PDF
+- **`--layout two-column`:** a main column with skills, languages and credentials in a narrower column beside it. There is one reading order: the header, the main column, then the side column. With nothing for the side column, it is one column.
+- **Reading order is checked in CI.** Each rendered PDF's own text order (`pdftotext -raw`) is held to the order of its view: name, summary, then every section heading and entry in turn. `scripts/check-reading-order.mjs` does the same outside CI.
 - **`--layout academic`:** an academic CV. Education first, then experience and publications; the document is titled a curriculum vitae. It arranges the same view and uses the same one-column template, and is validated in CI like the rest.
 - **Publications in the résumé view** now name their authors or inventors, carry a patent or report number, and link a DOI when there is no other link.
 - **veraPDF in CI.** A new job renders every example in eight variants and validates each against PDF/UA-1 with veraPDF (pinned by version and digest). Any violation, a file veraPDF can't read, or fewer validations than PDFs fails the build. The PDFs and the report are kept as the `resume-pdfs` artifact.
