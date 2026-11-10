@@ -9,12 +9,14 @@
 //   turnrow-profile release  <profile> <audience> [--format scim] --domain acme.com --method oidc [--application name] [--recipient "Fund name"]
 //                            [--out payload.json] [--receipt receipt.json] [--record]   (--record appends to profile.releases)
 //   turnrow-profile media add <bundle> <file> --id <id> --alt "<text>" [--kind headshot] [--purpose primary] [--from yyyy-mm] [--strip-gps]
+//   turnrow-profile badges import <bundle> <file | url> [--id <id>] [--fetch]   (Open Badges 2.0/3.0, baked PNG/SVG, JWT)
 //   turnrow-profile writeback <profile> <audience> <scim-user.json> --domain acme.com --method oidc [--out updated.json]
 
 import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, unlinkSync } from "node:fs";
 import { join, resolve, extname } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { readImageInfo, stripGps } from "../lib/media.mjs";
+import { parseBadge } from "../lib/badges.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError } from "../index.mjs";
 
 const argv = process.argv.slice(2);
@@ -39,6 +41,7 @@ const kind = takeFlag("--kind");
 const purpose = takeFlag("--purpose");
 const fromDate = takeFlag("--from");
 const stripGpsFlag = takeBool("--strip-gps");
+const fetchFlag = takeBool("--fetch");
 const visibility = visibilityFlag ? visibilityFlag.split(",").map((v) => v.trim()) : undefined;
 if (visibility && visibility.some((v) => !["public", "network", "private"].includes(v))) {
   console.error(`error: --visibility takes public, network and/or private (got ${visibilityFlag})`);
@@ -161,6 +164,34 @@ try {
       if (!v.valid) { unlinkSync(join(bundleDir, "media", `${id}${ext}`)); fail("adding it would make the profile invalid:\n  " + v.errors.join("\n  ")); }
       writeFileSync(file, JSON.stringify(profile, null, 2) + "\n");
       console.error(`Added ${id} (${after.mediaType}${after.width ? `, ${after.width}×${after.height}` : ""}${info.gps ? ", location metadata removed" : ""})`);
+      break;
+    }
+    case "badges": {
+      if (rest[0] !== "import" || !rest[1] || !rest[2]) usage();
+      const { profile, file, bundleDir } = loadProfile(rest[1]);
+      if (!bundleDir) fail("badges import needs a bundle folder (a folder with profile.json)", 2);
+      let bytes;
+      if (/^https?:\/\//.test(rest[2])) {
+        if (!fetchFlag) fail("a URL needs --fetch (this command never goes to the network unless asked)", 2);
+        const res = await fetch(rest[2], { headers: { accept: "application/ld+json, application/json, image/png, image/svg+xml" } });
+        if (!res.ok) fail(`could not fetch ${rest[2]}: HTTP ${res.status}`);
+        bytes = Buffer.from(await res.arrayBuffer());
+      } else {
+        if (!existsSync(rest[2])) fail(`no such file: ${rest[2]}`);
+        bytes = readFileSync(rest[2]);
+      }
+      const { entry, original, ext } = parseBadge(bytes, { id: mediaId });
+      if ((profile.badges ?? []).some((b) => b.id === entry.id)) fail(`a badge with id "${entry.id}" already exists; pass --id`, 2);
+      mkdirSync(join(bundleDir, "badges"), { recursive: true });
+      const rel = `badges/${entry.id}${ext}`;
+      writeFileSync(join(bundleDir, rel), original);
+      entry.credential.file = `bundle:${rel}`;
+      entry.credential.sha256 = createHash("sha256").update(original).digest("hex");
+      profile.badges = [...(profile.badges ?? []), entry];
+      const v = validateProfile(profile, { bundleDir });
+      if (!v.valid) { unlinkSync(join(bundleDir, rel)); fail("importing it would make the profile invalid:\n  " + v.errors.join("\n  ")); }
+      writeFileSync(file, JSON.stringify(profile, null, 2) + "\n");
+      console.error(`Imported ${entry.id} (${entry.credential.format}) as a draft; review it, then approve.`);
       break;
     }
     case "writeback": {
