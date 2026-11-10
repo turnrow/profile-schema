@@ -10,6 +10,12 @@
 - Design: `docs/superpowers/specs/2026-11-10-org-chart-design.md`, with the decisions made without a brainstorm listed for confirmation.
 - For code: `validateOrganization`, `stateOn`, `compareDates`, `buildOrganization`, `orgRows`, `orgMarkdown`, `orgCsv`.
 
+### Views and analysis
+- **`orgchart show --format html`** writes one self-contained page: a nested list that becomes a keyboard-and-screen-reader tree with scripting, vacant and planned posts marked in words and by border pattern, light and dark from the brand tokens, the same rows as a table, and what changed between two dates. It fetches nothing.
+- **`orgchart show --format pdf`** writes the table as a tagged PDF/UA-1 document through Typst; CI validates it with veraPDF.
+- **`orgchart stats`** counts posts, people and FTE, filled, vacant and planned per unit, span of control and layers; with `--from` and `--to`, headcount at the start of each month and what changed; with `--budget`, budgeted against filled.
+- For code: `orgHtml`, `renderOrgPdf`, `orgPdfView`, `orgStats`, `orgSeries`, `statsMarkdown`.
+
 ## Unreleased (2.9): directory sync
 
 ### The batch runner
