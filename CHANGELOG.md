@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased (2.9): directory sync
+
+### The batch runner
+- **`directory diff <folder> --against <export> --target <connector> --domain … --method … --out <folder>`** compares a folder of profiles with a directory's export and writes a change set, one change file per person, a report to approve, the people left out with reasons, and a consent receipt for each release. It changes nothing.
+- Every update is a release to an employer. The person's own fields (name, nickname, pronouns, preferred title, photo, bio) become changes; fields the employer is the authority for (official title, department, manager…) are compared and reported, never pushed. People are matched by employee number, then e-mail, never by name. A missing value never clears the directory's.
+- `scim` is the first connector: it reads a list of SCIM Users and writes one SCIM Bulk request.
+- Design: `docs/superpowers/specs/2026-11-10-directory-sync-design.md`, with the decisions made without a brainstorm listed for confirmation.
+- For code: `readProfileFolder`, `matchUser`, `diffDirectory`, `changeReport`, `DIRECTORY_CONNECTORS`, `DIRECTORY_FIELDS`.
+
 ## Unreleased (2.8): exports
 
 ### Europass

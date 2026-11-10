@@ -1,0 +1,36 @@
+{
+  "receiptVersion": "turnrow-1",
+  "receiptId": "release-e3352c73-1746-6086-face-b3772f6d3f92",
+  "issued": "2026-11-07T00:00:00.000Z",
+  "subject": "Dana Okoye",
+  "recipient": {
+    "organization": "acme",
+    "domain": "acme.example",
+    "verifiedBy": "oidc"
+  },
+  "purpose": {
+    "code": "employeeDirectory",
+    "description": "Directory listing, chat and email profile, org chart."
+  },
+  "shared": {
+    "person": [
+      "name",
+      "preferredName",
+      "pronouns",
+      "image",
+      "email",
+      "jobTitle",
+      "shortBio",
+      "profiles"
+    ],
+    "sections": [
+      "skills",
+      "languages",
+      "credentials"
+    ],
+    "entries": 1
+  },
+  "expires": "onSeparation",
+  "payloadSha256": "68eb769e8bc800ce99e0b74d9eecc61a508d65634d1645ef176b48ee5cfb0191",
+  "notice": "Stopping this release stops future updates. Copies already delivered stay with the recipient."
+}

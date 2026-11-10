@@ -1,0 +1,130 @@
+{
+  "changeSetVersion": 1,
+  "target": "scim",
+  "madeFor": "2026-11-07",
+  "recipient": {
+    "domain": "acme.example",
+    "verifiedBy": "oidc"
+  },
+  "against": {
+    "sha256": "12669f253f323d88fa6cb5cfd7715895427123ff4224b82b9f6732901426c6ac",
+    "users": 4
+  },
+  "changes": [
+    {
+      "user": {
+        "id": "u-1001",
+        "primaryEmail": "sam.rivera@acme.example",
+        "employeeNumber": "E-104233"
+      },
+      "person": "Sam Rivera",
+      "profile": "sam-rivera.profile.json",
+      "matchedBy": "employee number",
+      "release": {
+        "id": "release-a8c73600-c08c-b3c1-429b-8b1588004fa5",
+        "audience": "current-employer",
+        "payloadSha256": "5ebd9f45c8711c1a54a685e3d7bfb69fb1aff5cdc26fb6349ee67d698b945cb8"
+      },
+      "fields": [
+        {
+          "field": "givenName",
+          "attribute": "name.givenName",
+          "from": "Samantha",
+          "to": "Sam"
+        },
+        {
+          "field": "displayName",
+          "attribute": "displayName",
+          "from": "Samantha Rivera",
+          "to": "Sam Rivera"
+        },
+        {
+          "field": "nickname",
+          "attribute": "nickName",
+          "from": null,
+          "to": "Sam"
+        },
+        {
+          "field": "pronouns",
+          "attribute": "urn:turnrow:params:scim:schemas:extension:profile:2.0:User:pronouns",
+          "from": null,
+          "to": "she/her"
+        },
+        {
+          "field": "preferredTitle",
+          "attribute": "urn:turnrow:params:scim:schemas:extension:profile:2.0:User:preferredTitle",
+          "from": null,
+          "to": "Platform Engineering Lead"
+        },
+        {
+          "field": "photoUrl",
+          "attribute": "photos[type eq \"photo\"].value",
+          "from": null,
+          "to": "https://example.com/images/sam-rivera.jpg"
+        },
+        {
+          "field": "shortBio",
+          "attribute": "urn:turnrow:params:scim:schemas:extension:profile:2.0:User:shortBio",
+          "from": null,
+          "to": "Platform engineer who makes other engineers faster: build systems, internal tooling and the paved road from laptop to production."
+        }
+      ],
+      "notes": [
+        {
+          "field": "department",
+          "attribute": "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department",
+          "directory": "Platform Engineering",
+          "profile": "Engineering",
+          "reason": "the employer is the authority for this field, so it is not changed; correct the profile through write-back, or the directory at its source"
+        },
+        {
+          "field": "workLocation",
+          "attribute": "urn:turnrow:params:scim:schemas:extension:profile:2.0:User:workLocation",
+          "directory": null,
+          "profile": "Austin, Texas",
+          "reason": "the employer is the authority for this field, so it is not changed; correct the profile through write-back, or the directory at its source"
+        }
+      ]
+    },
+    {
+      "user": {
+        "id": "u-1002",
+        "primaryEmail": "dana.okoye@acme.example",
+        "employeeNumber": "E-104310"
+      },
+      "person": "Dana Okoye",
+      "profile": "dana-okoye.profile.json",
+      "matchedBy": "employee number",
+      "release": {
+        "id": "release-e3352c73-1746-6086-face-b3772f6d3f92",
+        "audience": "current-employer",
+        "payloadSha256": "68eb769e8bc800ce99e0b74d9eecc61a508d65634d1645ef176b48ee5cfb0191"
+      },
+      "fields": [],
+      "notes": [
+        {
+          "field": "workLocation",
+          "attribute": "urn:turnrow:params:scim:schemas:extension:profile:2.0:User:workLocation",
+          "directory": null,
+          "profile": "Austin, Texas",
+          "reason": "the employer is the authority for this field, so it is not changed; correct the profile through write-back, or the directory at its source"
+        }
+      ]
+    }
+  ],
+  "refusals": [
+    {
+      "profile": "jo-reyes.profile.json",
+      "person": "Jo Reyes",
+      "code": "noMatchingUser",
+      "reason": "no directory user has this person's employee number or e-mail address"
+    },
+    {
+      "profile": "lee-park.profile.json",
+      "person": "Lee Park",
+      "code": "noConsent",
+      "reason": "the subject has not given consent (meta.subjectConsent.given is not true)"
+    }
+  ],
+  "usersWithoutProfile": 2
+}

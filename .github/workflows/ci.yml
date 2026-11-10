@@ -57,7 +57,10 @@ jobs:
             node bin/profile.mjs convert examples/recommended "$m" --on 2026-11-07 --out "examples/out/recommended.$m.json"
           done
           node bin/profile.mjs review examples/sample.profile.json --on 2026-11-07 --out examples/out/sample.review.md
-          git diff --exit-code -- examples/recommended examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'
+          node scripts/make-directory-example.mjs
+          rm -rf examples/out/directory
+          node bin/profile.mjs directory diff examples/directory/people --against examples/directory/acme-users.scim.json --target scim --domain acme.example --method oidc --on 2026-11-07 --out examples/out/directory
+          git diff --exit-code -- examples/recommended examples/directory examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'
 
   pdf:
     name: Résumé PDFs conform to PDF/UA-1
