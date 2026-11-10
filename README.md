@@ -250,6 +250,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Write a GEDCOM 7 file for genealogy software | `convert <profile \| bundle> gedcom7 --out me.ged` (add `--gedzip` for a `.gdz` with the media) |
 | Write GEDCOM 5.5.1 for older genealogy software | `convert <profile \| bundle> gedcom551 --out me.ged` |
 | Write a plain-text résumé for applicant tracking systems | `convert <profile \| bundle> ats --out resume.txt` |
+| Write a CV the Europass editor imports | `convert <profile \| bundle> europass --out cv.xml` |
 | Write an HR Open Standards candidate for HR systems | `convert <profile \| bundle> hropen --out candidate.json` |
 | Present your Open Badges 3.0 credentials | `convert <bundle> ob3 --out presentation.json` |
 | Write a CLR 2.0 learner record to be signed | `convert <bundle> clr --out clr.json` |
@@ -260,7 +261,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
 
-Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
+Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `europass`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
 
 Options that apply widely: `--out <file>` (folders are created as needed), `--locale <tag>` (a BCP 47 tag such as `es` or `pt-BR`) and `--on <yyyy-mm-dd>` (the date an output is made for; default today, UTC). An option can be written `--out file` or `--out=file`. A misspelled option stops the command.
 
@@ -439,6 +440,35 @@ What to know:
 - **A CLR needs at least one Verifiable Credential**, by the standard. With no Open Badges 3.0 badge to carry, both commands stop and say so.
 - **Checked against the published schemas.** The tests validate both outputs against 1EdTech's JSON Schemas, which `node scripts/fetch-1edtech-schemas.mjs` downloads (they are not redistributed here). Not done: no wallet or verifier has imported these files, and JSON-LD processing against the contexts is not tested.
 
+## Europass
+
+```sh
+node bin/profile.mjs convert examples/sample.profile.json europass --out cv.xml
+```
+
+`europass` writes a CV in the XML the [Europass editor](https://europa.eu/europass/eportfolio/screen/cv-editor) imports ("Europass XML" in its upload dialog). Upload the file there to keep working on the CV in Europass, or to make a Europass PDF. See [`examples/out/sample.europass.xml`](examples/out/sample.europass.xml).
+
+It says what the [résumé](#the-résumé-view) says, and follows its per-entry choices (`targets.resume`; `targets.europass` can make its own):
+
+| In the résumé | In Europass |
+|---|---|
+| Name, public e-mail and phone, links, home town | Personal information. LinkedIn, Facebook and the other networks Europass lists are social media; any other link is a website. |
+| Summary | About me |
+| Experience, one entry per position | Work experience |
+| Education | Education and training |
+| Languages | Mother tongue(s) and Language skills. The profile holds one CEFR level for a language, so each of Europass's five skills gets that level; a language with no CEFR level is listed without one. |
+| Publications | Publications |
+| Skills, licenses and certifications, service, awards, projects, recommendations | Custom sections under their résumé headings, in the résumé's language |
+
+What to know:
+
+- **Where the format comes from.** The European Commission documents the vocabulary ([ECV Schema Documentation v3.0.0](https://europass.europa.eu/system/files/2020-08/ECV_Schema_Documentation_v3.0.0_20200602.pdf), 2020) but does not publish its XSD. What the editor's importer reads, requires and refuses is taken from [europass-cv](https://github.com/J0ker98/europass-cv) by Stefano Zeppieri (CC BY 4.0), who established it from the editor's own exports and importer in 2026. The tests check every example against those rules (`test/europass-check.mjs`). This is a format observed, not a published standard, and the editor can change it without notice.
+- **Not checked against the editor.** No file from this tool has been uploaded to the Europass editor. Upload [`examples/out/sample.europass.xml`](examples/out/sample.europass.xml) to see it work before relying on it.
+- **Qualified dates are not rounded.** Europass dates are exact, so "about 1996" is left out of the date field and said in words at the top of the entry's description.
+- **A phone number needs its country code.** The editor refuses a whole file over a number without one, so a number not written internationally (`+351 …`) is left out.
+- **The CV's language.** Europass offers 31 languages for a CV. In another language (Arabic, say) the text is written as it is and the CV is marked English, which you can change in the editor.
+- **Not written:** EQF levels, fields of study, driving licences, nationality, date of birth and a photo (the profile has no field for most of these; the editor has), and ESCO codes (no element the importer is known to read carries them). The European Learning Model is a format for credentials issued by institutions, not for a CV the editor imports, so it is not part of this output.
+
 ## HR Open Standards (HR-JSON)
 
 ```sh
@@ -508,7 +538,7 @@ From code: `reviewMarkdown(profile, { on, locale, mappings })`. Pass your own `m
 | [`lib/audience.mjs`](lib/audience.mjs) | Resolves audiences on a date, checks requesters against policy and looks up field authority. |
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
-| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `scim`, `verification`. |
+| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `europass`, `scim`, `verification`. |
 | [`lib/gedcom.mjs`](lib/gedcom.mjs) | Writes GEDCOM 7.0 and 5.5.1 from the `gedcom7` view, converts dates, and packages GEDZip archives. |
 | [`upstream/gedcom551/`](upstream/gedcom551/) | The GEDCOM 5.5.1 grammar, extracted from the specification's text. The tests check the 5.5.1 export against it. |
 | [`upstream/gedcom7/`](upstream/gedcom7/) | Unmodified structure tables and test files from the FamilySearch GEDCOM 7 specification (Apache 2.0). The tests check our export against them. |
@@ -571,7 +601,7 @@ A mapping is JSON: an `include` filter and an `output` template.
   - Documents: `label` (a fixed phrase in the output's language), `labelFor` (a translated enum value), `section` (an `{ id, heading, entries }` block that drops itself when empty), `count`.
   - Context: `locale`, `direction`, `onDate`, `now`.
 - Empty values are dropped, so missing data never renders as a blank field.
-- `"extends": "gedcom7"` takes everything from that bundled mapping and replaces only what this one sets. Use it when two outputs differ in how they are written, not in what they say.
+- `"extends": "gedcom7"` takes everything from that bundled mapping and replaces only what this one sets. Use it when two outputs differ in how they are written, not in what they say. A child that needs a little more than its parent says can add keys to the parent's output with `"extendOutput": { … }` instead of giving a whole `output` (the `europass` mapping adds exact dates and codes to the résumé view this way).
 - `"followsTargets": ["resume"]` makes a mapping honor another output's per-entry choices (`targets.resume.omit` and overrides) as well as its own.
 - `"ruleExemptKeys": ["id"]` keeps the content rules from reading identifiers as prose (an id such as `state-u-ms` is not a claim to an MS). Exempt only keys a reader never sees.
 

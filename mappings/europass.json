@@ -1,0 +1,431 @@
+{
+  "target": "europass",
+  "extends": "resume",
+  "format": "europass",
+  "followsTargets": [
+    "resume"
+  ],
+  "description": "Europass CV, as the XML the Europass editor (europass.europa.eu) imports: an HR-XML 3 Candidate document with Europass and EURES extensions. It says what the résumé says, and follows its per-entry choices. Jobs (one per position), education, languages and publications go to their Europass sections; everything else (skills, licenses and certifications, service, awards, projects, recommendations) becomes a custom section under its résumé heading. Dates this format can only state exactly are left out when they are qualified and said in words in the entry's description. A telephone number is carried only when written internationally (+country code), because the editor refuses a file whose number has no country code.",
+  "ruleExemptKeys": [
+    "id",
+    "countryCode",
+    "tag",
+    "language"
+  ],
+  "extendOutput": {
+    "europass": {
+      "language": {
+        "$fn": "locale",
+        "args": []
+      },
+      "id": "$.meta.canonicalUrl",
+      "person": {
+        "given": {
+          "$fn": "coalesce",
+          "args": [
+            {
+              "$fn": "name",
+              "args": [
+                "preferred",
+                "given"
+              ]
+            },
+            {
+              "$fn": "name",
+              "args": [
+                "legal",
+                "given"
+              ]
+            }
+          ]
+        },
+        "family": {
+          "$fn": "coalesce",
+          "args": [
+            {
+              "$fn": "name",
+              "args": [
+                "preferred",
+                "family"
+              ]
+            },
+            {
+              "$fn": "name",
+              "args": [
+                "legal",
+                "family"
+              ]
+            },
+            "$.person.name"
+          ]
+        },
+        "email": {
+          "$fn": "visible",
+          "args": [
+            "$.person.contact.email",
+            "$.person.contact.emailVisibility"
+          ]
+        },
+        "phone": {
+          "$fn": "visible",
+          "args": [
+            "$.person.contact.phone",
+            "$.person.contact.phoneVisibility"
+          ]
+        },
+        "website": "$.person.contact.website",
+        "profiles": {
+          "$each": "$$.person.profiles",
+          "$map": {
+            "network": "$.network",
+            "url": "$.url"
+          }
+        },
+        "city": {
+          "$fn": "place",
+          "args": [
+            "$.person.location",
+            "locality"
+          ]
+        },
+        "countryCode": {
+          "$fn": "place",
+          "args": [
+            "$.person.location",
+            "countryCode"
+          ]
+        }
+      },
+      "work": {
+        "$each": {
+          "$fn": "flatPositions",
+          "args": [
+            "$$.work"
+          ]
+        },
+        "$sort": "-startDate",
+        "$map": {
+          "id": "$.id",
+          "organization": {
+            "$fn": "employer",
+            "args": [
+              "$.organization",
+              "$.startDate",
+              "$.endDate"
+            ]
+          },
+          "website": {
+            "$fn": "org",
+            "args": [
+              "$.organization",
+              "url"
+            ]
+          },
+          "city": {
+            "$fn": "place",
+            "args": [
+              "$.location",
+              "locality"
+            ]
+          },
+          "countryCode": {
+            "$fn": "place",
+            "args": [
+              "$.location",
+              "countryCode"
+            ]
+          },
+          "title": "$.title",
+          "start": {
+            "$fn": "isoExact",
+            "args": [
+              "$.startDate"
+            ]
+          },
+          "end": {
+            "$fn": "isoExact",
+            "args": [
+              "$.endDate"
+            ]
+          },
+          "current": "$.current",
+          "dateNote": {
+            "$if": {
+              "$fn": "coalesce",
+              "args": [
+                {
+                  "$if": "$.startDate",
+                  "$then": {
+                    "$if": {
+                      "$fn": "isoExact",
+                      "args": [
+                        "$.startDate"
+                      ]
+                    },
+                    "$then": null,
+                    "$else": "x"
+                  }
+                },
+                {
+                  "$if": "$.endDate",
+                  "$then": {
+                    "$if": {
+                      "$fn": "isoExact",
+                      "args": [
+                        "$.endDate"
+                      ]
+                    },
+                    "$then": null,
+                    "$else": "x"
+                  }
+                }
+              ]
+            },
+            "$then": {
+              "$fn": "dateRangeText",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                "$.current"
+              ]
+            }
+          },
+          "summary": "$.summary",
+          "bullets": {
+            "$fn": "concatLists",
+            "args": [
+              {
+                "$fn": "responsibilityLines",
+                "args": [
+                  "$"
+                ]
+              },
+              "$.jobMetrics"
+            ]
+          }
+        }
+      },
+      "education": {
+        "$each": "$$.education",
+        "$sort": "-endDate,-startDate",
+        "$map": {
+          "id": "$.id",
+          "institution": {
+            "$fn": "org",
+            "args": [
+              "$.institution"
+            ]
+          },
+          "website": {
+            "$fn": "org",
+            "args": [
+              "$.institution",
+              "url"
+            ]
+          },
+          "city": {
+            "$fn": "place",
+            "args": [
+              "$.location",
+              "locality"
+            ]
+          },
+          "countryCode": {
+            "$fn": "place",
+            "args": [
+              "$.location",
+              "countryCode"
+            ]
+          },
+          "start": {
+            "$fn": "isoExact",
+            "args": [
+              "$.startDate"
+            ]
+          },
+          "end": {
+            "$fn": "isoExact",
+            "args": [
+              "$.endDate"
+            ]
+          },
+          "degree": {
+            "$fn": "coalesce",
+            "args": [
+              {
+                "$fn": "join",
+                "args": [
+                  [
+                    "$.credential",
+                    {
+                      "$fn": "text",
+                      "args": [
+                        "$.area"
+                      ]
+                    }
+                  ],
+                  {
+                    "$fn": "label",
+                    "args": [
+                      "listSep"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$fn": "text",
+                "args": [
+                  "$.area"
+                ]
+              }
+            ]
+          },
+          "note": {
+            "$if": "$.completed",
+            "$then": null,
+            "$else": {
+              "$if": "$.credential",
+              "$then": {
+                "$fn": "label",
+                "args": [
+                  "notCompleted",
+                  {
+                    "x": {
+                      "$fn": "join",
+                      "args": [
+                        [
+                          "$.credential",
+                          {
+                            "$fn": "text",
+                            "args": [
+                              "$.area"
+                            ]
+                          }
+                        ],
+                        {
+                          "$fn": "label",
+                          "args": [
+                            "listSep"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "dateNote": {
+            "$if": {
+              "$fn": "coalesce",
+              "args": [
+                {
+                  "$if": "$.startDate",
+                  "$then": {
+                    "$if": {
+                      "$fn": "isoExact",
+                      "args": [
+                        "$.startDate"
+                      ]
+                    },
+                    "$then": null,
+                    "$else": "x"
+                  }
+                },
+                {
+                  "$if": "$.endDate",
+                  "$then": {
+                    "$if": {
+                      "$fn": "isoExact",
+                      "args": [
+                        "$.endDate"
+                      ]
+                    },
+                    "$then": null,
+                    "$else": "x"
+                  }
+                }
+              ]
+            },
+            "$then": {
+              "$fn": "dateRangeText",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                null
+              ]
+            }
+          },
+          "summary": {
+            "$fn": "text",
+            "args": [
+              "$.summary"
+            ]
+          },
+          "score": "$.score"
+        }
+      },
+      "languages": {
+        "$each": "$$.languages",
+        "$map": {
+          "id": "$.id",
+          "tag": "$.language",
+          "name": {
+            "$fn": "text",
+            "args": [
+              "$.name"
+            ]
+          },
+          "cefr": "$.cefr",
+          "native": {
+            "$fn": "oneOf",
+            "args": [
+              "$.fluency",
+              "native"
+            ]
+          }
+        }
+      },
+      "publications": {
+        "$each": "$$.publications",
+        "$where": {
+          "aboutPerson": [
+            null,
+            false
+          ]
+        },
+        "$sort": "-date",
+        "$map": {
+          "id": "$.id",
+          "title": {
+            "$fn": "text",
+            "args": [
+              "$.title"
+            ]
+          },
+          "date": {
+            "$fn": "isoExact",
+            "args": [
+              "$.date"
+            ]
+          },
+          "authors": "$.authors",
+          "publisher": {
+            "$fn": "org",
+            "args": [
+              "$.publisher"
+            ]
+          },
+          "doi": "$.doi",
+          "url": "$.url",
+          "summary": {
+            "$fn": "text",
+            "args": [
+              "$.summary"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

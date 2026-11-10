@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Candidate xsi:schemaLocation="http://www.europass.eu/1.0 Candidate.xsd" xmlns="http://www.europass.eu/1.0" xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:eures="http://www.europass_eures.eu/1.0" xmlns:hr="http://www.hr-xml.org/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <hr:DocumentID schemeID="31ac48fe-bfc6-54fe-b2d8-c29831d3bde2" schemeName="DocumentIdentifier" schemeAgencyName="EUROPASS" schemeVersionID="4.0"/>
+  <CandidateSupplier>
+    <hr:PartyID schemeID="31ac48fe-bfc6-54fe-b2d8-c29831d3bde2" schemeName="PartyID" schemeAgencyName="EUROPASS" schemeVersionID="1.0"/>
+    <hr:PartyName>Owner</hr:PartyName>
+    <PersonContact>
+      <PersonName>
+        <oa:GivenName>Ines</oa:GivenName>
+        <hr:FamilyName>Calloway</hr:FamilyName>
+      </PersonName>
+    </PersonContact>
+    <hr:PrecedenceCode>1</hr:PrecedenceCode>
+  </CandidateSupplier>
+  <CandidatePerson>
+    <PersonName>
+      <oa:GivenName>Ines</oa:GivenName>
+      <hr:FamilyName>Calloway</hr:FamilyName>
+    </PersonName>
+    <Communication>
+      <ChannelCode>Web</ChannelCode>
+      <oa:URI>https://example.com</oa:URI>
+    </Communication>
+    <Communication>
+      <ChannelCode>Social Media</ChannelCode>
+      <UseCode>linkedin</UseCode>
+      <oa:URI>https://www.linkedin.com/in/example-ines-calloway/</oa:URI>
+    </Communication>
+    <Communication>
+      <ChannelCode>Web</ChannelCode>
+      <oa:URI>https://orcid.org/0000-0000-0000-0000</oa:URI>
+    </Communication>
+    <Communication>
+      <UseCode>home</UseCode>
+      <Address type="home">
+        <oa:CityName>New York</oa:CityName>
+        <CountryCode>us</CountryCode>
+      </Address>
+    </Communication>
+    <PrimaryLanguageCode name="NORMAL">eng</PrimaryLanguageCode>
+    <PrimaryLanguageCode name="NORMAL">spa</PrimaryLanguageCode>
+  </CandidatePerson>
+  <CandidateProfile languageCode="en">
+    <hr:ExecutiveSummary>&lt;p&gt;I started on research boats and ended up building the places those boats sail to. Tidewater Trails is what I learned along the way: trips planned around the people taking them.&lt;/p&gt;</hr:ExecutiveSummary>
+    <EmploymentHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>Tidewater Trails</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <Address>
+              <oa:CityName>New York</oa:CityName>
+              <CountryCode>us</CountryCode>
+            </Address>
+          </Communication>
+          <Communication>
+            <ChannelCode>Web</ChannelCode>
+            <oa:URI>https://example.com</oa:URI>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Founder &amp; CEO</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:StartDate>
+              <hr:FormattedDateTime>2024-03</hr:FormattedDateTime>
+            </eures:StartDate>
+            <hr:CurrentIndicator>true</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;p&gt;Building a trip-planning service for coastal and marine travel.&lt;/p&gt;</oa:Description>
+          <City>New York</City>
+          <Country>us</Country>
+        </PositionHistory>
+      </EmployerHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>Harborline Resorts</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <Address>
+              <oa:CityName>Cartagena</oa:CityName>
+              <CountryCode>co</CountryCode>
+            </Address>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Director of Development</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:StartDate>
+              <hr:FormattedDateTime>2009-06</hr:FormattedDateTime>
+            </eures:StartDate>
+            <eures:EndDate>
+              <hr:FormattedDateTime>2023-12</hr:FormattedDateTime>
+            </eures:EndDate>
+            <hr:CurrentIndicator>false</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;p&gt;Led development of three waterfront resorts from site selection through opening.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;3 resorts opened&lt;/li&gt;&lt;li&gt;~$240M development portfolio&lt;/li&gt;&lt;/ul&gt;</oa:Description>
+          <City>Cartagena</City>
+          <Country>co</Country>
+        </PositionHistory>
+      </EmployerHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>Coastal Ecology Lab</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <Address>
+              <CountryCode>pt</CountryCode>
+            </Address>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Research Biologist</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:EndDate>
+              <hr:FormattedDateTime>2009-05</hr:FormattedDateTime>
+            </eures:EndDate>
+            <hr:CurrentIndicator>false</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;p&gt;c. 1996 – May 2009&lt;/p&gt;&lt;p&gt;Field research on reef recovery; led survey dives and small-boat operations.&lt;/p&gt;</oa:Description>
+          <Country>pt</Country>
+        </PositionHistory>
+      </EmployerHistory>
+    </EmploymentHistory>
+    <EducationHistory>
+      <EducationOrganizationAttendance>
+        <hr:OrganizationName>State University (fictional)</hr:OrganizationName>
+        <AttendancePeriod>
+          <StartDate>
+            <hr:FormattedDateTime>1987</hr:FormattedDateTime>
+          </StartDate>
+          <EndDate>
+            <hr:FormattedDateTime>1991</hr:FormattedDateTime>
+          </EndDate>
+          <Ongoing>false</Ongoing>
+        </AttendancePeriod>
+        <EducationDegree>
+          <hr:DegreeName>BS, Marine Biology</hr:DegreeName>
+        </EducationDegree>
+      </EducationOrganizationAttendance>
+    </EducationHistory>
+    <PersonQualifications>
+      <PersonCompetency>
+        <CompetencyID schemeName="NORMAL">por</CompetencyID>
+        <hr:TaxonomyID>language</hr:TaxonomyID>
+        <eures:CompetencyDimension>
+          <hr:CompetencyDimensionTypeCode>CEF-Understanding-Listening</hr:CompetencyDimensionTypeCode>
+          <eures:Score>
+            <hr:ScoreText>B2</hr:ScoreText>
+          </eures:Score>
+        </eures:CompetencyDimension>
+        <eures:CompetencyDimension>
+          <hr:CompetencyDimensionTypeCode>CEF-Understanding-Reading</hr:CompetencyDimensionTypeCode>
+          <eures:Score>
+            <hr:ScoreText>B2</hr:ScoreText>
+          </eures:Score>
+        </eures:CompetencyDimension>
+        <eures:CompetencyDimension>
+          <hr:CompetencyDimensionTypeCode>CEF-Speaking-Interaction</hr:CompetencyDimensionTypeCode>
+          <eures:Score>
+            <hr:ScoreText>B2</hr:ScoreText>
+          </eures:Score>
+        </eures:CompetencyDimension>
+        <eures:CompetencyDimension>
+          <hr:CompetencyDimensionTypeCode>CEF-Speaking-Production</hr:CompetencyDimensionTypeCode>
+          <eures:Score>
+            <hr:ScoreText>B2</hr:ScoreText>
+          </eures:Score>
+        </eures:CompetencyDimension>
+        <eures:CompetencyDimension>
+          <hr:CompetencyDimensionTypeCode>CEF-Writing-Production</hr:CompetencyDimensionTypeCode>
+          <eures:Score>
+            <hr:ScoreText>B2</hr:ScoreText>
+          </eures:Score>
+        </eures:CompetencyDimension>
+      </PersonCompetency>
+    </PersonQualifications>
+    <Others>
+      <Title>Licenses and certifications</Title>
+      <Other>
+        <Title>Master Mariner licence (100 GT) (Near Coastal, Auxiliary Sail)</Title>
+        <Description>&lt;p&gt;Example Maritime Authority, Apr 2005&lt;/p&gt;</Description>
+      </Other>
+    </Others>
+    <Others>
+      <Title>Licenses and certifications</Title>
+      <Other>
+        <Title>Divemaster</Title>
+        <Description>&lt;p&gt;Example Diving Association, before 1998&lt;/p&gt;</Description>
+      </Other>
+    </Others>
+    <Others>
+      <Title>Skills</Title>
+      <Other>
+        <Title>Skills</Title>
+        <Description>&lt;p&gt;Entrepreneurship; Travel &amp;amp; Tourism; Resort Development; Marine Biology&lt;/p&gt;</Description>
+      </Other>
+    </Others>
+    <Others>
+      <Title>Projects</Title>
+      <Other>
+        <Title>Cartagena waterfront resort and marina</Title>
+        <Description>&lt;p&gt;Harborline Resorts, Development lead, 2015 – 2019&lt;/p&gt;</Description>
+      </Other>
+    </Others>
+    <Others>
+      <Title>Service and volunteering</Title>
+      <Other>
+        <Title>Boat crew member</Title>
+        <Description>&lt;p&gt;Coast Guard Auxiliary (fictional unit), between 1990 and 1991 – 1995&lt;/p&gt;&lt;p&gt;Search-and-rescue boat crew on weekends.&lt;/p&gt;</Description>
+      </Other>
+    </Others>
+    <Others>
+      <Title>Awards</Title>
+      <Other>
+        <Title>Waterfront Project of the Year</Title>
+        <Description>&lt;p&gt;The Harbor Gazette, Oct 2019&lt;/p&gt;</Description>
+      </Other>
+    </Others>
+  </CandidateProfile>
+  <RenderingInformation>
+    <Design>
+      <Template>Template1</Template>
+      <Color>Default</Color>
+      <FontSize>Medium</FontSize>
+      <Logo>FirstPage</Logo>
+      <PageNumbers>true</PageNumbers>
+      <SectionsOrder>
+        <Section>
+          <Title>work-experience</Title>
+        </Section>
+        <Section>
+          <Title>education-training</Title>
+        </Section>
+        <Section>
+          <Title>language</Title>
+        </Section>
+      </SectionsOrder>
+    </Design>
+  </RenderingInformation>
+</Candidate>

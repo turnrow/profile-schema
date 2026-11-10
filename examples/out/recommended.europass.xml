@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Candidate xsi:schemaLocation="http://www.europass.eu/1.0 Candidate.xsd" xmlns="http://www.europass.eu/1.0" xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:eures="http://www.europass_eures.eu/1.0" xmlns:hr="http://www.hr-xml.org/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <hr:DocumentID schemeID="47c804e0-6ff7-553c-b96e-092e3964fa85" schemeName="DocumentIdentifier" schemeAgencyName="EUROPASS" schemeVersionID="4.0"/>
+  <CandidateSupplier>
+    <hr:PartyID schemeID="47c804e0-6ff7-553c-b96e-092e3964fa85" schemeName="PartyID" schemeAgencyName="EUROPASS" schemeVersionID="1.0"/>
+    <hr:PartyName>Owner</hr:PartyName>
+    <PersonContact>
+      <PersonName>
+        <oa:GivenName>Ines</oa:GivenName>
+        <hr:FamilyName>Ortega</hr:FamilyName>
+      </PersonName>
+    </PersonContact>
+    <hr:PrecedenceCode>1</hr:PrecedenceCode>
+  </CandidateSupplier>
+  <CandidatePerson>
+    <PersonName>
+      <oa:GivenName>Ines</oa:GivenName>
+      <hr:FamilyName>Ortega</hr:FamilyName>
+    </PersonName>
+    <Communication>
+      <UseCode>home</UseCode>
+      <Address type="home">
+        <oa:CityName>Long Beach</oa:CityName>
+        <CountryCode>us</CountryCode>
+      </Address>
+    </Communication>
+  </CandidatePerson>
+  <CandidateProfile languageCode="en">
+    <hr:ExecutiveSummary>&lt;p&gt;Plans the moves that keep a container terminal running: berths, cranes and yard space.&lt;/p&gt;</hr:ExecutiveSummary>
+    <EmploymentHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>Port of Example</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <ChannelCode>Web</ChannelCode>
+            <oa:URI>https://port.example</oa:URI>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Senior Operations Planner</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:StartDate>
+              <hr:FormattedDateTime>2019-03</hr:FormattedDateTime>
+            </eures:StartDate>
+            <hr:CurrentIndicator>true</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;p&gt;Plans berth, crane and yard operations for the container terminal.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;33% less crane idle time (Jan 2020–Dec 2020)&lt;/li&gt;&lt;/ul&gt;</oa:Description>
+        </PositionHistory>
+      </EmployerHistory>
+    </EmploymentHistory>
+    <Others>
+      <Title>Licenses and certifications</Title>
+      <Other>
+        <Title>Harbor Operations Planner</Title>
+        <Description>&lt;p&gt;Example Maritime Academy, Mar 2024&lt;/p&gt;</Description>
+        <Link>https://badges.example/credentials/harbor-ops-118</Link>
+      </Other>
+    </Others>
+    <Others>
+      <Title>Licenses and certifications</Title>
+      <Other>
+        <Title>Site Safety Lead</Title>
+        <Description>&lt;p&gt;Example Builders Guild, Jun 2021&lt;/p&gt;</Description>
+      </Other>
+    </Others>
+    <Others>
+      <Title>Skills</Title>
+      <Other>
+        <Title>Skills</Title>
+        <Description>&lt;p&gt;Berth planning; Yard scheduling&lt;/p&gt;</Description>
+      </Other>
+    </Others>
+    <Others>
+      <Title>Recommendations</Title>
+      <Other>
+        <Title>Sam Okafor, Shift Lead at Port of Example</Title>
+        <Description>&lt;p&gt;Feb 2024&lt;/p&gt;&lt;p&gt;Every shift lead now plans with the tool she built&lt;/p&gt;</Description>
+      </Other>
+    </Others>
+    <Others>
+      <Title>Recommendations</Title>
+      <Other>
+        <Title>Maria Chen, Director of Terminal Operations at Port of Example</Title>
+        <Description>&lt;p&gt;May 2023&lt;/p&gt;&lt;p&gt;Ines rebuilt our harbor planning program from nothing. She is the most careful planner I know, and the crews trusted her completely.&lt;/p&gt;</Description>
+      </Other>
+    </Others>
+  </CandidateProfile>
+  <RenderingInformation>
+    <Design>
+      <Template>Template1</Template>
+      <Color>Default</Color>
+      <FontSize>Medium</FontSize>
+      <Logo>FirstPage</Logo>
+      <PageNumbers>true</PageNumbers>
+      <SectionsOrder>
+        <Section>
+          <Title>work-experience</Title>
+        </Section>
+      </SectionsOrder>
+    </Design>
+  </RenderingInformation>
+</Candidate>

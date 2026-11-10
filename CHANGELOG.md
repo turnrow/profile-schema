@@ -2,6 +2,11 @@
 
 ## Unreleased (2.8): exports
 
+### Europass
+- **`convert <profile | bundle> europass`** writes a CV in the XML the Europass editor imports: personal information, work experience (one entry per position), education, mother tongues and language skills, publications, and the résumé's other sections as custom sections.
+- It says what the résumé says: `europass` extends `resume` and follows its per-entry choices. A mapping can now add keys to its parent's output with `"extendOutput"`.
+- The format is not published as a schema; the rules come from a documented study of the editor's importer (credited in the README), and a checker written from them runs on every example. Not yet uploaded to the editor itself.
+
 ### HR Open Standards
 - **`convert <profile | bundle> hropen`** writes an HR Open Standards 4.5 `Candidate` (HR-JSON): jobs with their positions as `positionHistories`, education with whether the degree was granted, licenses, certifications, clearances, affiliations, military service, publications, patents, skills and languages as qualifications, and references.
 - Qualified dates are left out of exact date fields and said in words in the entry's descriptions.

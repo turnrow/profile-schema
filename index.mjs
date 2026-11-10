@@ -9,6 +9,7 @@ export { officialTitle, checkCode, codeSet, socLevel, BUNDLED as BUNDLED_CODE_LI
 export { applyWriteBack, readScim } from "./lib/writeback.mjs";
 export { reviewMarkdown } from "./lib/review.mjs";
 export { renderAts } from "./lib/ats.mjs";
+export { renderEuropass } from "./lib/europass.mjs";
 export { renderPresentation, renderClr, originalCredential, bundleFileReader, NothingToExportError, urnUuid, CONTEXT_VC, CONTEXT_OB3, CONTEXT_CLR } from "./lib/ob3.mjs";
 export { renderGedcom7, renderGedcom551, gedcomDate, gedcomDateValue, gedcomPeriod, gedzip, gedzipMedia, readBundleMedia, storeZip, GEDZIP_MEDIA, EXTENSIONS as GEDCOM_EXTENSIONS } from "./lib/gedcom.mjs";
 export { renderResumePdf, resumeViewForPdf, dropCandidates, PdfError, LAYOUTS as PDF_LAYOUTS } from "./lib/pdf.mjs";
