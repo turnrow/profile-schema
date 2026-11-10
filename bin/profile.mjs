@@ -53,6 +53,7 @@ Exit codes
 Set TURNROW_DEBUG=1 to see a stack trace with an error. Full guide: README.md.
 `;
 
+const MAX_BADGE_BYTES = 10 * 1024 * 1024;
 function fail(message, code = 1) { console.error(`error: ${message}`); process.exit(code); }
 
 // Flags are declared here so that a misspelled one is refused instead of silently ignored.
@@ -72,7 +73,9 @@ const argv = [];
     if (BOOL_FLAGS.includes(name) && eq < 0) flags[name] = true;
     else if (VALUE_FLAGS.includes(name)) {
       const value = eq < 0 ? raw[++i] : arg.slice(eq + 1);
-      if (value === undefined || value === "") fail(`${name} needs a value (run "turnrow-profile help")`, 2);
+      // "--out --record" is a forgotten value, not a file named "--record".
+      const isOption = eq < 0 && [...VALUE_FLAGS, ...BOOL_FLAGS].includes(String(value).split("=")[0]);
+      if (value === undefined || value === "" || isOption) fail(`${name} needs a value (run "turnrow-profile help")`, 2);
       flags[name] = value;
     } else fail(`unknown option ${name} (run "turnrow-profile help")`, 2);
   }
@@ -108,6 +111,7 @@ if (visibility && visibility.some((v) => !["public", "network", "private"].inclu
 if (on !== undefined && !(/^\d{4}-\d{2}-\d{2}$/.test(on) && !Number.isNaN(Date.parse(`${on}T00:00:00Z`)))) {
   fail(`--on takes a date as yyyy-mm-dd (got ${on})`, 2);
 }
+if (mediaBaseUrl !== undefined && !/^https?:\/\/\S+$/.test(mediaBaseUrl)) fail(`--media-base takes an http(s) URL (got ${mediaBaseUrl})`, 2);
 if (locale !== undefined) {
   try { new Intl.Locale(locale); } catch { fail(`--locale takes a BCP 47 language tag such as es or pt-BR (got ${locale})`, 2); }
 }
@@ -238,6 +242,7 @@ try {
       let bytes = readFileSync(rest[2]);
       const info = readImageInfo(bytes);
       if (info.unreadable) fail(`${rest[2]} is not a readable image (${info.unreadable})`, 2);
+      if (info.uninspected) fail(`${rest[2]} is ${info.mediaType}, which can't be checked for location (GPS) metadata; export it as JPEG or PNG and add that (nothing was changed)`, 2);
       if (info.gps && !stripGpsFlag) fail(`${rest[2]} carries location (GPS) metadata in ${info.gpsWhere.join(" and ")}; re-run with --strip-gps to store a copy without it`, 2);
       if (info.gps) bytes = stripGps(bytes, info.mediaType);
       const after = readImageInfo(bytes);
@@ -278,9 +283,12 @@ try {
       let bytes;
       if (/^https?:\/\//.test(rest[2])) {
         if (!fetchFlag) fail("a URL needs --fetch (this command never goes to the network unless asked)", 2);
-        const res = await fetch(rest[2], { headers: { accept: "application/ld+json, application/json, image/png, image/svg+xml" } });
+        // A badge is small; a slow or endless response should stop the command, not hang it.
+        const res = await fetch(rest[2], { headers: { accept: "application/ld+json, application/json, image/png, image/svg+xml" }, signal: AbortSignal.timeout(30_000) });
         if (!res.ok) fail(`could not fetch ${rest[2]}: HTTP ${res.status}`);
+        if (Number(res.headers.get("content-length") ?? 0) > MAX_BADGE_BYTES) fail(`${rest[2]} is larger than 10 MB; that is not a badge`);
         bytes = Buffer.from(await res.arrayBuffer());
+        if (bytes.length > MAX_BADGE_BYTES) fail(`${rest[2]} is larger than 10 MB; that is not a badge`);
       } else {
         if (!existsSync(rest[2])) fail(`no such file: ${rest[2]}`);
         bytes = readFileSync(rest[2]);

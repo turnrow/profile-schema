@@ -2,11 +2,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, writeFileSync, existsSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync, existsSync, cpSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateProfile, loadMapping, convert, schema, BUNDLED_MAPPINGS } from "../index.mjs";
+import { validateProfile, loadMapping, convert, schema, BUNDLED_MAPPINGS, scopeProfile, withPublishedMedia } from "../index.mjs";
+import { readImageInfo, imageFor } from "../lib/media.mjs";
+import { endorsementCount } from "../lib/people.mjs";
 import { t, SUPPORTED_MESSAGE_LANGUAGES } from "../lib/i18n.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -89,7 +91,7 @@ test("a zip, a missing file and a bad mapping name each get a plain explanation"
   assert.match(cli("validate", join(dir, "nope.json")).stderr, /no such file or folder/);
   const r = cli("convert", SAMPLE, "europass");
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /unknown mapping "europass": use one of jsonresume, schemaorg/);
+  assert.match(r.stderr, /unknown mapping "europass": use one of brief, jsonresume, linkedin, schemaorg, scim, timeline, verification/);
   assert.match(cli("convert", SAMPLE, join(dir, "mine.json")).stderr, /no such mapping file/);
 });
 
@@ -141,4 +143,114 @@ test("a recommender's role is phrased in the output's language", () => {
   assert.match(from("en"), /Shift Lead at Port of Example/);
   assert.match(from("es"), /Shift Lead en Port of Example/);
   assert.match(from("de"), /Shift Lead bei Port of Example/);
+});
+
+// ---------- fixes from the review of the 2.5/2.6 stack ----------
+
+const RECOMMENDED = join(root, "examples", "recommended");
+const recommended = () => JSON.parse(readFileSync(join(RECOMMENDED, "profile.json"), "utf8"));
+const heic = Buffer.concat([Buffer.from([0, 0, 0, 0x18]), Buffer.from("ftypheic\0\0\0\0mif1heic", "latin1")]);
+const webp = Buffer.from("RIFF\x10\0\0\0WEBPVP8 ", "latin1");
+
+test("a forgotten option value does not swallow the next option", () => {
+  const r = cli("convert", SAMPLE, "brief", "--out", "--allow-rule-violations");
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /--out needs a value/);
+});
+
+test("image formats that can't be checked for GPS are said to be unchecked, not clean", () => {
+  for (const [bytes, type] of [[heic, "image/heic"], [webp, "image/webp"], [Buffer.from("II*\0\x08\0\0\0", "latin1"), "image/tiff"]]) {
+    const info = readImageInfo(bytes);
+    assert.equal(info.mediaType, type);
+    assert.equal(info.uninspected, true);
+  }
+  assert.equal(readImageInfo(Buffer.from("%PDF-1.7")).uninspected, undefined);
+});
+
+test("media add refuses a photo it can't check for location metadata, and leaves the bundle alone", () => {
+  const dir = join(tmp(), "bundle");
+  cpSync(RECOMMENDED, dir, { recursive: true });
+  const photo = join(tmp(), "phone.heic");
+  writeFileSync(photo, heic);
+  const before = readFileSync(join(dir, "profile.json"), "utf8");
+  const r = cli("media", "add", dir, photo, "--id", "phone", "--alt", "A photo");
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /image\/heic, which can't be checked for location/);
+  assert.equal(readFileSync(join(dir, "profile.json"), "utf8"), before);
+  assert.ok(!readdirSync(join(dir, "media")).some((f) => f.startsWith("phone")));
+});
+
+test("a 2.6.0 bundle holding an unchecked image format is invalid; an older one is warned", () => {
+  const dir = join(tmp(), "bundle");
+  cpSync(RECOMMENDED, dir, { recursive: true });
+  writeFileSync(join(dir, "media", "phone.webp"), webp);
+  const p = recommended();
+  p.media.push({ id: "phone", title: "Phone photo", url: "bundle:media/phone.webp", alt: "A photo", status: "approved" });
+  const strict = validateProfile(p, { bundleDir: dir });
+  assert.match(strict.errors.join("\n"), /media\/phone: media\/phone\.webp is image\/webp, which can't be checked/);
+  const older = validateProfile({ ...p, schemaVersion: "2.5.0" }, { bundleDir: dir });
+  assert.match(older.warnings.join("\n"), /can't be checked for location/);
+  assert.doesNotMatch(older.errors.join("\n"), /can't be checked for location/);
+});
+
+test("a media base without its closing slash still makes a folder URL", () => {
+  const p = { person: { name: "A" }, media: [{ id: "m", url: "bundle:media/a.jpg" }] };
+  assert.equal(withPublishedMedia(p, "https://example.com/me").media[0].url, "https://example.com/me/media/a.jpg");
+  assert.equal(withPublishedMedia(p, "https://example.com/me/").media[0].url, "https://example.com/me/media/a.jpg");
+  assert.match(cli("convert", RECOMMENDED, "schemaorg", "--media-base", "https://example.com/me", "--on", "2026-11-07").stdout, /example\.com\/me\/media\//);
+  assert.equal(cli("convert", RECOMMENDED, "schemaorg", "--media-base", "example.com/me").status, 2);
+});
+
+test("a photo dated by month is in force for a job dated by year", () => {
+  const profile = {
+    media: [{ id: "old", url: "https://x.example/old.jpg", mediaType: "image/jpeg" }, { id: "new", url: "https://x.example/new.jpg", mediaType: "image/jpeg" }],
+    person: { images: [{ media: "old", purpose: "primary", to: "2019-02" }, { media: "new", purpose: "primary", from: "2019-03" }] },
+  };
+  assert.equal(imageFor(profile, { entry: { startDate: "2019" } }, "2026-11-07").id, "new");
+  assert.equal(imageFor(profile, { entry: { startDate: "2018" } }, "2026-11-07").id, "old");
+  assert.equal(imageFor(profile, {}, "2019-02-10").id, "old");
+  assert.equal(imageFor(profile, {}, "2019-03-01").id, "new");
+});
+
+test("endorsement counts leave out what an output may not show", () => {
+  const profile = { endorsements: [
+    { id: "a", target: "s", status: "approved", consent: { given: true } },
+    { id: "b", target: "s", status: "approved", consent: { given: true }, visibility: "private" },
+  ] };
+  assert.equal(endorsementCount(profile, "s"), 2);
+  assert.equal(endorsementCount(profile, "s", (e) => (e.visibility ?? "public") === "public"), 1);
+});
+
+test("a release holds no more of a recommendation than its author agreed to", () => {
+  const audience = { kind: "other", purpose: "x", sections: ["recommendations"], baseVisibility: ["public", "network"], recipients: "anyVerified", verification: { methods: ["oidc"] } };
+  const scopedWith = (scope) => {
+    const p = recommended();
+    p.audiences = { ...(p.audiences ?? {}), t: audience };
+    const rec = p.recommendations.find((r) => r.consent?.given === true);
+    rec.consent.scope = scope;
+    // Only this recommendation names its author, so nothing else brings the person along.
+    p.recommendations = [rec];
+    p.endorsements = [];
+    p.references = [];
+    const { scoped } = scopeProfile(p, "t", { on: "2026-11-07" });
+    return { rec: scoped.recommendations[0], who: scoped.people?.[rec.author], original: p.people[rec.author] };
+  };
+  const full = scopedWith("full");
+  assert.ok(full.rec.text && full.who.name);
+
+  const anon = scopedWith("anonymous");
+  assert.equal(anon.who.name, undefined);
+  assert.deepEqual(Object.keys(anon.who), ["roles"]);
+  assert.ok(anon.who.roles.every((r) => !("organization" in r)));
+  assert.equal(anon.rec.source, undefined);
+  assert.ok(!anon.rec.authorAt || Object.keys(anon.rec.authorAt).join() === "title");
+  assert.doesNotMatch(JSON.stringify([anon.rec, anon.who]), new RegExp(anon.original.name));
+
+  const highlights = scopedWith("highlights");
+  assert.equal(highlights.rec.text, undefined);
+  assert.ok(highlights.who.name);
+
+  const nameOnly = scopedWith("nameOnly");
+  assert.equal(nameOnly.rec.text, undefined);
+  assert.equal(nameOnly.rec.highlights, undefined);
 });
