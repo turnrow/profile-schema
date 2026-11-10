@@ -148,11 +148,15 @@ function schemas() {
   const byId = new Map();
   for (const f of walk(DEFAULT_DIR)) {
     const id = BASE + relative(DEFAULT_DIR, f).split("\\").join("/");
-    const s = JSON.parse(readFileSync(f, "utf8").replace(/^\uFEFF/, ""));
+    // A reference inside a file ("#/definitions/…") is written out with the file's own address. The
+    // validator otherwise resolves some of them against the file that pulled this one in, and four
+    // LER-RS files then fail to compile. The meaning is unchanged.
+    const s = JSON.parse(readFileSync(f, "utf8").replace(/^\uFEFF/, "").replace(/("\$ref"\s*:\s*")#/g, `$1${id}#`));
+    delete s.$id; // several LER-RS files share one "$id", which is not their address
     byId.set(id, s);
     ajv.addSchema(s, id);
   }
-  return (cached = { validate: ajv.getSchema(BASE + "recruiting/json/CandidateType.json"), byId });
+  return (cached = { validate: ajv.getSchema(BASE + "recruiting/json/CandidateType.json"), get validateLer() { return ajv.getSchema(BASE + "recruiting/json/LER-RSType.json"); }, byId });
 }
 
 /**
@@ -238,6 +242,42 @@ test("the checks can fail: a bad date, a wrong code and a misspelled key are all
   const e = hr(sample());
   e.profiles[0].employment[0].positionHistory = [];
   assert.deepEqual(undefinedKeys(byId, e, byId.get(id), id), ["/profiles/0/employment/0/positionHistory"]);
+});
+
+const ler = (p, opts = {}) => convert(p, loadMapping("lerrs"), { on: ON, ...opts }).output;
+
+test("LER-RS: the same entries as the Candidate, in the résumé document's shape", () => {
+  const r = ler(sample()), c = hr(sample());
+  assert.equal(r.type, "http://schema.hropenstandards.org/4.4/recruiting/json/ler-rs/LER-RSType.json");
+  assert.deepEqual(r.person.name, c.person.name);
+  assert.deepEqual(r.communication, c.person.communication);
+  assert.deepEqual(r.employmentHistories, c.profiles[0].employment);
+  assert.deepEqual(r.educationAndLearnings, c.profiles[0].education);
+  assert.equal(r.narratives[0].name, "Summary");
+  assert.match(r.narratives[0].texts[0].lines[0], /research boats/);
+  assert.ok(r.skills.every((s) => s.name));
+  const p = sample();
+  p.credentials = [{ id: "c", status: "approved", confidence: "high", visibility: "public", kind: "certification", name: "First Aid" }];
+  p.skills[0].years = 7.5;
+  const out = ler(p);
+  assert.equal(out.certifications[0].issuingAuthority.name, "Issuer not recorded", "LER-RS requires an issuer; a missing one is said, not invented");
+  assert.equal(out.skills.find((s) => s.yearsOfExperience !== undefined).yearsOfExperience, 7);
+  p.person.summary = "A guaranteed safe pair of hands";
+  assert.throws(() => ler(p), /no-safe/);
+});
+
+test("LER-RS: every example is valid, using only keys the standard defines", { skip }, () => {
+  const { byId } = schemas();
+  const validateLer = schemas().validateLer;
+  const id = BASE + "recruiting/json/LER-RSType.json";
+  for (const f of EXAMPLES) {
+    const r = ler(load(f));
+    assert.equal(validateLer(r), true, `${f}\n${(validateLer.errors ?? []).slice(0, 8).map((e) => `${e.instancePath} ${e.message}`).join("\n")}`);
+    assert.deepEqual(undefinedKeys(byId, r, byId.get(id), id), [], f);
+  }
+  const bad = ler(sample());
+  delete bad.type;
+  assert.equal(validateLer(bad), false, "the check can fail");
 });
 
 test("the archive reader reads stored entries and refuses what is not a zip", () => {
