@@ -24,4 +24,6 @@ Items not done yet, roughly in priority order. Planned milestones are tracked as
 ## Developer experience
 - TypeScript types generated from the schema; a generated schema reference.
 - A decision on publishing to npm (the package is private for now).
+- **Read zipped bundles directly** (`validate bundle.zip`), with the same path and size guards as folders; today a zip must be unzipped first.
+- **Translate the field labels of the LinkedIn sheet** ("Company at the time", "Relationship"); only the phrases inside values are translated today.
 - A scheduled check that the copy of the JSON Resume schema in `upstream/` is current.

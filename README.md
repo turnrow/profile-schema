@@ -39,6 +39,8 @@ node bin/profile.mjs import   my-resume.json --out my.profile.json   # start fro
 node bin/profile.mjs media add my-bundle/ headshot.jpg --id headshot --alt "…" --purpose primary --from 2024-01 [--strip-gps]   # add a photo, hashed and versioned
 ```
 
+`node bin/profile.mjs help` lists every command and option. Commands and day-to-day tasks are in the [command reference](#command-reference) below.
+
 The sample is a **fictional** person built to exercise every feature. Its outputs are in [`examples/out/`](examples/out/).
 
 ## What it adds to JSON Resume
@@ -57,7 +59,7 @@ The sample is a **fictional** person built to exercise every feature. Its output
 | Statements that are not true | `rules`: forbidden phrases, forbidden patterns and negative assertions (`notTrue`). Converters refuse to emit output that breaks a rule. | GEDCOM negative assertions |
 | Approval that sticks | `lock` records who approved an entry and when; a later change must go back for approval. | GEDCOM RESN LOCKED |
 | Who changed what | Optional `attribution` per entry (or rely on git). | GEDCOM X Attribution |
-| Evidence kept with the data | A **profile bundle**: a folder (or a zip of one) with `profile.json` and a `media/` folder. `bundle:media/…` URLs resolve inside it, and `sha256` checksums are verified. | GEDZip |
+| Evidence kept with the data | A **profile bundle**: a folder with `profile.json` and a `media/` folder. `bundle:media/…` URLs resolve inside it, and `sha256` checksums are verified. | GEDZip |
 | Localization | Any text field is a string or a map of BCP 47 tags (`{"en-US": "…", "es": "…"}`), with fallback to the default locale. | GEDCOM X `lang` |
 | Accessibility | `alt` is required on every image. | |
 | Short and long views from one file | `priority` (0–100), structured `metrics`, and per-target `targets.<name>` overrides or omission. | |
@@ -232,6 +234,52 @@ An audience's `writeBack.authority` can change these defaults field by field. Wr
 
 **Out of scope here:** verifying tokens, DNS records and signatures is the application's job. This library decides whether what was verified satisfies the audience. Signed attestations (for example W3C Verifiable Credentials issued by the employer) fit naturally as primary-quality citations and are a likely next step.
 
+## Command reference
+
+Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <command>` once the package is installed or linked (`npm link`).
+
+| Task | Command |
+|---|---|
+| Check a profile or bundle | `validate <profile \| bundle>...` |
+| Check many at once (a shell glob works) | `validate profiles/*.json` |
+| Get the result as JSON, for scripts and CI | `validate <profile> --json` |
+| See what still needs confirming | `open <profile \| bundle>` |
+| Write an output | `convert <profile \| bundle> <mapping> [--out file]` |
+| Start from a JSON Resume | `import <resume.json> --out my.profile.json` |
+| Share with an audience, with a consent receipt | `release <profile> <audience> --method … --domain …` |
+| Take an employer's corrections | `writeback <profile> <audience> <scim-user.json> --method … --domain …` |
+| Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
+| Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
+
+Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
+
+Options that apply widely: `--out <file>` (folders are created as needed), `--locale <tag>` (a BCP 47 tag such as `es` or `pt-BR`) and `--on <yyyy-mm-dd>` (the date an output is made for; default today, UTC). An option can be written `--out file` or `--out=file`. A misspelled option stops the command.
+
+| Exit code | Meaning |
+|---|---|
+| 0 | Success. |
+| 1 | A profile is not valid, or something went wrong (a missing file, bad JSON). |
+| 2 | The command was used wrongly (an unknown command or option, a missing argument). |
+| 3 | The output breaks one of the profile's content rules. |
+| 4 | A release was refused (no consent, or the requester doesn't qualify). |
+
+### Use it in your editor and in CI
+
+- **Editor.** Point a profile's `$schema` at the schema file and editors that understand JSON Schema (VS Code among them) complete field names and flag mistakes as you type: `"$schema": "https://raw.githubusercontent.com/turnrow/profile-schema/main/schema/profile.schema.json"`, or a relative path, as the examples do.
+- **CI.** `validate` checks every file it is given and exits 1 if any fails, so one step covers a folder: `node bin/profile.mjs validate profiles/*.json`.
+
+### When something goes wrong
+
+| Message | What to do |
+|---|---|
+| `"organisation" is not a known field here` | A field name is misspelled or is in the wrong place. Compare it with the schema or an example. |
+| `must be equal to one of the allowed values: …` | Use one of the values listed. |
+| `status is pending but openQuestion is missing` | Say what needs confirming in `openQuestion`, or change the status. |
+| `is a zip archive: unzip it and pass the folder` | The tools read a bundle as a folder. |
+| `Output breaks content rules` (exit 3) | An output contains something `rules` forbids. Fix the text, or pass `--allow-rule-violations` to see the output with warnings. |
+| `Release refused` (exit 4) | The reason follows the message: consent isn't recorded, the audience has expired, or the domain or method doesn't qualify. |
+| Anything unexpected | Run again with `TURNROW_DEBUG=1` for a stack trace, and include it in the issue. |
+
 ## Repository layout
 
 | Path | What it is |
@@ -368,7 +416,7 @@ See [`examples/recommended/`](examples/recommended/), a fictional bundle made en
 
 ## Profile bundles
 
-A bundle is a folder, or a zip of one:
+A bundle is a folder. Zip it to send it; the tools read the folder, so unzip it first.
 
 ```
 ines-calloway/

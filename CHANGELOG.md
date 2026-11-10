@@ -1,5 +1,29 @@
 # Changelog
 
+## Unreleased: command-line and message fixes from a review of the tools
+
+No schema changes; every existing file remains valid.
+
+### Command line
+- **`help`, `--help`, `-h` and `version`.** Help lists every command, option and exit code. It used to be one line that left out `media add` and `badges import`.
+- **`validate` checks every file it is given.** `validate profiles/*.json` used to check the first file and report success. `--json` prints the result for scripts and CI.
+- **Misspelled options are refused.** `--recrod` used to be ignored, so a release went unrecorded without a word. An option missing its value is refused too. `--name=value` is accepted.
+- **`--on` and `--locale` are checked.** `--on tomorrow` used to be compared as text and give wrong answers quietly.
+- **Files from Windows editors load.** A leading byte-order mark no longer makes a profile "not valid JSON".
+- **Plain explanations** for a zip passed as a bundle, a missing file, an unknown mapping name (the bundled ones are listed) and an `import` of something that isn't a JSON Resume.
+- **`--out` and `--receipt` create the folder they need.**
+
+### Messages
+- **Schema errors say what is wrong.** An unexpected field is named (`"organisation" is not a known field here`) and a bad value lists the allowed ones. Repeated errors are reported once.
+- **Spanish, French, German and Portuguese** gain the two phrases they lacked ("{title} at {org}", "A colleague"), which were falling back to English inside translated outputs.
+
+### Fixes
+- **The schema's `$id`** pointed at a `master` branch that doesn't exist; it now points at `main`, so the URL resolves for editors.
+- **`loadMapping`** accepts only the bundled names (exported as `BUNDLED_MAPPINGS`) and says which they are.
+
+### Docs
+- README: a command reference with exit codes, editor and CI setup, and a table of common messages. It no longer says the tools read zipped bundles; they read folders.
+
 ## 2.6.0 (2026-11-09): photos, other people, recommendations, endorsements and badges
 
 Earlier files remain valid. A file that declares 2.6.0 is held to stricter checks, listed under each heading below.

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/turnrow/profile-schema/master/schema/profile.schema.json",
+  "$id": "https://raw.githubusercontent.com/turnrow/profile-schema/main/schema/profile.schema.json",
   "title": "Turnrow Profile",
   "description": "A single source of truth for a person's professional record, from which a résumé, a LinkedIn profile, schema.org JSON-LD, a slide bio or a Europass CV are generated. Derived from JSON Resume, with an evidence model borrowed from genealogy (GEDCOM 7 / GEDCOM X): every fact carries its sources, competing claims, a confidence level, a review status and a visibility, so nothing unconfirmed or private is ever published by accident.",
   "type": "object",
