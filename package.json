@@ -60,5 +60,8 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "ajv-draft-04": "^1.0.0"
   }
 }

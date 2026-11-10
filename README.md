@@ -250,6 +250,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Write a GEDCOM 7 file for genealogy software | `convert <profile \| bundle> gedcom7 --out me.ged` (add `--gedzip` for a `.gdz` with the media) |
 | Write GEDCOM 5.5.1 for older genealogy software | `convert <profile \| bundle> gedcom551 --out me.ged` |
 | Write a plain-text résumé for applicant tracking systems | `convert <profile \| bundle> ats --out resume.txt` |
+| Write an HR Open Standards candidate for HR systems | `convert <profile \| bundle> hropen --out candidate.json` |
 | Present your Open Badges 3.0 credentials | `convert <bundle> ob3 --out presentation.json` |
 | Write a CLR 2.0 learner record to be signed | `convert <bundle> clr --out clr.json` |
 | Write an accessible résumé PDF | `pdf <profile \| bundle> --out resume.pdf` |
@@ -259,7 +260,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
 
-Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
+Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
 
 Options that apply widely: `--out <file>` (folders are created as needed), `--locale <tag>` (a BCP 47 tag such as `es` or `pt-BR`) and `--on <yyyy-mm-dd>` (the date an output is made for; default today, UTC). An option can be written `--out file` or `--out=file`. A misspelled option stops the command.
 
@@ -438,6 +439,34 @@ What to know:
 - **A CLR needs at least one Verifiable Credential**, by the standard. With no Open Badges 3.0 badge to carry, both commands stop and say so.
 - **Checked against the published schemas.** The tests validate both outputs against 1EdTech's JSON Schemas, which `node scripts/fetch-1edtech-schemas.mjs` downloads (they are not redistributed here). Not done: no wallet or verifier has imported these files, and JSON-LD processing against the contexts is not tested.
 
+## HR Open Standards (HR-JSON)
+
+```sh
+node bin/profile.mjs convert examples/sample.profile.json hropen --out candidate.json
+```
+
+`hropen` writes a `Candidate` in [HR Open Standards](https://www.hropenstandards.org/standards) 4.5 (final release, February 2026), the recruiting document applicant tracking and HR systems exchange. See [`examples/out/sample.hropen.json`](examples/out/sample.hropen.json).
+
+| In the profile | In the Candidate |
+|---|---|
+| Name, location, public contact details and links | `person` |
+| Headline and summary | `profiles[0].profileName`, `executiveSummary` |
+| Jobs, with each job's positions | `employment[]`, each with `positionHistories[]` (occupation codes as `jobCategories`) |
+| Education | `education[]`, with `degreeGrantedStatus`: `Granted`, `NotGranted` or `InProgress` |
+| Licenses; certifications, ratings and badges; clearances | `licenses[]`, `certifications[]`, `securityCredentials[]` |
+| Memberships; volunteer, civic and board service | `affiliations[]` |
+| Military and reserve service | `militaryService[]` |
+| Publications; patents | `publications[]`, `patents[]` (press about you is not your publication and is left out) |
+| Skills and languages | `qualifications[]`, with skill codes and CEFR levels |
+| References and consented recommendations | `references[]`, in the words their authors allowed |
+
+What to know:
+
+- **The usual filter applies.** Approved, public entries of high or medium confidence; private contact details and credential numbers stay out; content rules stop the output. Share more through a [release](#releases-and-consent-receipts).
+- **Qualified dates are not rounded.** HR Open dates are exact, so "about 1996" is left out of `start` and said in words in the entry's `descriptions`.
+- **Left out:** awards, projects and interests have no place in a Candidate.
+- **Checked against the standard.** The tests validate every example against HR Open's JSON Schemas and, because those schemas accept any extra key, also check that every key written is one the standard defines. `node scripts/fetch-hropen-schemas.mjs` downloads the release (it is HR Open's to distribute, under its own licence, so it is not kept here). Not done: no ATS or HR system has imported the output. The LER-RS résumé that 4.5 also defines is not written yet.
+
 ## The review file
 
 ```sh
@@ -479,7 +508,7 @@ From code: `reviewMarkdown(profile, { on, locale, mappings })`. Pass your own `m
 | [`lib/audience.mjs`](lib/audience.mjs) | Resolves audiences on a date, checks requesters against policy and looks up field authority. |
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
-| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `scim`, `verification`. |
+| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `scim`, `verification`. |
 | [`lib/gedcom.mjs`](lib/gedcom.mjs) | Writes GEDCOM 7.0 and 5.5.1 from the `gedcom7` view, converts dates, and packages GEDZip archives. |
 | [`upstream/gedcom551/`](upstream/gedcom551/) | The GEDCOM 5.5.1 grammar, extracted from the specification's text. The tests check the 5.5.1 export against it. |
 | [`upstream/gedcom7/`](upstream/gedcom7/) | Unmodified structure tables and test files from the FamilySearch GEDCOM 7 specification (Apache 2.0). The tests check our export against them. |

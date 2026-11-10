@@ -2,6 +2,11 @@
 
 ## Unreleased (2.8): exports
 
+### HR Open Standards
+- **`convert <profile | bundle> hropen`** writes an HR Open Standards 4.5 `Candidate` (HR-JSON): jobs with their positions as `positionHistories`, education with whether the degree was granted, licenses, certifications, clearances, affiliations, military service, publications, patents, skills and languages as qualifications, and references.
+- Qualified dates are left out of exact date fields and said in words in the entry's descriptions.
+- The tests validate every example against HR Open's schemas, fetched by `scripts/fetch-hropen-schemas.mjs` (pinned by hash, not kept in the repository), and check that every key written is one the standard defines. `ajv-draft-04` is a new development dependency for this (HR Open's schemas are JSON Schema draft-04).
+
 ### Open Badges 3.0 and CLR 2.0
 - **`convert <bundle> ob3`** writes an unsigned Verifiable Presentation carrying the Open Badges 3.0 credentials exactly as their issuers signed them (a VC-JWT in an `EnvelopedVerifiableCredential`).
 - **`convert <bundle> clr`** writes a CLR 2.0 `ClrCredential` template: those credentials, plus Open Badges 2.0 badges, active licenses and certifications and completed education as achievements, for an institution or the holder to sign. A badge that stands for a credentials entry is counted once.
