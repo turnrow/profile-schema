@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased (2.7): review file
+
+- **`review <profile | bundle> [--on] [--locale] [--out review.md]`** writes the whole profile as one Markdown file for checking: a summary (consent, counts, open items, rule hits), every entry with its status, confidence, visibility, sources, codes, notes and **which outputs show it**, claims beside the profile's own value, other people's data with consent per item, and audiences and releases.
+- "Which outputs show it" uses each mapping's own filter and gives the reason an entry is hidden ("priority 40 is below 80").
+- The file is internal. `.gitignore` now leaves out `review.md` and `*.review.md`.
+- The Markdown is accessible: one H1, no skipped heading levels, header rows on every table, no meaning carried by color or symbols.
+- From code: `reviewMarkdown`, plus `inclusion` (a mapping's verdict on an entry, with the reason) and `sectionsRead` (the lists a mapping uses).
+- `examples/out/sample.review.md` is generated and checked in CI.
+
 ## 2.6.1 (2026-11-10): fixes from a review of the tools and of the 2.5 and 2.6 work
 
 No schema changes: files keep `schemaVersion` 2.6.0, and every existing file remains valid, with one exception noted under Privacy.

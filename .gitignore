@@ -1,2 +1,7 @@
 node_modules/
 .superpowers/
+
+# Review files hold private data (drafts, notes, other people's details). Only the fictional sample is kept.
+review.md
+*.review.md
+!examples/out/sample.review.md
