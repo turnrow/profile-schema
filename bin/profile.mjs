@@ -6,6 +6,7 @@
 //                            [--visibility public[,network]] [--media-base https://example.com/profile/] [--on yyyy-mm-dd]
 //   turnrow-profile import   <resume.json> [--locale xx] [--out file]
 //   turnrow-profile open     <profile.json | bundle-folder>      list items waiting on confirmation
+//   turnrow-profile review   <profile.json | bundle-folder> [--on yyyy-mm-dd] [--locale xx] [--out review.md]   the whole profile, for checking (internal)
 //   turnrow-profile release  <profile> <audience> [--format scim] --domain acme.com --method oidc [--application name] [--recipient "Fund name"]
 //                            [--out payload.json] [--receipt receipt.json] [--record]   (--record appends to profile.releases)
 //   turnrow-profile media add <bundle> <file> --id <id> --alt "<text>" [--kind headshot] [--purpose primary] [--from yyyy-mm] [--strip-gps]
@@ -17,6 +18,7 @@ import { join, resolve, extname, dirname } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { readImageInfo, stripGps } from "../lib/media.mjs";
 import { parseBadge } from "../lib/badges.mjs";
+import { reviewMarkdown } from "../lib/review.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS } from "../index.mjs";
 
 const HELP = `turnrow-profile: validate, convert and share Turnrow Profiles.
@@ -24,6 +26,8 @@ const HELP = `turnrow-profile: validate, convert and share Turnrow Profiles.
 Commands
   validate  <profile | bundle>...          check one or more files; --json prints the result as JSON
   open      <profile | bundle>             list what is still waiting on confirmation
+  review    <profile | bundle>             write the whole profile as a Markdown file for checking (internal:
+                                           it includes drafts, private entries, notes and other people's details)
   convert   <profile | bundle> <mapping>   write an output: ${BUNDLED_MAPPINGS.join(", ")},
                                            or the path to your own mapping .json
   import    <resume.json>                  start a profile from a JSON Resume (everything arrives as a draft)
@@ -147,7 +151,7 @@ function writeNew(path, bytes, what) {
 function writeOut(path, text) { mkdirSync(dirname(resolve(path)), { recursive: true }); writeFileSync(path, text); }
 function emit(text) { if (out) writeOut(out, text); else process.stdout.write(text); }
 function usage() {
-  console.error(`usage: turnrow-profile <validate|open|convert|import|release|writeback|media add|badges import> …\nRun "turnrow-profile help" for the commands and options.`);
+  console.error(`usage: turnrow-profile <validate|open|review|convert|import|release|writeback|media add|badges import> …\nRun "turnrow-profile help" for the commands and options.`);
   process.exit(2);
 }
 if (flags["--version"] || command === "version") {
@@ -193,6 +197,14 @@ try {
       for (const o of [...r.openItems].sort((a, b) => order[a.status] - order[b.status])) {
         console.log(`- [${o.status}] ${o.id}: ${o.question ?? "(no question recorded)"}`);
       }
+      break;
+    }
+    case "review": {
+      if (!rest[0]) usage();
+      const { profile, bundleDir } = loadProfile(rest[0]);
+      // An invalid profile still gets its review file: the errors head it, and the rest shows what is there.
+      emit(reviewMarkdown(profile, { on, locale, bundleDir, source: rest[0] }));
+      if (out) console.error(`Wrote ${out}. It holds private data: keep it out of public repositories and shared folders.`);
       break;
     }
     case "convert": {

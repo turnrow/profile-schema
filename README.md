@@ -31,6 +31,7 @@ Outputs choose what they accept. The public JSON-LD takes only approved, public 
 npm install
 node bin/profile.mjs validate examples/sample.profile.json
 node bin/profile.mjs open     examples/sample.profile.json          # what still needs confirming
+node bin/profile.mjs review   examples/sample.profile.json --out review.md   # the whole profile, for checking (internal)
 node bin/profile.mjs convert  examples/sample.profile.json schemaorg  # or jsonresume, linkedin, brief, timeline
 node bin/profile.mjs convert  examples/sample.profile.json brief --locale es
 node bin/profile.mjs convert  examples/sample.profile.json jsonresume --visibility public,network  # override which entries go in
@@ -244,6 +245,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Check many at once (a shell glob works) | `validate profiles/*.json` |
 | Get the result as JSON, for scripts and CI | `validate <profile> --json` |
 | See what still needs confirming | `open <profile \| bundle>` |
+| Get the whole profile as one file to check | `review <profile \| bundle> --out review.md` |
 | Write an output | `convert <profile \| bundle> <mapping> [--out file]` |
 | Start from a JSON Resume | `import <resume.json> --out my.profile.json` |
 | Share with an audience, with a consent receipt | `release <profile> <audience> --method … --domain …` |
@@ -280,6 +282,31 @@ Options that apply widely: `--out <file>` (folders are created as needed), `--lo
 | `Release refused` (exit 4) | The reason follows the message: consent isn't recorded, the audience has expired, or the domain or method doesn't qualify. |
 | Anything unexpected | Run again with `TURNROW_DEBUG=1` for a stack trace, and include it in the issue. |
 
+## The review file
+
+```sh
+node bin/profile.mjs review examples/sample.profile.json --out review.md
+```
+
+`review` writes the whole profile as one Markdown file, for the person and the people who check their record. Outputs show only what is approved and public; the review file shows everything, so nothing is approved unseen. See [`examples/out/sample.review.md`](examples/out/sample.review.md).
+
+| Part | What it shows |
+|---|---|
+| Summary | Whether the subject's consent is recorded; counts by status, confidence and visibility; validation errors and warnings; open items (disputed, then pending, then questions); content rule hits in each output. |
+| The person | Each personal field and name with its visibility. |
+| Entries by section | One row per entry, position, responsibility and figure: what it says, status, confidence, visibility, sources with their quality, codes, internal notes, and which outputs show it. |
+| Claims and disputes | What each source says beside what the profile says, with the decision and the reason. |
+| Other people's data | People named in the profile, what is held about them, and each recommender's and endorser's consent and its scope. Contact details are counted, not printed. |
+| Audiences and releases | What each audience is granted, whether it is active on the date, and the releases already made. |
+
+- **"Which outputs show it"** is worked out with each mapping's own filter, so it reads "Shown in: linkedin, schemaorg. Hidden from: brief (priority 40 is below 80)." A mapping's own limits (the first five, say) are not applied.
+- **It is internal.** It holds drafts, private entries, notes and other people's details. `.gitignore` leaves out `review.md` and `*.review.md`; keep it out of shared folders too.
+- **An invalid profile still gets a file**, headed by its errors.
+- **Accessible Markdown:** one top heading, no skipped levels, every table with a header row, status in words (never color or symbols), and links named for where they go.
+- `--on` sets the date outputs are judged for; `--locale` picks the language of translated text.
+
+From code: `reviewMarkdown(profile, { on, locale, mappings })`. Pass your own `mappings` to report on outputs of your own.
+
 ## Repository layout
 
 | Path | What it is |
@@ -297,7 +324,8 @@ Options that apply widely: `--out <file>` (folders are created as needed), `--lo
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
 | [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`, `verification`. |
-| [`bin/profile.mjs`](bin/profile.mjs) | Command line: `validate`, `open`, `convert`, `import`, `release`, `writeback`. |
+| [`lib/review.mjs`](lib/review.mjs) | Writes the review file: every entry with its status, sources and which outputs show it. |
+| [`bin/profile.mjs`](bin/profile.mjs) | Command line: `validate`, `open`, `review`, `convert`, `import`, `release`, `writeback`, `media add`, `badges import`. |
 | [`examples/`](examples/) | Three fictional people: a founder; a new employee with audiences; and someone whose employers (EDS, Coopers & Lybrand, Buchanan) changed around them, with real company histories cited to public sources. Plus a sample SCIM write-back and every generated output. |
 | [`upstream/jsonresume/`](upstream/jsonresume/) | An unmodified copy of the current JSON Resume schema (1.7.1). The tests validate our JSON Resume export against it. |
 | [`test/`](test/) | `node --test`: schema, validator, converter, rules and import round trip. |

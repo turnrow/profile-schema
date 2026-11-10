@@ -1,12 +1,13 @@
 import { readFileSync, readdirSync } from "node:fs";
 
 export { validateProfile, getField, canonical, SECTIONS } from "./lib/validate.mjs";
-export { convert, checkRules, stringsOf, renderText, RuleViolationError, DEFAULT_INCLUDE, withoutNotes, withPublishedMedia } from "./lib/convert.mjs";
+export { convert, checkRules, stringsOf, renderText, RuleViolationError, DEFAULT_INCLUDE, withoutNotes, withPublishedMedia, inclusion, sectionsRead } from "./lib/convert.mjs";
 export { fromJsonResume } from "./lib/import-jsonresume.mjs";
 export { resolveAudience, checkRequester, authorityFor, isCurrent, DEFAULT_AUTHORITY } from "./lib/audience.mjs";
 export { buildRelease, scopeProfile, consentReceipt, ReleaseRefusedError } from "./lib/release.mjs";
 export { officialTitle, checkCode, codeSet, socLevel, BUNDLED as BUNDLED_CODE_LISTS } from "./lib/codes.mjs";
 export { applyWriteBack, readScim } from "./lib/writeback.mjs";
+export { reviewMarkdown } from "./lib/review.mjs";
 
 /** The Turnrow Profile JSON Schema (draft 2020-12). */
 export const schema = JSON.parse(readFileSync(new URL("./schema/profile.schema.json", import.meta.url), "utf8"));
