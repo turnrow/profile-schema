@@ -813,12 +813,74 @@
                 ]
               },
               "summary": {
-                "$fn": "text",
+                "$fn": "joinLines",
                 "args": [
-                  "$.summary"
+                  {
+                    "$if": "$.authors",
+                    "$then": {
+                      "$if": {
+                        "$fn": "oneOf",
+                        "args": [
+                          "$.kind",
+                          "patent",
+                          "patentApplication"
+                        ]
+                      },
+                      "$then": {
+                        "$fn": "label",
+                        "args": [
+                          "inventorsLine",
+                          {
+                            "x": {
+                              "$fn": "join",
+                              "args": [
+                                "$.authors"
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "$else": {
+                        "$fn": "label",
+                        "args": [
+                          "authorsLine",
+                          {
+                            "x": {
+                              "$fn": "join",
+                              "args": [
+                                "$.authors"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$fn": "text",
+                    "args": [
+                      "$.summary"
+                    ]
+                  }
                 ]
               },
-              "url": "$.url"
+              "url": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.url",
+                  {
+                    "$if": "$.doi",
+                    "$then": {
+                      "$fn": "concat",
+                      "args": [
+                        "https://doi.org/",
+                        "$.doi"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "detail": "$.number"
             }
           }
         ]

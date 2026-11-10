@@ -102,7 +102,28 @@ test("the pdf command checks its own options", () => {
   assert.match(cli("help").stdout, /pdf {7}<profile \| bundle> --out <file>/);
 });
 
+test("the academic layout leads with education and publications, and is titled a curriculum vitae", () => {
+  const p = sample();
+  p.publications.push({ id: "reef-paper", status: "approved", confidence: "high", kind: "paper", title: "Reef recovery after dredging", date: "2004-06", authors: ["I. Calloway", "R. Example"], doi: "10.1234/reef.2004.01", role: "author" });
+  const classic = resumeViewForPdf(p, { on: ON }).view;
+  const academic = resumeViewForPdf(p, { on: ON, layout: "academic" }).view;
+  assert.deepEqual(academic.sections.map((s) => s.id).slice(0, 4), ["education", "experience", "publications", "awards"]);
+  assert.equal(classic.sections[0].id, "experience");
+  assert.deepEqual([...academic.sections.map((s) => s.id)].sort(), [...classic.sections.map((s) => s.id)].sort(), "the same sections, in another order");
+  assert.equal(academic.title, "Ines Calloway: curriculum vitae");
+  assert.equal(classic.title, "Ines Calloway: résumé");
+  assert.equal(resumeViewForPdf(p, { on: ON, layout: "academic", locale: "fr" }).view.title, "Ines Calloway : curriculum vitæ");
+  assert.equal(academic.layout, "academic");
+});
+
 // ---------- rendering (needs Typst) ----------
+
+test("renders the academic layout", { skip: noTypst }, () => {
+  const out = join(tmp(), "cv.pdf");
+  renderResumePdf(load("examples/employee.profile.json"), { out, on: ON, layout: "academic" });
+  assert.ok(readFileSync(out).length > 5000);
+});
+
 
 test("renders each example as a tagged PDF with its title and language set", { skip: noTypst }, () => {
   for (const [file, name] of [["examples/sample.profile.json", "Ines Calloway"], ["examples/history.profile.json", "Pat Example"], ["examples/employee.profile.json", "Sam Rivera"]]) {

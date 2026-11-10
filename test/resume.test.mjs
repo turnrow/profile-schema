@@ -150,6 +150,19 @@ test("recommendations appear only with consent, cut to its scope", () => {
   assert.equal(section(view(p), "recommendations"), undefined);
 });
 
+test("a publication names its authors or inventors, its number and a DOI link; press about the person stays out", () => {
+  const patent = section(view(load("examples/employee.profile.json")), "publications").entries[0];
+  assert.equal(patent.summary, "Inventors: Sam Rivera, A. Colleague");
+  assert.equal(patent.detail, "US 11,000,000 B2 (example)");
+  const p = sample();
+  p.publications.push({ id: "reef-paper", status: "approved", confidence: "high", kind: "paper", title: "Reef recovery after dredging", date: "2004-06", authors: ["I. Calloway", "R. Example"], doi: "10.1234/reef.2004.01", summary: "Five-year survey." });
+  const pubs = section(view(p), "publications").entries;
+  assert.deepEqual(pubs.map((e) => e.id), ["reef-paper"], "the Gazette profile is about her, not by her");
+  assert.equal(pubs[0].summary, "Authors: I. Calloway, R. Example\nFive-year survey.");
+  assert.equal(pubs[0].url, "https://doi.org/10.1234/reef.2004.01");
+  assert.equal(section(view(p, { locale: "de" }), "publications").entries[0].summary.split("\n")[0], "Autoren: I. Calloway, R. Example");
+});
+
 test("the committed example views are current", () => {
   for (const [name, src] of [["sample", "examples/sample.profile.json"], ["history", "examples/history.profile.json"], ["recommended", "examples/recommended/profile.json"]]) {
     assert.deepEqual(load(`examples/out/${name}.resume.json`), view(load(src)), name);
