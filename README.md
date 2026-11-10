@@ -260,6 +260,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Take an employer's corrections | `writeback <profile> <audience> <scim-user.json> --method … --domain …` |
 | Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
+| Send an approved change set to a directory's API | `directory apply <change-set.json> --apply --approved <sha256> --out <folder>` |
 | See what a folder of profiles would change in a directory | `directory diff <folder> --against <export> --target scim --domain … --method … --out <folder>` |
 
 Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `europass`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
@@ -539,12 +540,45 @@ Profiles are read-only unless you pass `--record`, which adds each release to it
 | `google-csv` | The Admin console's user export (Directory > Users > Download users) | `google-bulk-update.csv`, to upload at Directory > Users > Bulk update users | First name, last name, work phone |
 | `ldif` | An LDIF export of people (OpenLDAP, Active Directory) | `directory-changes.ldif`: `changetype: modify` records for `ldapmodify` | `givenName`, `sn`, `displayName`, `telephoneNumber` |
 
-A connector that can read a field but not write it says so in the report, so the report never promises a change the file does not make.
+| `google` | The Directory API's user list (`users.list`, saved as JSON) | requests for `directory apply` | Names, display name; pronouns, nickname, preferred title, headline and bio in a custom schema |
+| `entra` | A Microsoft Graph user list (`/users`, saved as JSON) | requests for `directory apply` | Names, display name; more with `--map` |
+| `okta` | An Okta user list (`/api/v1/users`, saved as JSON) | requests for `directory apply` | Names, display name, nickname, phone; more with `--map` |
+| `onelogin` | A OneLogin user list (`/api/2/users`, saved as JSON) | requests for `directory apply` | Names, phone; more with `--map` |
+
+A connector that can read a field but not write it says so in the report, so the report never promises a change that is not made.
 
 - **Google Workspace.** The file has only the rows and columns that change. Each row repeats what Google requires on every row (the names, the organizational unit, and `****`, which keeps the password); no column that renames, suspends or licenses a user is ever written. Google's file has no column for pronouns, a nickname or a photo: those need the Directory API, which is planned. Format source: Google's help page [Add or update multiple users from a CSV file](https://knowledge.workspace.google.com/admin/users/add-or-update-multiple-users-from-a-csv-file) (updated 2026-10-26). That page names the required columns; the optional ones read here (Work Phone, Employee ID, Employee Title, Department, Cost Center) are spelled as the console's template spells them, and headers are matched without regard to case. **Not checked against a real export or upload**: the example export is written by hand.
 - **LDAP and Active Directory.** The tool writes LDIF and opens no connection: apply the file with `ldapmodify` (try `ldapmodify -n` first) or `ldifde -i`. It reads `employeeNumber` or `employeeID`, `department` or `departmentNumber`, `mail` and `proxyAddresses`. Photos (`jpegPhoto`, `thumbnailPhoto`) are not written yet. **Not checked against a real directory.**
 
-The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-directory-sync-design.md`](docs/superpowers/specs/2026-11-10-directory-sync-design.md). Connectors that call a directory's API (Google, Microsoft Entra ID, Okta, OneLogin) are planned on the same base.
+### Applying through a directory's API
+
+`directory diff` works the same for the API connectors, and still needs no credentials: it compares against a list of users you saved from the API. Applying is a second command:
+
+```sh
+node bin/profile.mjs directory apply run/change-set.json                       # shows the requests; sends nothing
+ENTRA_GRAPH_TOKEN=… node bin/profile.mjs directory apply run/change-set.json \
+  --apply --approved <sha256 from report.md> --out run/applied
+```
+
+- **It sends nothing unless you pass `--apply`.** Without it, it prints the requests.
+- **It applies only what was approved.** `--approved` must be the change set's hash, which is printed in `report.md`; a change set that was edited, or is more than seven days old (`--max-age`), is refused.
+- **It reads each user again first**, and changes a field only if the directory still holds the value the approver saw. Anything else is skipped and logged.
+- **It stops at the first error** from the directory.
+- **It keeps a log and a way back.** `apply-log.jsonl` records every field against its release; `rollback-change-set.json` is the inverse of what was applied, and rolling back is applying that file. A field that was empty before can't be emptied again.
+- **The token** is an access token you obtain with your own tools (`gcloud`, `az`, your identity provider's console). It is read from an environment variable, sent as a header, and written nowhere.
+
+| Connector | Request | Token variable | Narrowest permission | Also set |
+|---|---|---|---|---|
+| `google` | `PATCH https://admin.googleapis.com/admin/directory/v1/users/{id}` | `GOOGLE_DIRECTORY_TOKEN` | scope `https://www.googleapis.com/auth/admin.directory.user` | |
+| `entra` | `PATCH https://graph.microsoft.com/v1.0/users/{id}` | `ENTRA_GRAPH_TOKEN` | `User.ReadUpdate.All` | |
+| `okta` | `POST {org}/api/v1/users/{id}` (a partial update) | `OKTA_TOKEN` | scope `okta.users.manage` | `OKTA_ORG_URL` |
+| `onelogin` | `PUT {org}/api/2/users/{id}` | `ONELOGIN_TOKEN` | API credentials with "Manage users" | `ONELOGIN_URL` |
+
+- **Fields a directory has no attribute for.** Google keeps pronouns, nickname, preferred title, headline and bio in a custom schema named `TurnrowProfile`, which an administrator creates once (five text fields with those names). For Entra, Okta and OneLogin, name your own attributes: `--map pronouns=extensionAttribute1,preferredTitle=extensionAttribute2`. Only a person's own fields can be mapped.
+- **Not written by any API connector:** phone numbers in Google and Entra (their phone lists are replaced whole by a patch, which could remove other numbers), photos, and anything the employer is the authority for.
+- **Not run against a real tenant.** The requests follow each vendor's reference as read on 2026-11-10 and are tested against a stand-in directory. Try `directory apply` without `--apply` first, then with one person.
+
+The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-directory-sync-design.md`](docs/superpowers/specs/2026-11-10-directory-sync-design.md).
 
 ## The review file
 

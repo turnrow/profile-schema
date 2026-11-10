@@ -25,7 +25,7 @@ test("every connector has the same shape and only known fields", () => {
     assert.match(c.id, /^[a-z0-9-]+$/);
     assert.equal(typeof c.label, "string");
     assert.equal(typeof c.readExport, "function");
-    assert.equal(typeof c.render, "function");
+    assert.equal(typeof (c.render ?? c.write), "function", "a file to apply, or requests to send");
     for (const f of [...Object.keys(c.fields), ...(c.writable ?? [])]) assert.ok(DIRECTORY_FIELDS.some((x) => x.field === f), `${c.id}: ${f}`);
     for (const f of c.writable ?? []) assert.ok(c.fields[f], `${c.id} names the attribute it writes ${f} to`);
   }
