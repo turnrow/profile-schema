@@ -468,6 +468,7 @@ try {
       const r = built.report;
       console.error(`Wrote ${out}: ${r.opened.length} post${r.opened.length === 1 ? "" : "s"} opened, ${r.ended.length} ended, ${r.replaced.length} changed, ${r.kept} unchanged.`);
       console.error(`${r.named} ${r.named === 1 ? "person is" : "people are"} named, by their own release. ${r.notNamed} ${r.notNamed === 1 ? "seat is" : "seats are"} filled by someone not shown (no profile here, or no consent).`);
+      if (r.history) console.error(`${r.history} earlier position${r.history === 1 ? "" : "s"} added from people's own profiles.`);
       for (const t of r.replaced) console.error(`  changed: ${t}`);
       for (const t of r.ended) console.error(`  ended: ${t} (no longer in the directory; if the seat stays open, add it back as a vacancy)`);
       break;

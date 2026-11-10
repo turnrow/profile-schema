@@ -251,7 +251,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Write GEDCOM 5.5.1 for older genealogy software | `convert <profile \| bundle> gedcom551 --out me.ged` |
 | Write a plain-text résumé for applicant tracking systems | `convert <profile \| bundle> ats --out resume.txt` |
 | Write a CV the Europass editor imports | `convert <profile \| bundle> europass --out cv.xml` |
-| Write an HR Open Standards candidate for HR systems | `convert <profile \| bundle> hropen --out candidate.json` |
+| Write an HR Open Standards candidate for HR systems | `convert <profile \| bundle> hropen --out candidate.json` (or `lerrs` for the LER-RS résumé) |
 | Present your Open Badges 3.0 credentials | `convert <bundle> ob3 --out presentation.json` |
 | Write a CLR 2.0 learner record to be signed | `convert <bundle> clr --out clr.json` |
 | Write an accessible résumé PDF | `pdf <profile \| bundle> --out resume.pdf` |
@@ -266,7 +266,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Count headcount, vacancies, span of control and layers | `orgchart stats acme.org.json --from 2026-01-05 --to 2026-11-07` |
 | See what a folder of profiles would change in a directory | `directory diff <folder> --against <export> --target scim --domain … --method … --out <folder>` |
 
-Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `europass`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
+Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `lerrs`, `europass`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
 
 Options that apply widely: `--out <file>` (folders are created as needed), `--locale <tag>` (a BCP 47 tag such as `es` or `pt-BR`) and `--on <yyyy-mm-dd>` (the date an output is made for; default today, UTC). An option can be written `--out file` or `--out=file`. A misspelled option stops the command.
 
@@ -500,7 +500,8 @@ What to know:
 - **The usual filter applies.** Approved, public entries of high or medium confidence; private contact details and credential numbers stay out; content rules stop the output. Share more through a [release](#releases-and-consent-receipts).
 - **Qualified dates are not rounded.** HR Open dates are exact, so "about 1996" is left out of `start` and said in words in the entry's `descriptions`.
 - **Left out:** awards, projects and interests have no place in a Candidate.
-- **Checked against the standard.** The tests validate every example against HR Open's JSON Schemas and, because those schemas accept any extra key, also check that every key written is one the standard defines. `node scripts/fetch-hropen-schemas.mjs` downloads the release (it is HR Open's to distribute, under its own licence, so it is not kept here). Not done: no ATS or HR system has imported the output. The LER-RS résumé that 4.5 also defines is not written yet.
+- **Checked against the standard.** The tests validate every example against HR Open's JSON Schemas and, because those schemas accept any extra key, also check that every key written is one the standard defines. `node scripts/fetch-hropen-schemas.mjs` downloads the release (it is HR Open's to distribute, under its own licence, so it is not kept here). Not done: no ATS or HR system has imported the output.
+- **LER-RS.** `convert … lerrs` writes the same release's résumé document (Learning and Employment Record Resume Standard): the same employment, education, licenses, certifications and skills, the summary as a narrative, languages as skills. Service, publications, patents and references have no place in it. LER-RS requires an issuer on a license or certification; where the profile has none it says "Issuer not recorded". Every entry is your own statement: nothing here is a Verifiable Credential. See [`examples/out/sample.lerrs.json`](examples/out/sample.lerrs.json).
 
 ## Directory sync
 
@@ -541,9 +542,9 @@ Profiles are read-only unless you pass `--record`, which adds each release to it
 |---|---|---|---|
 | `scim` | A list of SCIM 2.0 Users (JSON) | `scim-bulk.json`: one SCIM Bulk request | Every field the person is the authority for |
 | `google-csv` | The Admin console's user export (Directory > Users > Download users) | `google-bulk-update.csv`, to upload at Directory > Users > Bulk update users | First name, last name, work phone |
-| `ldif` | An LDIF export of people (OpenLDAP, Active Directory) | `directory-changes.ldif`: `changetype: modify` records for `ldapmodify` | `givenName`, `sn`, `displayName`, `telephoneNumber` |
+| `ldif` | An LDIF export of people (OpenLDAP, Active Directory) | `directory-changes.ldif`: `changetype: modify` records for `ldapmodify` | `givenName`, `sn`, `displayName`, `telephoneNumber`, `jpegPhoto` |
 
-| `google` | The Directory API's user list (`users.list`, saved as JSON) | requests for `directory apply` | Names, display name; pronouns, nickname, preferred title, headline and bio in a custom schema |
+| `google` | The Directory API's user list (`users.list`, saved as JSON) | requests for `directory apply` | Names, display name, photo; pronouns, nickname, preferred title, headline and bio in a custom schema |
 | `entra` | A Microsoft Graph user list (`/users`, saved as JSON) | requests for `directory apply` | Names, display name; more with `--map` |
 | `okta` | An Okta user list (`/api/v1/users`, saved as JSON) | requests for `directory apply` | Names, display name, nickname, phone; more with `--map` |
 | `onelogin` | A OneLogin user list (`/api/2/users`, saved as JSON) | requests for `directory apply` | Names, phone; more with `--map` |
@@ -551,7 +552,7 @@ Profiles are read-only unless you pass `--record`, which adds each release to it
 A connector that can read a field but not write it says so in the report, so the report never promises a change that is not made.
 
 - **Google Workspace.** The file has only the rows and columns that change. Each row repeats what Google requires on every row (the names, the organizational unit, and `****`, which keeps the password); no column that renames, suspends or licenses a user is ever written. Google's file has no column for pronouns, a nickname or a photo: those need the Directory API, which is planned. Format source: Google's help page [Add or update multiple users from a CSV file](https://knowledge.workspace.google.com/admin/users/add-or-update-multiple-users-from-a-csv-file) (updated 2026-10-26). That page names the required columns; the optional ones read here (Work Phone, Employee ID, Employee Title, Department, Cost Center) are spelled as the console's template spells them, and headers are matched without regard to case. **Not checked against a real export or upload**: the example export is written by hand.
-- **LDAP and Active Directory.** The tool writes LDIF and opens no connection: apply the file with `ldapmodify` (try `ldapmodify -n` first) or `ldifde -i`. It reads `employeeNumber` or `employeeID`, `department` or `departmentNumber`, `mail` and `proxyAddresses`. Photos (`jpegPhoto`, `thumbnailPhoto`) are not written yet. **Not checked against a real directory.**
+- **LDAP and Active Directory.** The tool writes LDIF and opens no connection: apply the file with `ldapmodify` (try `ldapmodify -n` first) or `ldifde -i`. It reads `employeeNumber` or `employeeID`, `department` or `departmentNumber`, `mail` and `proxyAddresses`. A released JPEG photo is written as `jpegPhoto`; a PNG is not (the attribute holds a JPEG), and the report says so. **Not checked against a real directory.**
 
 ### Applying through a directory's API
 
@@ -577,8 +578,10 @@ ENTRA_GRAPH_TOKEN=… node bin/profile.mjs directory apply run/change-set.json \
 | `okta` | `POST {org}/api/v1/users/{id}` (a partial update) | `OKTA_TOKEN` | scope `okta.users.manage` | `OKTA_ORG_URL` |
 | `onelogin` | `PUT {org}/api/2/users/{id}` | `ONELOGIN_TOKEN` | API credentials with "Manage users" | `ONELOGIN_URL` |
 
-- **Fields a directory has no attribute for.** Google keeps pronouns, nickname, preferred title, headline and bio in a custom schema named `TurnrowProfile`, which an administrator creates once (five text fields with those names). For Entra, Okta and OneLogin, name your own attributes: `--map pronouns=extensionAttribute1,preferredTitle=extensionAttribute2`. Only a person's own fields can be mapped.
-- **Not written by any API connector:** phone numbers in Google and Entra (their phone lists are replaced whole by a patch, which could remove other numbers), photos, and anything the employer is the authority for.
+- **Fields a directory has no attribute for.** Google keeps pronouns, nickname, preferred title, headline and bio in a custom schema named `TurnrowProfile`, which an administrator creates once (text fields with those names, and `photoSha256` if photos are sent). For Entra, Okta and OneLogin, name your own attributes: `--map pronouns=extensionAttribute1,preferredTitle=extensionAttribute2`. Only a person's own fields can be mapped.
+- **Photos.** A photo is sent only from a bundle, only when the audience grants the image, the image is approved and within the audience's visibility, and the file still matches its recorded hash. It is compared by hash, and the report shows the hash, never the image. Google takes it in a request of its own (`users.photos.update`) and records the hash in a sixth `TurnrowProfile` field, `photoSha256`, so the next run knows it is there. A photo can't be rolled back: the directory's old image is never read.
+- **Not written by any API connector:** phone numbers in Google and Entra (their phone lists are replaced whole by a patch, which could remove other numbers), photos in Entra, Okta and OneLogin, and anything the employer is the authority for.
+- **Entra's inbound provisioning API is not used, on purpose.** It creates and updates users from an HR source. A sync here never creates a user and never writes the employer's fields, so the Graph connector is the way to update Entra.
 - **Not run against a real tenant.** The requests follow each vendor's reference as read on 2026-11-10 and are tested against a stand-in directory. Try `directory apply` without `--apply` first, then with one person.
 
 The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-directory-sync-design.md`](docs/superpowers/specs/2026-11-10-directory-sync-design.md).
@@ -609,7 +612,7 @@ Whether a post is filled, vacant or planned is worked out from the dates and nev
 - **A person is named only by their own release** to this employer, the same one [directory sync](#directory-sync) uses. Someone who has not consented, or has no profile in the folder, is not named: the seat shows as "Filled (person not shown)", so headcount and spans stay right.
 - **Budget figures** (`budget`: band, FTE, annual cost) are the seat's, never a person's pay. They are left out of every view unless you pass `--budget`, and that view says it is internal.
 
-**Building and keeping history.** The export gives the seats (title, department, manager); the profiles give the names. With `--base`, nothing is deleted: a seat the directory no longer has is **ended** the day before the run, a seat whose title or department changed is replaced by a new post that `succeeds` it (so a comparison reads as a change, not as one seat closing and another opening), and posts you wrote by hand are left alone. Run it each month and the history accumulates. Vacancies, planned roles, budgets and the units above departments are written by hand: no directory knows about a seat nobody holds.
+**Building and keeping history.** The export gives the seats (title, department, manager); the profiles give the names. With `--base`, nothing is deleted: a seat the directory no longer has is **ended** the day before the run, a seat whose title or department changed is replaced by a new post that `succeeds` it (so a comparison reads as a change, not as one seat closing and another opening), and posts you wrote by hand are left alone. Run it each month and the history accumulates. **History from profiles.** When a seat is first built and its holder's profile dates their positions in that job, the seat starts when the current position did, and each earlier position becomes an ended post that the next one succeeds. That history is the person's own account, so its source is their profile; positions with inexact dates are left out. Vacancies, planned roles, budgets and the units above departments are written by hand: no directory knows about a seat nobody holds.
 
 **The web page** (`--format html`, see [`examples/out/orgchart/acme.html`](examples/out/orgchart/acme.html)) is one file that fetches nothing.
 
@@ -668,7 +671,7 @@ From code: `reviewMarkdown(profile, { on, locale, mappings })`. Pass your own `m
 | [`lib/audience.mjs`](lib/audience.mjs) | Resolves audiences on a date, checks requesters against policy and looks up field authority. |
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
-| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `europass`, `scim`, `verification`. |
+| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `lerrs`, `europass`, `scim`, `verification`. |
 | [`lib/gedcom.mjs`](lib/gedcom.mjs) | Writes GEDCOM 7.0 and 5.5.1 from the `gedcom7` view, converts dates, and packages GEDZip archives. |
 | [`upstream/gedcom551/`](upstream/gedcom551/) | The GEDCOM 5.5.1 grammar, extracted from the specification's text. The tests check the 5.5.1 export against it. |
 | [`upstream/gedcom7/`](upstream/gedcom7/) | Unmodified structure tables and test files from the FamilySearch GEDCOM 7 specification (Apache 2.0). The tests check our export against them. |
@@ -838,7 +841,7 @@ Individual person fields (location, pronouns, photo and others) can be hidden fr
 
 ## Versioning
 
-`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 added organization history, positions and responsibilities; 2.3.0 added registry and tax identifiers; 2.4.0 hardens security and privacy, localizes outputs and fills model gaps; 2.5.0 adds occupation, industry and skill codes, internal notes and open-recipient audiences, and refuses releases without consent; 2.6.0 adds versioned photos, other people, recommendations, endorsements and Open Badges 3.0 badges. Earlier files remain valid; a 2.5.0 or 2.6.0 file is held to stricter checks (see the changelog). 2.6.1 fixes privacy gaps and command-line problems found in review, with no schema change, so files keep `schemaVersion` 2.6.0. Releases are tagged from 2.6.1 on (`v2.6.1`); earlier versions were not tagged.
+`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 added organization history, positions and responsibilities; 2.3.0 added registry and tax identifiers; 2.4.0 hardens security and privacy, localizes outputs and fills model gaps; 2.5.0 adds occupation, industry and skill codes, internal notes and open-recipient audiences, and refuses releases without consent; 2.6.0 adds versioned photos, other people, recommendations, endorsements and Open Badges 3.0 badges. Earlier files remain valid; a 2.5.0 or 2.6.0 file is held to stricter checks (see the changelog). 2.6.1 fixes privacy gaps and command-line problems found in review, with no schema change, so files keep `schemaVersion` 2.6.0. Releases are tagged from 2.6.1 on (`v2.6.1`). 3.0.0 adds the review file, the résumé view and PDF, the exports, directory sync and the org chart, again with no change to profile files: they keep `schemaVersion` 2.6.0. The organization file has its own `orgSchemaVersion`.
 
 **Releasing.** Bump `version` in `package.json`, add a `## <version> (<date>): …` entry to `CHANGELOG.md`, and merge to `main`. The [release workflow](.github/workflows/release.yml) runs the tests, tags `v<version>` and publishes a GitHub release with that changelog entry as its notes. It does nothing when the tag already exists. Merged branches are deleted with the [delete-merged-branch workflow](.github/workflows/delete-merged-branch.yml), which refuses any branch with commits that are not in `main`.
 

@@ -1,0 +1,199 @@
+{
+  "type": "http://schema.hropenstandards.org/4.4/recruiting/json/ler-rs/LER-RSType.json",
+  "person": {
+    "name": {
+      "formattedName": "Ines Calloway",
+      "given": "Ines",
+      "family": "Calloway"
+    }
+  },
+  "communication": {
+    "address": [
+      {
+        "city": "New York",
+        "countrySubDivisions": [
+          {
+            "type": "region",
+            "value": "NY"
+          }
+        ],
+        "countryCode": "US",
+        "formattedAddress": "New York, NY"
+      }
+    ],
+    "web": [
+      {
+        "name": "Website",
+        "url": "https://example.com"
+      },
+      {
+        "name": "LinkedIn",
+        "url": "https://www.linkedin.com/in/example-ines-calloway/"
+      },
+      {
+        "name": "ORCID",
+        "url": "https://orcid.org/0000-0000-0000-0000"
+      }
+    ]
+  },
+  "narratives": [
+    {
+      "name": "Summary",
+      "texts": [
+        {
+          "lines": [
+            "I started on research boats and ended up building the places those boats sail to. Tidewater Trails is what I learned along the way: trips planned around the people taking them."
+          ]
+        }
+      ]
+    }
+  ],
+  "employmentHistories": [
+    {
+      "id": {
+        "value": "tidewater-ceo"
+      },
+      "organization": {
+        "name": "Tidewater Trails",
+        "domainName": "https://example.com"
+      },
+      "start": "2024-03",
+      "current": true,
+      "positionHistories": [
+        {
+          "id": {
+            "value": "tidewater-ceo-role"
+          },
+          "title": "Founder & CEO",
+          "start": "2024-03",
+          "current": true,
+          "descriptions": [
+            "Building a trip-planning service for coastal and marine travel."
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "value": "harborline-director"
+      },
+      "organization": {
+        "name": "Harborline Resorts"
+      },
+      "start": "2009-06",
+      "end": "2023-12",
+      "positionHistories": [
+        {
+          "id": {
+            "value": "harborline-director-role"
+          },
+          "title": "Director of Development",
+          "start": "2009-06",
+          "end": "2023-12",
+          "descriptions": [
+            "Led development of three waterfront resorts from site selection through opening.",
+            "3 resorts opened",
+            "~$240M development portfolio"
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "value": "coastal-lab-researcher"
+      },
+      "organization": {
+        "name": "Coastal Ecology Lab"
+      },
+      "end": "2009-05",
+      "descriptions": [
+        "c. 1996 – May 2009"
+      ],
+      "positionHistories": [
+        {
+          "id": {
+            "value": "coastal-lab-researcher-role"
+          },
+          "title": "Research Biologist",
+          "end": "2009-05",
+          "descriptions": [
+            "c. 1996 – May 2009",
+            "Field research on reef recovery; led survey dives and small-boat operations."
+          ]
+        }
+      ]
+    }
+  ],
+  "educationAndLearnings": [
+    {
+      "id": {
+        "value": "state-u-bs"
+      },
+      "institution": {
+        "name": "State University (fictional)"
+      },
+      "start": "1987",
+      "end": "1991",
+      "programs": [
+        "Marine Biology"
+      ],
+      "educationDegrees": [
+        {
+          "name": "BS, Marine Biology",
+          "date": "1991",
+          "degreeGrantedStatus": "Granted"
+        }
+      ]
+    }
+  ],
+  "licenses": [
+    {
+      "name": "Master Mariner licence (100 GT) (Near Coastal, Auxiliary Sail)",
+      "issued": "2005-04",
+      "issuingAuthority": {
+        "name": "Example Maritime Authority"
+      }
+    }
+  ],
+  "certifications": [
+    {
+      "name": "Divemaster",
+      "issuingAuthority": {
+        "name": "Example Diving Association"
+      }
+    }
+  ],
+  "skills": [
+    {
+      "name": "Entrepreneurship"
+    },
+    {
+      "name": "Travel & Tourism"
+    },
+    {
+      "name": "Resort Development"
+    },
+    {
+      "name": "Marine Biology",
+      "yearsOfExperience": 13
+    },
+    {
+      "name": "English",
+      "comments": [
+        "Native or bilingual, C2"
+      ]
+    },
+    {
+      "name": "Spanish",
+      "comments": [
+        "Native or bilingual, C2"
+      ]
+    },
+    {
+      "name": "Portuguese",
+      "comments": [
+        "Professional working, B2"
+      ]
+    }
+  ]
+}

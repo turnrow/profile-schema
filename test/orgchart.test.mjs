@@ -211,3 +211,35 @@ test("the commands: validate, show, build", () => {
   assert.equal(next.status, 0, next.stderr);
   assert.match(next.stderr, /0 posts opened, 0 ended, 0 changed, 4 unchanged\./);
 });
+
+test("a profile's dated positions give the seat its history, sourced to the profile", () => {
+  const profiles = readProfileFolder(join(root, "examples/directory/people")).map((p) => {
+    if (!p.name.startsWith("sam-")) return p;
+    const profile = structuredClone(p.profile);
+    const job = profile.work.find((w) => w.id === "acme-platform");
+    job.positions = [
+      { id: "p1", title: "Software Engineer", startDate: "2022-03", endDate: "2023-12", status: "approved", confidence: "high" },
+      { id: "p2", title: "Senior Software Engineer", startDate: "2024-01", endDate: "2025-06", status: "approved", confidence: "high" },
+      { id: "p3", title: "Platform Engineering Lead", startDate: "2025-07", current: true, status: "approved", confidence: "high" },
+      { id: "p0", title: "Intern", startDate: { value: "2021", qualifier: "about" }, endDate: "2022-02", status: "approved", confidence: "high" },
+    ];
+    job.startDate = "2022-03";
+    return { ...p, profile };
+  });
+  const { org, report } = buildOrganization({ profiles, users: scim.readExport(JSON.stringify(exportDoc())), connector: scim, requester: { domain: "acme.example", method: "oidc" }, name: "Acme", on: NOV, now: `${NOV}T00:00:00.000Z` });
+  assert.equal(report.history, 2, "a position with an inexact start is not turned into a dated post");
+  assert.equal(validateOrganization(org).valid, true, validateOrganization(org).errors.join("\n"));
+  const current = org.posts.find((p) => p.directoryId === "u-1001");
+  assert.equal(current.from, "2025-07");
+  assert.equal(current.holders[0].from, "2025-07");
+  const past = org.posts.find((p) => p.id === current.succeeds);
+  assert.deepEqual([past.title, past.from, past.to, org.sources[past.source].kind], ["Senior Software Engineer", "2024-01", "2025-06", "profile"]);
+  assert.equal(org.posts.find((p) => p.id === past.succeeds).title, "Software Engineer");
+  assert.equal(holderText(post(stateOn(org, { on: "2023-06-01", planned: false }), "Software Engineer")), "Sam Rivera");
+  const changes = compareDates(org, "2024-06-01", NOV).changes.filter((c) => c.post === current.id);
+  assert.deepEqual(changes.map((c) => c.kind), ["renamed"], "a promotion reads as one seat retitled");
+  // Carried forward, nothing is added twice.
+  const again = buildOrganization({ profiles, users: scim.readExport(JSON.stringify(exportDoc())), connector: scim, requester: { domain: "acme.example", method: "oidc" }, on: "2026-12-01", base: org });
+  assert.equal(again.report.history, 0);
+  assert.equal(again.org.posts.length, org.posts.length);
+});

@@ -1,0 +1,242 @@
+{
+  "type": "http://schema.hropenstandards.org/4.4/recruiting/json/ler-rs/LER-RSType.json",
+  "person": {
+    "name": {
+      "formattedName": "Pat Example",
+      "given": "Pat",
+      "family": "Example"
+    }
+  },
+  "communication": {
+    "address": [
+      {
+        "countrySubDivisions": [
+          {
+            "type": "region",
+            "value": "TX"
+          }
+        ],
+        "countryCode": "US",
+        "formattedAddress": "Dallas–Fort Worth, Texas"
+      }
+    ]
+  },
+  "employmentHistories": [
+    {
+      "id": {
+        "value": "eds-job"
+      },
+      "organization": {
+        "name": "EDS (now DXC Technology)"
+      },
+      "start": "2005-06",
+      "end": "2011-03",
+      "positionHistories": [
+        {
+          "id": {
+            "value": "eds-sa"
+          },
+          "title": "Solutions Architect",
+          "start": "2010-02",
+          "end": "2011-03",
+          "jobCategories": [
+            {
+              "code": "15-1299",
+              "id": {
+                "value": "15-1299",
+                "schemeId": "soc"
+              }
+            },
+            {
+              "code": "15-1299.08",
+              "id": {
+                "value": "15-1299.08",
+                "schemeId": "onetSoc"
+              }
+            }
+          ],
+          "descriptions": [
+            "Release engineering and architecture for state government outsourcing accounts.",
+            "Continued: Led the release-engineering team for the account. (8 engineers (Jul 2009–Mar 2011))",
+            "Owned the target architecture for the claims-system modernization."
+          ]
+        },
+        {
+          "id": {
+            "value": "eds-tc3"
+          },
+          "title": "Technology Consultant III",
+          "start": "2009-01",
+          "end": "2010-01",
+          "current": false,
+          "jobCategories": [
+            {
+              "code": "15-1211",
+              "id": {
+                "value": "15-1211",
+                "schemeId": "soc"
+              }
+            },
+            {
+              "code": "15-1244",
+              "id": {
+                "value": "15-1244",
+                "schemeId": "soc"
+              }
+            },
+            {
+              "code": "25-3021",
+              "id": {
+                "value": "25-3021",
+                "schemeId": "soc"
+              }
+            }
+          ],
+          "descriptions": [
+            "Same job; the title changed when HP mapped EDS roles onto its own job architecture.",
+            "Continued: Ran nightly batch operations for a state Medicaid claims system.",
+            "Continued: Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009); 8 engineers (Jul 2009–Mar 2011))",
+            "Continued: Mentored new engineers through the onboarding program."
+          ]
+        },
+        {
+          "id": {
+            "value": "eds-sse"
+          },
+          "title": "Senior Systems Engineer",
+          "start": "2007-04",
+          "end": "2008-12",
+          "current": false,
+          "jobCategories": [
+            {
+              "code": "15-1244",
+              "id": {
+                "value": "15-1244",
+                "schemeId": "soc"
+              }
+            },
+            {
+              "code": "25-3021",
+              "id": {
+                "value": "25-3021",
+                "schemeId": "soc"
+              }
+            }
+          ],
+          "descriptions": [
+            "Continued: Ran nightly batch operations for a state Medicaid claims system.",
+            "Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009))",
+            "Mentored new engineers through the onboarding program."
+          ]
+        },
+        {
+          "id": {
+            "value": "eds-se"
+          },
+          "title": "Systems Engineer",
+          "start": "2005-06",
+          "end": "2007-03",
+          "current": false,
+          "jobCategories": [
+            {
+              "code": "15-1244",
+              "id": {
+                "value": "15-1244",
+                "schemeId": "soc"
+              }
+            }
+          ],
+          "descriptions": [
+            "Ran nightly batch operations for a state Medicaid claims system."
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "value": "buchanan-job"
+      },
+      "organization": {
+        "name": "Buchanan Associates (now Buchanan Technologies)"
+      },
+      "start": "1999-07",
+      "end": "2005-05",
+      "positionHistories": [
+        {
+          "id": {
+            "value": "buchanan-job-role"
+          },
+          "title": "Network Engineer",
+          "start": "1999-07",
+          "end": "2005-05",
+          "jobCategories": [
+            {
+              "code": "15-1244",
+              "id": {
+                "value": "15-1244",
+                "schemeId": "soc"
+              }
+            }
+          ],
+          "descriptions": [
+            "Managed network services for outsourcing clients."
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "value": "cl-job"
+      },
+      "organization": {
+        "name": "Coopers & Lybrand (now PwC)"
+      },
+      "start": "1996-03",
+      "end": "1999-06",
+      "positionHistories": [
+        {
+          "id": {
+            "value": "pwc-sassoc"
+          },
+          "title": "Senior Associate",
+          "start": "1998-07",
+          "end": "1999-06",
+          "jobCategories": [
+            {
+              "code": "13-2011",
+              "id": {
+                "value": "13-2011",
+                "schemeId": "soc"
+              }
+            }
+          ],
+          "descriptions": [
+            "Continued with the merged firm, PricewaterhouseCoopers.",
+            "Continued: Delivered ERP integration work for manufacturing clients."
+          ]
+        },
+        {
+          "id": {
+            "value": "cl-assoc"
+          },
+          "title": "Associate",
+          "start": "1996-03",
+          "end": "1998-06",
+          "current": false,
+          "jobCategories": [
+            {
+              "code": "13-2011",
+              "id": {
+                "value": "13-2011",
+                "schemeId": "soc"
+              }
+            }
+          ],
+          "descriptions": [
+            "Delivered ERP integration work for manufacturing clients."
+          ]
+        }
+      ]
+    }
+  ]
+}
