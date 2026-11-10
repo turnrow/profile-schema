@@ -21,9 +21,10 @@
         "2.2.0",
         "2.3.0",
         "2.4.0",
-        "2.5.0"
+        "2.5.0",
+        "2.6.0"
       ],
-      "description": "2.5.0 adds occupation (SOC, O*NET-SOC, ISCO, ESCO), industry and skill codes, internal notes, open-recipient audiences and a media base URL; earlier files remain valid."
+      "description": "2.6.0 adds media assets (versions, renditions, dated person images), other people, recommendations, endorsements and badges; earlier files remain valid."
     },
     "meta": {
       "$ref": "#/$defs/meta"
@@ -1001,6 +1002,36 @@
               "$ref": "#/$defs/visibility"
             }
           }
+        },
+        "images": {
+          "type": "array",
+          "description": "Dated portraits. Outputs show the one in force on their date; person.image is used when there are none.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "media",
+              "purpose"
+            ],
+            "properties": {
+              "media": {
+                "$ref": "#/$defs/id"
+              },
+              "purpose": {
+                "enum": [
+                  "primary",
+                  "headshot",
+                  "banner"
+                ]
+              },
+              "from": {
+                "$ref": "#/$defs/fuzzyDate"
+              },
+              "to": {
+                "$ref": "#/$defs/fuzzyDate"
+              }
+            }
+          }
         }
       }
     },
@@ -1869,6 +1900,165 @@
           "type": "string",
           "pattern": "^[a-f0-9]{64}$",
           "description": "Checksum of the file, so a bundle can be verified."
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Stable identity of the photograph or document across re-crops, re-encodes and versions (RFC 9562). sha256 identifies one exact file."
+        },
+        "version": {
+          "type": "string"
+        },
+        "supersedes": {
+          "$ref": "#/$defs/id",
+          "description": "The media entry this one replaces (an earlier version of the same asset)."
+        },
+        "capturedOn": {
+          "$ref": "#/$defs/fuzzyDate"
+        },
+        "kind": {
+          "enum": [
+            "headshot",
+            "portrait",
+            "banner",
+            "logo",
+            "photo",
+            "document",
+            "video",
+            "audio"
+          ]
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "byteSize": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "focalPoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "x",
+            "y"
+          ],
+          "properties": {
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "description": "The point any crop keeps in frame (0–1 from the top left)."
+        },
+        "renditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "url",
+              "purpose"
+            ],
+            "properties": {
+              "url": {
+                "type": "string",
+                "pattern": "^(https?://|bundle:)[^\\s]+$"
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "purpose": {
+                "enum": [
+                  "square",
+                  "banner",
+                  "print",
+                  "thumbnail"
+                ]
+              }
+            }
+          }
+        },
+        "credit": {
+          "type": "string"
+        },
+        "copyrightHolder": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string",
+          "description": "A license URL or an SPDX-style id (CC-BY-4.0)."
+        },
+        "consent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "given": {
+              "type": "boolean"
+            },
+            "on": {
+              "$ref": "#/$defs/partialDate"
+            },
+            "by": {
+              "type": "string"
+            }
+          },
+          "description": "Consent of anyone shown other than the subject."
+        },
+        "contentCredentials": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "pattern": "^https?://[^\\s]+$"
+            },
+            "embedded": {
+              "type": "boolean"
+            }
+          },
+          "description": "C2PA Content Credentials: a manifest URL, or embedded in the file."
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "dateTimeOriginal": {
+              "type": "string"
+            },
+            "make": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "software": {
+              "type": "string"
+            }
+          },
+          "description": "A few fields read from the file, so a re-export can be matched to its original. Never location."
+        },
+        "longDescription": {
+          "$ref": "#/$defs/text"
         }
       }
     },
@@ -2746,6 +2936,13 @@
         "note": {
           "$ref": "#/$defs/text",
           "description": "Internal note: a ruling, a caveat, where a figure came from. Never rendered in any output or release."
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "description": "Media for this position only (a badge photo, a project image)."
         }
       }
     },
@@ -2857,6 +3054,12 @@
         "note": {
           "$ref": "#/$defs/text",
           "description": "Internal note: a ruling, a caveat, where a figure came from. Never rendered in any output or release."
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
         }
       }
     },

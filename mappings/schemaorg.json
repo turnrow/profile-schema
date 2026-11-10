@@ -70,11 +70,29 @@
       },
       "image": {
         "@type": "ImageObject",
-        "contentUrl": "$.person.image.url",
-        "caption": {
-          "$fn": "text",
+        "contentUrl": {
+          "$fn": "imageFor",
           "args": [
-            "$.person.image.alt"
+            "url",
+            "square"
+          ]
+        },
+        "caption": {
+          "$fn": "imageFor",
+          "args": [
+            "alt"
+          ]
+        },
+        "width": {
+          "$fn": "imageFor",
+          "args": [
+            "width"
+          ]
+        },
+        "height": {
+          "$fn": "imageFor",
+          "args": [
+            "height"
           ]
         }
       },
