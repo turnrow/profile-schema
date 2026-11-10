@@ -1,0 +1,15 @@
+{
+  "target": "clr",
+  "extends": "ob3",
+  "format": "clr",
+  "description": "CLR 2.0 (1EdTech Comprehensive Learner Record): an unsigned ClrCredential template that gathers the subject's original Open Badges 3.0 credentials with their other achievements (older badges, licenses and certifications, completed education), for an institution or the holder to sign. Until it is signed it names the holder as issuer; whoever signs replaces that with their own profile. A CLR must carry at least one Verifiable Credential, so it needs a bundle with at least one approved, public Open Badges 3.0 badge.",
+  "ruleExemptKeys": [
+    "id",
+    "credential",
+    "url",
+    "criteriaUrl",
+    "issuerId",
+    "achievementType",
+    "represents"
+  ]
+}

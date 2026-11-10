@@ -91,7 +91,7 @@ test("a zip, a missing file and a bad mapping name each get a plain explanation"
   assert.match(cli("validate", join(dir, "nope.json")).stderr, /no such file or folder/);
   const r = cli("convert", SAMPLE, "europass");
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /unknown mapping "europass": use one of ats, brief, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, scim, timeline, verification/);
+  assert.match(r.stderr, /unknown mapping "europass": use one of ats, brief, clr, gedcom551, gedcom7, jsonresume, linkedin, ob3, resume, schemaorg, scim, timeline, verification/);
   assert.match(cli("convert", SAMPLE, join(dir, "mine.json")).stderr, /no such mapping file/);
 });
 

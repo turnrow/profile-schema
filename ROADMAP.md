@@ -1,6 +1,6 @@
 # Roadmap
 
-Items not done yet, roughly in priority order. Planned milestones are tracked as GitHub issues (2.7 is done; in 2.8, GEDCOM 7.0 and 5.5.1 are done): 2.7 (review document and accessible PDF résumé), 2.8 (exports: Open Badges 3.0/CLR 2.0, Europass, HR Open, plain-text ATS, GEDCOM 7.0 and 5.5.1), 2.9 (directory sync) and 3.0 (time-based org chart).
+Items not done yet, roughly in priority order. Planned milestones are tracked as GitHub issues (2.7 is done; in 2.8, GEDCOM 7.0 and 5.5.1, the plain-text ATS résumé and Open Badges 3.0/CLR 2.0 are done): 2.7 (review document and accessible PDF résumé), 2.8 (exports: Open Badges 3.0/CLR 2.0, Europass, HR Open, plain-text ATS, GEDCOM 7.0 and 5.5.1), 2.9 (directory sync) and 3.0 (time-based org chart).
 
 ## Trust
 - **Badge signature checks.** Verify Open Badges 3.0 proofs (Data Integrity and VC-JWT) and Open Badges 2.0 signed assertions, and check revocation lists, instead of reporting them as not implemented.

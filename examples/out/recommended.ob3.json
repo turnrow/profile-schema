@@ -1,0 +1,59 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2"
+  ],
+  "type": [
+    "VerifiablePresentation"
+  ],
+  "holder": "https://ines-ortega.example/",
+  "verifiableCredential": [
+    {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
+      ],
+      "id": "https://badges.example/credentials/harbor-ops-118",
+      "type": [
+        "VerifiableCredential",
+        "OpenBadgeCredential"
+      ],
+      "issuer": {
+        "id": "https://badges.example/issuers/maritime-academy",
+        "type": [
+          "Profile"
+        ],
+        "name": "Example Maritime Academy"
+      },
+      "validFrom": "2024-03-01T00:00:00Z",
+      "name": "Harbor Operations Planner",
+      "credentialSubject": {
+        "type": [
+          "AchievementSubject"
+        ],
+        "achievement": {
+          "id": "https://badges.example/achievements/harbor-ops",
+          "type": [
+            "Achievement"
+          ],
+          "achievementType": "Badge",
+          "name": "Harbor Operations Planner",
+          "description": "Plans berth, crane and yard operations for a container terminal.",
+          "criteria": {
+            "narrative": "Passed the practical planning assessment."
+          },
+          "alignment": [
+            {
+              "type": [
+                "Alignment"
+              ],
+              "targetName": "Logisticians",
+              "targetUrl": "https://www.onetonline.org/link/summary/13-1081.00",
+              "targetFramework": "O*NET",
+              "targetCode": "13-1081.00"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

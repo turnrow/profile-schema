@@ -83,7 +83,7 @@ test("each entry says which outputs show it, and why the others don't", () => {
   assert.equal(row.length, 9);
   assert.match(row[8], /Shown in: [a-z0-9, ]*linkedin/);
   assert.match(row[8], /Hidden from: .*brief \(priority 40 is below 80\)/);
-  assert.match(row[8], /Not used by: scim/);
+  assert.match(row[8], /Not used by: [a-z0-9, ]*scim/);
   const pending = rowOf(md, "consulting-gap");
   assert.equal(pending[2], "pending");
   assert.match(pending[7], /Open question: Was this paid work/);

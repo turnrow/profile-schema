@@ -23,6 +23,7 @@ import { parseBadge } from "../lib/badges.mjs";
 import { reviewMarkdown } from "../lib/review.mjs";
 import { renderResumePdf, PdfError } from "../lib/pdf.mjs";
 import { gedzip, gedzipMedia, readBundleMedia, GEDZIP_MEDIA } from "../lib/gedcom.mjs";
+import { bundleFileReader } from "../lib/ob3.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS, resolveMapping } from "../index.mjs";
 
 const HELP = `turnrow-profile: validate, convert and share Turnrow Profiles.
@@ -226,7 +227,9 @@ try {
       if (asGedzip && resolveMapping(mapping).format !== "gedcom7") fail("--gedzip goes with the gedcom7 output (GEDZip is a GEDCOM 7 format)", 2);
       if (asGedzip && !out) fail("--gedzip needs --out <file.gdz>: an archive can't be printed to the screen", 2);
       // In a GEDZip the media travel inside the archive, so bundle: links become paths in it.
-      const { text, output, violations } = convert(profile, mapping, { locale, allowRuleViolations: allow, on, visibility, mediaBaseUrl: asGedzip ? GEDZIP_MEDIA : mediaBaseUrl });
+      // Outputs that carry original files (badge credentials) read them from the bundle, with its guards and hash check.
+      const readBundleFile = bundleDir ? bundleFileReader(bundleDir) : undefined;
+      const { text, output, violations } = convert(profile, mapping, { locale, allowRuleViolations: allow, on, visibility, mediaBaseUrl: asGedzip ? GEDZIP_MEDIA : mediaBaseUrl, readBundleFile });
       for (const v of violations) console.error(`warning: rule ${v.rule} matched "${v.match}"`);
       if (asGedzip) {
         const paths = gedzipMedia(output);

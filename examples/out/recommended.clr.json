@@ -1,0 +1,101 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://purl.imsglobal.org/spec/clr/v2p0/context-2.0.1.json",
+    "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
+  ],
+  "id": "urn:uuid:697833d0-2ed0-565d-880e-32d10e3df8ae",
+  "type": [
+    "VerifiableCredential",
+    "ClrCredential"
+  ],
+  "name": "Ines Ortega: learning and employment record",
+  "issuer": {
+    "id": "https://ines-ortega.example/",
+    "type": [
+      "Profile"
+    ],
+    "name": "Ines Ortega"
+  },
+  "validFrom": "2026-11-07T00:00:00Z",
+  "credentialSubject": {
+    "id": "https://ines-ortega.example/",
+    "type": [
+      "ClrSubject"
+    ],
+    "verifiableCredential": [
+      {
+        "@context": [
+          "https://www.w3.org/ns/credentials/v2",
+          "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
+        ],
+        "id": "https://badges.example/credentials/harbor-ops-118",
+        "type": [
+          "VerifiableCredential",
+          "OpenBadgeCredential"
+        ],
+        "issuer": {
+          "id": "https://badges.example/issuers/maritime-academy",
+          "type": [
+            "Profile"
+          ],
+          "name": "Example Maritime Academy"
+        },
+        "validFrom": "2024-03-01T00:00:00Z",
+        "name": "Harbor Operations Planner",
+        "credentialSubject": {
+          "type": [
+            "AchievementSubject"
+          ],
+          "achievement": {
+            "id": "https://badges.example/achievements/harbor-ops",
+            "type": [
+              "Achievement"
+            ],
+            "achievementType": "Badge",
+            "name": "Harbor Operations Planner",
+            "description": "Plans berth, crane and yard operations for a container terminal.",
+            "criteria": {
+              "narrative": "Passed the practical planning assessment."
+            },
+            "alignment": [
+              {
+                "type": [
+                  "Alignment"
+                ],
+                "targetName": "Logisticians",
+                "targetUrl": "https://www.onetonline.org/link/summary/13-1081.00",
+                "targetFramework": "O*NET",
+                "targetCode": "13-1081.00"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "achievement": [
+      {
+        "id": "https://badges.example/badges/site-safety",
+        "type": [
+          "Achievement"
+        ],
+        "achievementType": "Badge",
+        "name": "Site Safety Lead",
+        "description": "Leads site safety on a working port.",
+        "criteria": {
+          "narrative": "Completed 40 supervised hours."
+        },
+        "creator": {
+          "id": "https://badges.example/issuers/builders-guild",
+          "type": [
+            "Profile"
+          ],
+          "name": "Example Builders Guild"
+        },
+        "tag": [
+          "safety"
+        ]
+      }
+    ]
+  }
+}

@@ -5,7 +5,7 @@
 - Profile: examples/sample.profile.json
 - Schema version: 2.0.0
 - Outputs judged as of: 2026-11-07
-- Outputs compared: ats, brief, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, scim, timeline, verification
+- Outputs compared: ats, brief, clr, gedcom551, gedcom7, jsonresume, linkedin, ob3, resume, schemaorg, scim, timeline, verification
 
 ## Summary
 
@@ -68,100 +68,100 @@ The Outputs column applies each output's own filter (visibility, status, confide
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| tidewater-ceo | Founder & CEO, Tidewater Trails, 2024-03 to present | approved | high | public | Certificate of incorporation, Tidewater Trails (primary) | none | Locked by Ines Calloway on 2026-11-01 | Shown in: ats, brief, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, timeline, verification. Not used by: scim. |
-| harborline-director | Director of Development, Harborline Resorts, 2009-06 to 2023-12 | approved | high | public | Harborline offer letter (primary); Ines Calloway CV, 2024, p1 (selfReported) | none | none | Shown in: ats, brief, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, timeline, verification. Not used by: scim. |
-| harborline-director › figure resorts-opened | 3 resorts opened | approved | high | public | Ines Calloway CV, 2024 (selfReported); The Harbor Gazette, profile article (published) | none | none | Shown in: ats, brief, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, timeline, verification. Not used by: scim. |
-| harborline-director › figure portfolio-value | approx $240M development portfolio | approved | high | public | Ines Calloway CV, 2024 (selfReported) | none | none | Shown in: ats, brief, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, timeline, verification. Not used by: scim. |
-| harborline-director › figure marina-slips | 120 marina slips | disputed | high | public | none | none | Open question: CV says 120 slips; the 2019 Gazette article says 140. Which is right? | Shown in: no output. Hidden from: ats (status is disputed), brief (status is disputed), gedcom551 (status is disputed), gedcom7 (status is disputed), jsonresume (status is disputed), linkedin (status is disputed), resume (status is disputed), schemaorg (status is disputed), timeline (status is disputed), verification (status is disputed). Not used by: scim. |
-| coastal-lab-researcher | Research Biologist, Coastal Ecology Lab, about 1996 to 2009-05 | approved | medium | public | Ines Calloway CV, 2024, p3 (selfReported) | none | none | Shown in: ats, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, timeline, verification. Hidden from: brief (confidence is medium). Not used by: scim. |
-| consulting-gap | Hospitality consultant, Independent consultant, 2024-01 to 2024-02 | pending | low | public | none | none | Open question: Was this paid work worth listing, or just the gap before founding? | Shown in: no output. Hidden from: ats (status is pending), brief (status is pending), gedcom551 (status is pending), gedcom7 (status is pending), jsonresume (status is pending), linkedin (status is pending), resume (status is pending), schemaorg (status is pending), timeline (status is pending), verification (status is pending). Not used by: scim. |
+| tidewater-ceo | Founder & CEO, Tidewater Trails, 2024-03 to present | approved | high | public | Certificate of incorporation, Tidewater Trails (primary) | none | Locked by Ines Calloway on 2026-11-01 | Shown in: ats, brief, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, timeline, verification. Not used by: clr, ob3, scim. |
+| harborline-director | Director of Development, Harborline Resorts, 2009-06 to 2023-12 | approved | high | public | Harborline offer letter (primary); Ines Calloway CV, 2024, p1 (selfReported) | none | none | Shown in: ats, brief, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, timeline, verification. Not used by: clr, ob3, scim. |
+| harborline-director › figure resorts-opened | 3 resorts opened | approved | high | public | Ines Calloway CV, 2024 (selfReported); The Harbor Gazette, profile article (published) | none | none | Shown in: ats, brief, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, timeline, verification. Not used by: clr, ob3, scim. |
+| harborline-director › figure portfolio-value | approx $240M development portfolio | approved | high | public | Ines Calloway CV, 2024 (selfReported) | none | none | Shown in: ats, brief, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, timeline, verification. Not used by: clr, ob3, scim. |
+| harborline-director › figure marina-slips | 120 marina slips | disputed | high | public | none | none | Open question: CV says 120 slips; the 2019 Gazette article says 140. Which is right? | Shown in: no output. Hidden from: ats (status is disputed), brief (status is disputed), gedcom551 (status is disputed), gedcom7 (status is disputed), jsonresume (status is disputed), linkedin (status is disputed), resume (status is disputed), schemaorg (status is disputed), timeline (status is disputed), verification (status is disputed). Not used by: clr, ob3, scim. |
+| coastal-lab-researcher | Research Biologist, Coastal Ecology Lab, about 1996 to 2009-05 | approved | medium | public | Ines Calloway CV, 2024, p3 (selfReported) | none | none | Shown in: ats, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg, timeline, verification. Hidden from: brief (confidence is medium). Not used by: clr, ob3, scim. |
+| consulting-gap | Hospitality consultant, Independent consultant, 2024-01 to 2024-02 | pending | low | public | none | none | Open question: Was this paid work worth listing, or just the gap before founding? | Shown in: no output. Hidden from: ats (status is pending), brief (status is pending), gedcom551 (status is pending), gedcom7 (status is pending), jsonresume (status is pending), linkedin (status is pending), resume (status is pending), schemaorg (status is pending), timeline (status is pending), verification (status is pending). Not used by: clr, ob3, scim. |
 
 ### Service
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| coast-guard-aux | Boat crew member, Coast Guard Auxiliary (fictional unit), between 1990 and 1991 to 1995 | approved | medium | public | Bio interview recording, 12:40 (selfReported) | none | none | Shown in: ats, gedcom551, gedcom7, jsonresume, linkedin, resume. Not used by: brief, schemaorg, scim, timeline, verification. |
-| trails-board | Board member, Open Trails Foundation, 2020 to present | approved | high | network | Open Trails Foundation board minutes (primary) | none | none | Shown in: linkedin. Hidden from: ats (visibility is network), gedcom551 (visibility is network), gedcom7 (visibility is network), jsonresume (visibility is network), resume (visibility is network). Not used by: brief, schemaorg, scim, timeline, verification. |
+| coast-guard-aux | Boat crew member, Coast Guard Auxiliary (fictional unit), between 1990 and 1991 to 1995 | approved | medium | public | Bio interview recording, 12:40 (selfReported) | none | none | Shown in: ats, gedcom551, gedcom7, jsonresume, linkedin, resume. Not used by: brief, clr, ob3, schemaorg, scim, timeline, verification. |
+| trails-board | Board member, Open Trails Foundation, 2020 to present | approved | high | network | Open Trails Foundation board minutes (primary) | none | none | Shown in: linkedin. Hidden from: ats (visibility is network), gedcom551 (visibility is network), gedcom7 (visibility is network), jsonresume (visibility is network), resume (visibility is network). Not used by: brief, clr, ob3, schemaorg, scim, timeline, verification. |
 
 ### Education
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| state-u-bs | Marine Biology, State University (fictional), 1987 to 1991 | approved | high | public | BS diploma (primary) | none | none | Shown in: ats, gedcom551, gedcom7, jsonresume, linkedin, resume, schemaorg. Not used by: brief, scim, timeline, verification. |
-| state-u-ms | Coastal Management, not completed, State University (fictional), 1993 to 1995 | approved | medium | network | Bio interview recording (selfReported) | none | none | Shown in: linkedin. Hidden from: ats (visibility is network), gedcom551 (visibility is network), gedcom7 (visibility is network), jsonresume (visibility is network), resume (visibility is network), schemaorg (visibility is network). Not used by: brief, scim, timeline, verification. |
+| state-u-bs | Marine Biology, State University (fictional), 1987 to 1991 | approved | high | public | BS diploma (primary) | none | none | Shown in: ats, clr, gedcom551, gedcom7, jsonresume, linkedin, ob3, resume, schemaorg. Not used by: brief, scim, timeline, verification. |
+| state-u-ms | Coastal Management, not completed, State University (fictional), 1993 to 1995 | approved | medium | network | Bio interview recording (selfReported) | none | none | Shown in: linkedin. Hidden from: ats (visibility is network), clr (visibility is network), gedcom551 (visibility is network), gedcom7 (visibility is network), jsonresume (visibility is network), ob3 (visibility is network), resume (visibility is network), schemaorg (visibility is network). Not used by: brief, scim, timeline, verification. |
 
 ### Credentials
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| captain-license | Master Mariner licence (100 GT), Example Maritime Authority, 2005-04 | approved | high | public | Master Mariner licence (scan) (primary) | none | none | Shown in: ats, brief, jsonresume, linkedin, resume, schemaorg, scim. Not used by: gedcom551, gedcom7, timeline, verification. |
-| divemaster | Divemaster, Example Diving Association, before 1998 | approved | medium | public | Ines Calloway CV, 2024 (selfReported) | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Hidden from: brief (confidence is medium). Not used by: gedcom551, gedcom7, timeline, verification. |
-| divemaster › figure logged-dives | atLeast 1500 logged dives | approved | medium | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Hidden from: brief (its entry is hidden: confidence is medium). Not used by: gedcom551, gedcom7, timeline, verification. |
-| old-pilot-cert | Private pilot certificate | retired | medium | private | none | none | none | Shown in: no output. Hidden from: ats (visibility is private), brief (visibility is private), jsonresume (visibility is private), linkedin (visibility is private), resume (visibility is private), schemaorg (visibility is private), scim (visibility is private). Not used by: gedcom551, gedcom7, timeline, verification. |
+| captain-license | Master Mariner licence (100 GT), Example Maritime Authority, 2005-04 | approved | high | public | Master Mariner licence (scan) (primary) | none | none | Shown in: ats, brief, clr, jsonresume, linkedin, ob3, resume, schemaorg, scim. Not used by: gedcom551, gedcom7, timeline, verification. |
+| divemaster | Divemaster, Example Diving Association, before 1998 | approved | medium | public | Ines Calloway CV, 2024 (selfReported) | none | none | Shown in: ats, clr, jsonresume, linkedin, ob3, resume, schemaorg, scim. Hidden from: brief (confidence is medium). Not used by: gedcom551, gedcom7, timeline, verification. |
+| divemaster › figure logged-dives | atLeast 1500 logged dives | approved | medium | public | none | none | none | Shown in: ats, clr, jsonresume, linkedin, ob3, resume, schemaorg, scim. Hidden from: brief (its entry is hidden: confidence is medium). Not used by: gedcom551, gedcom7, timeline, verification. |
+| old-pilot-cert | Private pilot certificate | retired | medium | private | none | none | none | Shown in: no output. Hidden from: ats (visibility is private), brief (visibility is private), clr (visibility is private), jsonresume (visibility is private), linkedin (visibility is private), ob3 (visibility is private), resume (visibility is private), schemaorg (visibility is private), scim (visibility is private). Not used by: gedcom551, gedcom7, timeline, verification. |
 
 ### Awards
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| harbor-award | Waterfront Project of the Year, The Harbor Gazette, 2019-10 | approved | high | public | The Harbor Gazette, profile article (published) | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg. Not used by: brief, gedcom551, gedcom7, scim, timeline, verification. |
+| harbor-award | Waterfront Project of the Year, The Harbor Gazette, 2019-10 | approved | high | public | The Harbor Gazette, profile article (published) | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg. Not used by: brief, clr, gedcom551, gedcom7, ob3, scim, timeline, verification. |
 
 ### Projects
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| cartagena-marina | Cartagena waterfront resort and marina, Harborline Resorts, 2015 to 2019 | approved | high | public | The Harbor Gazette, profile article (published) | none | none | Shown in: ats, jsonresume, linkedin, resume. Not used by: brief, gedcom551, gedcom7, schemaorg, scim, timeline, verification. |
+| cartagena-marina | Cartagena waterfront resort and marina, Harborline Resorts, 2015 to 2019 | approved | high | public | The Harbor Gazette, profile article (published) | none | none | Shown in: ats, jsonresume, linkedin, resume. Not used by: brief, clr, gedcom551, gedcom7, ob3, schemaorg, scim, timeline, verification. |
 
 ### Publications
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| gazette-profile | The biologist who builds harbors, The Harbor Gazette, 2019-10-12 | approved | high | public | The Harbor Gazette, profile article (published) | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg. Not used by: brief, gedcom551, gedcom7, scim, timeline, verification. |
+| gazette-profile | The biologist who builds harbors, The Harbor Gazette, 2019-10-12 | approved | high | public | The Harbor Gazette, profile article (published) | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg. Not used by: brief, clr, gedcom551, gedcom7, ob3, scim, timeline, verification. |
 
 ### Timeline
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| atlantic-crossing | Sailed from Lisbon to the Azores, 1995-06 to 1995-07 | approved | medium | public | Bio interview recording, 05:10 (selfReported) | none | none | Shown in: gedcom551, gedcom7, linkedin, timeline. Hidden from: brief (confidence is medium). Not used by: ats, jsonresume, resume, schemaorg, scim, verification. |
-| atlantic-crossing › figure sea-miles | approx 900 sea miles | approved | medium | public | none | none | none | Shown in: gedcom551, gedcom7, linkedin, timeline. Hidden from: brief (its entry is hidden: confidence is medium). Not used by: ats, jsonresume, resume, schemaorg, scim, verification. |
-| paris-year | A year in Paris studying hotel management in the evenings, about 2008 to ? | approved | medium | public | Bio interview recording (selfReported) | none | none | Shown in: gedcom551, gedcom7, linkedin, timeline. Hidden from: brief (confidence is medium). Not used by: ats, jsonresume, resume, schemaorg, scim, verification. |
-| founding | Founded Tidewater Trails, 2024-03 to ? | approved | high | public | Certificate of incorporation, Tidewater Trails (primary) | none | none | Shown in: brief, gedcom551, gedcom7, linkedin, timeline. Not used by: ats, jsonresume, resume, schemaorg, scim, verification. |
+| atlantic-crossing | Sailed from Lisbon to the Azores, 1995-06 to 1995-07 | approved | medium | public | Bio interview recording, 05:10 (selfReported) | none | none | Shown in: gedcom551, gedcom7, linkedin, timeline. Hidden from: brief (confidence is medium). Not used by: ats, clr, jsonresume, ob3, resume, schemaorg, scim, verification. |
+| atlantic-crossing › figure sea-miles | approx 900 sea miles | approved | medium | public | none | none | none | Shown in: gedcom551, gedcom7, linkedin, timeline. Hidden from: brief (its entry is hidden: confidence is medium). Not used by: ats, clr, jsonresume, ob3, resume, schemaorg, scim, verification. |
+| paris-year | A year in Paris studying hotel management in the evenings, about 2008 to ? | approved | medium | public | Bio interview recording (selfReported) | none | none | Shown in: gedcom551, gedcom7, linkedin, timeline. Hidden from: brief (confidence is medium). Not used by: ats, clr, jsonresume, ob3, resume, schemaorg, scim, verification. |
+| founding | Founded Tidewater Trails, 2024-03 to ? | approved | high | public | Certificate of incorporation, Tidewater Trails (primary) | none | none | Shown in: brief, gedcom551, gedcom7, linkedin, timeline. Not used by: ats, clr, jsonresume, ob3, resume, schemaorg, scim, verification. |
 
 ### Media
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| website | Tidewater Trails | approved | high | public | none | none | none | Shown in: gedcom551, gedcom7, linkedin. Not used by: ats, brief, jsonresume, resume, schemaorg, scim, timeline, verification. |
-| gazette-pdf | Harbor Gazette profile (PDF) | approved | high | network | none | none | none | Shown in: linkedin. Hidden from: gedcom551 (visibility is network), gedcom7 (visibility is network). Not used by: ats, brief, jsonresume, resume, schemaorg, scim, timeline, verification. |
+| website | Tidewater Trails | approved | high | public | none | none | none | Shown in: gedcom551, gedcom7, linkedin. Not used by: ats, brief, clr, jsonresume, ob3, resume, schemaorg, scim, timeline, verification. |
+| gazette-pdf | Harbor Gazette profile (PDF) | approved | high | network | none | none | none | Shown in: linkedin. Hidden from: gedcom551 (visibility is network), gedcom7 (visibility is network). Not used by: ats, brief, clr, jsonresume, ob3, resume, schemaorg, scim, timeline, verification. |
 
 ### Skills
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| entrepreneurship | Entrepreneurship | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, gedcom551, gedcom7, timeline, verification. |
-| travel | Travel & Tourism | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, gedcom551, gedcom7, timeline, verification. |
-| resort-development | Resort Development | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, gedcom551, gedcom7, timeline, verification. |
-| marine-biology | Marine Biology | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, gedcom551, gedcom7, timeline, verification. |
+| entrepreneurship | Entrepreneurship | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, clr, gedcom551, gedcom7, ob3, timeline, verification. |
+| travel | Travel & Tourism | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, clr, gedcom551, gedcom7, ob3, timeline, verification. |
+| resort-development | Resort Development | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, clr, gedcom551, gedcom7, ob3, timeline, verification. |
+| marine-biology | Marine Biology | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, clr, gedcom551, gedcom7, ob3, timeline, verification. |
 
 ### Languages
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| lang-en | English | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, gedcom551, gedcom7, timeline, verification. |
-| lang-es | Spanish | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, gedcom551, gedcom7, timeline, verification. |
-| lang-pt | Portuguese | approved | medium | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, gedcom551, gedcom7, timeline, verification. |
+| lang-en | English | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, clr, gedcom551, gedcom7, ob3, timeline, verification. |
+| lang-es | Spanish | approved | high | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, clr, gedcom551, gedcom7, ob3, timeline, verification. |
+| lang-pt | Portuguese | approved | medium | public | none | none | none | Shown in: ats, jsonresume, linkedin, resume, schemaorg, scim. Not used by: brief, clr, gedcom551, gedcom7, ob3, timeline, verification. |
 
 ### Interests
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| sailing | Offshore sailing | approved | high | public | none | none | none | Shown in: jsonresume. Not used by: ats, brief, gedcom551, gedcom7, linkedin, resume, schemaorg, scim, timeline, verification. |
-| sailing › figure countries | 41 countries visited | approved | high | public | none | none | none | Shown in: jsonresume. Not used by: ats, brief, gedcom551, gedcom7, linkedin, resume, schemaorg, scim, timeline, verification. |
+| sailing | Offshore sailing | approved | high | public | none | none | none | Shown in: jsonresume. Not used by: ats, brief, clr, gedcom551, gedcom7, linkedin, ob3, resume, schemaorg, scim, timeline, verification. |
+| sailing › figure countries | 41 countries visited | approved | high | public | none | none | none | Shown in: jsonresume. Not used by: ats, brief, clr, gedcom551, gedcom7, linkedin, ob3, resume, schemaorg, scim, timeline, verification. |
 
 ### References
 
 | Id | What it says | Status | Confidence | Visibility | Sources | Codes | Notes | Outputs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| ref-mentor | Reference: A. Example, Coastal Ecology Lab | approved | medium | private | none | none | none | Shown in: no output. Hidden from: jsonresume (visibility is private). Not used by: ats, brief, gedcom551, gedcom7, linkedin, resume, schemaorg, scim, timeline, verification. |
+| ref-mentor | Reference: A. Example, Coastal Ecology Lab | approved | medium | private | none | none | none | Shown in: no output. Hidden from: jsonresume (visibility is private). Not used by: ats, brief, clr, gedcom551, gedcom7, linkedin, ob3, resume, schemaorg, scim, timeline, verification. |
 
 ## Claims and disputes
 

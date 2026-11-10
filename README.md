@@ -250,6 +250,8 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Write a GEDCOM 7 file for genealogy software | `convert <profile \| bundle> gedcom7 --out me.ged` (add `--gedzip` for a `.gdz` with the media) |
 | Write GEDCOM 5.5.1 for older genealogy software | `convert <profile \| bundle> gedcom551 --out me.ged` |
 | Write a plain-text résumé for applicant tracking systems | `convert <profile \| bundle> ats --out resume.txt` |
+| Present your Open Badges 3.0 credentials | `convert <bundle> ob3 --out presentation.json` |
+| Write a CLR 2.0 learner record to be signed | `convert <bundle> clr --out clr.json` |
 | Write an accessible résumé PDF | `pdf <profile \| bundle> --out resume.pdf` |
 | Start from a JSON Resume | `import <resume.json> --out my.profile.json` |
 | Share with an audience, with a consent receipt | `release <profile> <audience> --method … --domain …` |
@@ -257,7 +259,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
 
-Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
+Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
 
 Options that apply widely: `--out <file>` (folders are created as needed), `--locale <tag>` (a BCP 47 tag such as `es` or `pt-BR`) and `--on <yyyy-mm-dd>` (the date an output is made for; default today, UTC). An option can be written `--out file` or `--out=file`. A misspelled option stops the command.
 
@@ -416,6 +418,26 @@ Applicant tracking systems read a résumé with a parser, and parsers trip on la
 - **Headings follow `--locale`.** For a system that expects English headings, write the English version.
 - No parser has been run on the output; the format follows what such systems are documented to read best.
 
+## Open Badges 3.0 and CLR 2.0
+
+```sh
+node bin/profile.mjs convert examples/recommended ob3 --out presentation.json
+node bin/profile.mjs convert examples/recommended clr --out clr.json
+```
+
+Both follow the 1EdTech standards on the W3C Verifiable Credentials Data Model 2.0, and both need the [bundle](#profile-bundles) folder, because they carry the issuers' original credentials.
+
+- **`ob3`** writes a Verifiable Presentation: your Open Badges 3.0 credentials exactly as their issuers signed them, so a verifier can check each signature. A VC-JWT goes in the `EnvelopedVerifiableCredential` form the Data Model defines. See [`examples/out/recommended.ob3.json`](examples/out/recommended.ob3.json).
+- **`clr`** writes a [CLR 2.0](https://www.imsglobal.org/spec/clr/v2p0/) `ClrCredential` that gathers those credentials with your other achievements: older Open Badges 2.0 badges, active licenses and certifications, and completed education. A badge that stands for a license or certification (`credentialRef`) is counted once. See [`examples/out/recommended.clr.json`](examples/out/recommended.clr.json).
+
+What to know:
+
+- **Nothing is signed.** The profile never speaks as an issuer. The presentation has no proof; add one with your wallet or signing tool if the verifier asks for it. The CLR is a template: it names you as issuer until an institution, or you, signs it and puts its own profile there. Achievements listed in the CLR outside a signed credential are your statement, not the issuer's.
+- **What is carried.** Approved, public badges of high or medium confidence, as in other outputs, and only ones in good standing: a badge whose check failed, that its issuer revoked, or that has run out by `--on` is left out. Open Badges 2.0 badges are not Verifiable Credentials, so they are never in the presentation.
+- **Originals are checked, not changed.** Each original is read from the bundle and refused if it no longer matches its recorded `sha256`. Your content rules apply to the words this tool writes, not to the issuer's signed text, which cannot be reworded.
+- **A CLR needs at least one Verifiable Credential**, by the standard. With no Open Badges 3.0 badge to carry, both commands stop and say so.
+- **Checked against the published schemas.** The tests validate both outputs against 1EdTech's JSON Schemas, which `node scripts/fetch-1edtech-schemas.mjs` downloads (they are not redistributed here). Not done: no wallet or verifier has imported these files, and JSON-LD processing against the contexts is not tested.
+
 ## The review file
 
 ```sh
@@ -457,7 +479,7 @@ From code: `reviewMarkdown(profile, { on, locale, mappings })`. Pass your own `m
 | [`lib/audience.mjs`](lib/audience.mjs) | Resolves audiences on a date, checks requesters against policy and looks up field authority. |
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
-| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`, `verification`. |
+| [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `scim`, `verification`. |
 | [`lib/gedcom.mjs`](lib/gedcom.mjs) | Writes GEDCOM 7.0 and 5.5.1 from the `gedcom7` view, converts dates, and packages GEDZip archives. |
 | [`upstream/gedcom551/`](upstream/gedcom551/) | The GEDCOM 5.5.1 grammar, extracted from the specification's text. The tests check the 5.5.1 export against it. |
 | [`upstream/gedcom7/`](upstream/gedcom7/) | Unmodified structure tables and test files from the FamilySearch GEDCOM 7 specification (Apache 2.0). The tests check our export against them. |
