@@ -21,6 +21,10 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
+      # The résumé PDF tests render with Typst; without it they are skipped, so it is installed and pinned here.
+      - uses: typst-community/setup-typst@v4
+        with:
+          typst-version: 0.15.1
       - run: npm test
       - name: Validate the example profiles
         run: npm run validate:examples

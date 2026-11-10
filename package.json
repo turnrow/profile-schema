@@ -21,6 +21,8 @@
     "mappings/",
     "data/",
     "examples/",
+    "templates/",
+    "brand/fonts/",
     "upstream/",
     "SECURITY.md"
   ],
