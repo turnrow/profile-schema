@@ -81,7 +81,7 @@ test("each entry says which outputs show it, and why the others don't", () => {
   const md = review(p);
   const row = rowOf(md, p.work[0].id);
   assert.equal(row.length, 9);
-  assert.match(row[8], /Shown in: [a-z, ]*linkedin/);
+  assert.match(row[8], /Shown in: [a-z0-9, ]*linkedin/);
   assert.match(row[8], /Hidden from: brief \(priority 40 is below 80\)/);
   assert.match(row[8], /Not used by: scim/);
   const pending = rowOf(md, "consulting-gap");

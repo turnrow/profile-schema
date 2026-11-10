@@ -1,0 +1,64 @@
+0 HEAD
+1 GEDC
+2 VERS 7.0
+1 SCHMA
+2 TAG _CONF https://github.com/turnrow/profile-schema/blob/main/README.md#gedcom-7
+1 SOUR https://github.com/turnrow/profile-schema
+2 NAME Profile Schema, a Turnrow Solution
+1 DATE 7 NOV 2026
+1 LANG en-US
+0 @I1@ INDI
+1 NAME Pat /Example/
+2 GIVN Pat
+2 SURN Example
+1 OCCU Associate
+2 DATE FROM MAR 1996 TO JUN 1998
+2 PLAC Dallas, Texas
+2 AGNC Coopers & Lybrand
+2 NOTE Delivered ERP integration work for manufacturing clients.
+2 _CONF medium
+1 OCCU Senior Associate
+2 DATE FROM JUL 1998 TO JUN 1999
+2 PLAC Dallas, Texas
+2 AGNC PricewaterhouseCoopers
+2 NOTE Continued with the merged firm, PricewaterhouseCoopers.
+3 CONT Continued: Delivered ERP integration work for manufacturing clients.
+2 _CONF medium
+1 OCCU Network Engineer
+2 DATE FROM JUL 1999 TO MAY 2005
+2 PLAC Grapevine, Texas
+2 AGNC Buchanan Associates
+2 NOTE Managed network services for outsourcing clients.
+2 _CONF medium
+1 OCCU Systems Engineer
+2 DATE FROM JUN 2005 TO MAR 2007
+2 PLAC Plano, Texas
+2 AGNC EDS
+2 NOTE Ran nightly batch operations for a state Medicaid claims system.
+2 _CONF medium
+1 OCCU Senior Systems Engineer
+2 DATE FROM APR 2007 TO DEC 2008
+2 PLAC Plano, Texas
+2 AGNC EDS
+2 NOTE Continued: Ran nightly batch operations for a state Medicaid claims system.
+3 CONT Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009))
+3 CONT Mentored new engineers through the onboarding program.
+2 _CONF medium
+1 OCCU Technology Consultant III
+2 DATE FROM JAN 2009 TO JAN 2010
+2 PLAC Plano, Texas
+2 AGNC EDS, an HP Company
+2 NOTE Same job; the title changed when HP mapped EDS roles onto its own job architecture.
+3 CONT Continued: Ran nightly batch operations for a state Medicaid claims system.
+3 CONT Continued: Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009); 8 engineers (Jul 2009–Mar 2011))
+3 CONT Continued: Mentored new engineers through the onboarding program.
+2 _CONF medium
+1 OCCU Solutions Architect
+2 DATE FROM FEB 2010 TO MAR 2011
+2 PLAC Plano, Texas
+2 AGNC HP Enterprise Services
+2 NOTE Release engineering and architecture for state government outsourcing accounts.
+3 CONT Continued: Led the release-engineering team for the account. (8 engineers (Jul 2009–Mar 2011))
+3 CONT Owned the target architecture for the claims-system modernization.
+2 _CONF medium
+0 TRLR
