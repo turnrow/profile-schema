@@ -8,10 +8,13 @@
 //   turnrow-profile open     <profile.json | bundle-folder>      list items waiting on confirmation
 //   turnrow-profile release  <profile> <audience> [--format scim] --domain acme.com --method oidc [--application name] [--recipient "Fund name"]
 //                            [--out payload.json] [--receipt receipt.json] [--record]   (--record appends to profile.releases)
+//   turnrow-profile media add <bundle> <file> --id <id> --alt "<text>" [--kind headshot] [--purpose primary] [--from yyyy-mm] [--strip-gps]
 //   turnrow-profile writeback <profile> <audience> <scim-user.json> --domain acme.com --method oidc [--out updated.json]
 
-import { readFileSync, writeFileSync, existsSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, unlinkSync } from "node:fs";
+import { join, resolve, extname } from "node:path";
+import { createHash, randomUUID } from "node:crypto";
+import { readImageInfo, stripGps } from "../lib/media.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError } from "../index.mjs";
 
 const argv = process.argv.slice(2);
@@ -30,6 +33,12 @@ const on = takeFlag("--on");
 const recipient = takeFlag("--recipient");
 const visibilityFlag = takeFlag("--visibility");
 const mediaBaseUrl = takeFlag("--media-base");
+const mediaId = takeFlag("--id");
+const altText = takeFlag("--alt");
+const kind = takeFlag("--kind");
+const purpose = takeFlag("--purpose");
+const fromDate = takeFlag("--from");
+const stripGpsFlag = takeBool("--strip-gps");
 const visibility = visibilityFlag ? visibilityFlag.split(",").map((v) => v.trim()) : undefined;
 if (visibility && visibility.some((v) => !["public", "network", "private"].includes(v))) {
   console.error(`error: --visibility takes public, network and/or private (got ${visibilityFlag})`);
@@ -114,6 +123,44 @@ try {
         writeFileSync(file, JSON.stringify(profile, null, 2) + "\n");
         console.error(`Recorded ${r.record.id} in ${file}`);
       }
+      break;
+    }
+    case "media": {
+      if (rest[0] !== "add" || !rest[1] || !rest[2]) usage();
+      if (!mediaId || !altText) fail("media add needs --id and --alt (describe the image for people who cannot see it)", 2);
+      const { profile, file, bundleDir } = loadProfile(rest[1]);
+      if (!bundleDir) fail("media add needs a bundle folder (a folder with profile.json), not a single file", 2);
+      if (!existsSync(rest[2])) fail(`no such file: ${rest[2]}`);
+      let bytes = readFileSync(rest[2]);
+      const info = readImageInfo(bytes);
+      if (info.gps && !stripGpsFlag) fail(`${rest[2]} carries location (GPS) metadata in ${info.gpsWhere.join(" and ")}; re-run with --strip-gps to store a copy without it`, 2);
+      if (info.gps) bytes = stripGps(bytes, info.mediaType);
+      // An existing id means a new version of the same asset: the next free <id>-vN, same uuid.
+      const media = profile.media ?? [];
+      const prior = media.filter((m) => m.id === mediaId || m.id.startsWith(`${mediaId}-v`));
+      const latest = prior.at(-1);
+      const id = latest ? `${mediaId}-v${prior.length + 1}` : mediaId;
+      const ext = (extname(rest[2]) || { "image/png": ".png", "image/jpeg": ".jpg", "image/svg+xml": ".svg" }[info.mediaType] || "").toLowerCase();
+      mkdirSync(join(bundleDir, "media"), { recursive: true });
+      writeFileSync(join(bundleDir, "media", `${id}${ext}`), bytes);
+      const after = readImageInfo(bytes);
+      const entry = {
+        id, title: altText, url: `bundle:media/${id}${ext}`, mediaType: after.mediaType, alt: altText,
+        ...(kind ? { kind } : {}),
+        uuid: latest?.uuid ?? randomUUID(),
+        ...(latest ? { version: String(prior.length + 1), supersedes: latest.id } : {}),
+        ...(after.width ? { width: after.width, height: after.height } : {}),
+        byteSize: bytes.length,
+        sha256: createHash("sha256").update(bytes).digest("hex"),
+        ...(after.metadata ? { metadata: after.metadata } : {}),
+        status: "approved", confidence: "high",
+      };
+      profile.media = [...media, entry];
+      if (purpose) profile.person.images = [...(profile.person.images ?? []), { media: id, purpose, ...(fromDate ? { from: fromDate } : {}) }];
+      const v = validateProfile(profile, { bundleDir });
+      if (!v.valid) { unlinkSync(join(bundleDir, "media", `${id}${ext}`)); fail("adding it would make the profile invalid:\n  " + v.errors.join("\n  ")); }
+      writeFileSync(file, JSON.stringify(profile, null, 2) + "\n");
+      console.error(`Added ${id} (${after.mediaType}${after.width ? `, ${after.width}×${after.height}` : ""}${info.gps ? ", location metadata removed" : ""})`);
       break;
     }
     case "writeback": {
