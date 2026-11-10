@@ -1,0 +1,41 @@
+name: Delete a merged branch
+
+# Deletes one branch, and only if every commit on it is already in main.
+# Run it from the Actions tab (or the API) with the branch name.
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to delete (must be fully merged into main)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  delete:
+    name: Delete ${{ inputs.branch }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check and delete
+        env:
+          BRANCH: ${{ inputs.branch }}
+        run: |
+          if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "${{ github.event.repository.default_branch }}" ]; then
+            echo "::error::Refusing to delete the default branch."; exit 1
+          fi
+          if ! git check-ref-format --branch "$BRANCH" >/dev/null 2>&1; then
+            echo "::error::Not a valid branch name."; exit 1
+          fi
+          if ! git rev-parse -q --verify "refs/remotes/origin/$BRANCH" >/dev/null; then
+            echo "::error::No branch named $BRANCH."; exit 1
+          fi
+          if ! git merge-base --is-ancestor "origin/$BRANCH" origin/main; then
+            echo "::error::$BRANCH has commits that are not in main; not deleting it."; exit 1
+          fi
+          git push origin --delete "$BRANCH"
