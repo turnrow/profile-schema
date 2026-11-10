@@ -3,6 +3,11 @@
 ## Unreleased (2.7): review file, résumé view and accessible PDF
 
 ### Résumé PDF
+- **Right-to-left output (experimental).** Arabic and Hebrew profiles are laid out right to left, with bundled fonts that have the letters (Vazirmatn and Noto Sans Hebrew, both SIL Open Font License), translated headings and each language's own punctuation. `examples/rtl.profile.json` is a fictional Arabic profile; CI renders and validates it.
+  - **Known defect:** Arabic text extracted from the PDF has lam-alef pairs reversed and vowel marks doubled, so a screen reader may misread it. Hebrew extracts correctly. The Arabic variants are named as skipped in the text-order check, with this reason.
+  - The Arabic and Hebrew wording was written by an AI and awaits a fluent reader.
+- **Fix: dates are always Gregorian.** A Persian or Thai locale printed a 2024 date as 1402 or 2567.
+- The résumé view carries `separators`, the punctuation between parts in the output's language.
 - **`--layout two-column`:** a main column with skills, languages and credentials in a narrower column beside it. There is one reading order: the header, the main column, then the side column. With nothing for the side column, it is one column.
 - **Reading order is checked in CI.** Each rendered PDF's own text order (`pdftotext -raw`) is held to the order of its view: name, summary, then every section heading and entry in turn. `scripts/check-reading-order.mjs` does the same outside CI.
 - **`--layout academic`:** an academic CV. Education first, then experience and publications; the document is titled a curriculum vitae. It arranges the same view and uses the same one-column template, and is validated in CI like the rest.

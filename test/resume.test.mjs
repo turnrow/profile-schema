@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { convert, loadMapping, validateProfile } from "../index.mjs";
-import { direction } from "../lib/i18n.mjs";
+import { direction, monthYear } from "../lib/i18n.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const load = (rel) => JSON.parse(readFileSync(join(root, rel), "utf8"));
@@ -161,6 +161,33 @@ test("a publication names its authors or inventors, its number and a DOI link; p
   assert.equal(pubs[0].summary, "Authors: I. Calloway, R. Example\nFive-year survey.");
   assert.equal(pubs[0].url, "https://doi.org/10.1234/reef.2004.01");
   assert.equal(section(view(p, { locale: "de" }), "publications").entries[0].summary.split("\n")[0], "Autoren: I. Calloway, R. Example");
+});
+
+test("dates are always Gregorian, whatever calendar a locale prefers", () => {
+  // Persian and Thai locales default to other calendars, where 2024 is 1402 or 2567.
+  for (const locale of ["fa", "th-TH", "ar-SA", "he", "ja-JP-u-ca-japanese"]) {
+    const d = monthYear(locale, "2024-03");
+    const digits = d.normalize("NFKD").replace(/[\u0660-\u0669]/g, (c) => c.charCodeAt(0) - 0x660).replace(/[\u06F0-\u06F9]/g, (c) => c.charCodeAt(0) - 0x6F0).replace(/[\u0E50-\u0E59]/g, (c) => c.charCodeAt(0) - 0xE50);
+    assert.match(digits, /2024/, `${locale}: ${d}`);
+  }
+  assert.equal(monthYear("en-US", "2024-03"), "Mar 2024");
+});
+
+test("a right-to-left profile says so, in its own words and punctuation", () => {
+  const p = load("examples/rtl.profile.json");
+  assert.equal(validateProfile(p).valid, true);
+  const v = view(p);
+  assert.equal(v.direction, "rtl");
+  assert.equal(v.locale, "ar");
+  assert.deepEqual(v.separators, { list: "، ", item: "؛ " });
+  assert.equal(section(v, "experience").heading, "الخبرة العملية");
+  assert.equal(section(v, "education").entries[0].title, "بكالوريوس، علوم الحاسوب", "the Arabic comma, not the Latin one");
+  assert.match(section(v, "experience").entries[0].dates, /حتى الآن$/);
+  assert.equal(section(v, "experience").entries[0].organization, "Northwind Example Ltd", "a Latin name stays as written");
+  const he = view(sample(), { locale: "he" });
+  assert.equal(he.direction, "rtl");
+  assert.equal(section(he, "experience").heading, "ניסיון תעסוקתי");
+  assert.deepEqual(view(sample()).separators, { list: ", ", item: "; " });
 });
 
 test("the committed example views are current", () => {
