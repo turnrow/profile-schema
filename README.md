@@ -247,6 +247,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | See what still needs confirming | `open <profile \| bundle>` |
 | Get the whole profile as one file to check | `review <profile \| bundle> --out review.md` |
 | Write an output | `convert <profile \| bundle> <mapping> [--out file]` |
+| Write a GEDCOM 7 file for genealogy software | `convert <profile \| bundle> gedcom7 --out me.ged` (add `--gedzip` for a `.gdz` with the media) |
 | Write an accessible résumé PDF | `pdf <profile \| bundle> --out resume.pdf` |
 | Start from a JSON Resume | `import <resume.json> --out my.profile.json` |
 | Share with an audience, with a consent receipt | `release <profile> <audience> --method … --domain …` |
@@ -254,7 +255,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
 
-Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
+Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `gedcom7`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
 
 Options that apply widely: `--out <file>` (folders are created as needed), `--locale <tag>` (a BCP 47 tag such as `es` or `pt-BR`) and `--on <yyyy-mm-dd>` (the date an output is made for; default today, UTC). An option can be written `--out file` or `--out=file`. A misspelled option stops the command.
 
@@ -282,6 +283,33 @@ Options that apply widely: `--out <file>` (folders are created as needed), `--lo
 | `Output breaks content rules` (exit 3) | An output contains something `rules` forbids. Fix the text, or pass `--allow-rule-violations` to see the output with warnings. |
 | `Release refused` (exit 4) | The reason follows the message: consent isn't recorded, the audience has expired, or the domain or method doesn't qualify. |
 | Anything unexpected | Run again with `TURNROW_DEBUG=1` for a stack trace, and include it in the issue. |
+
+## GEDCOM 7
+
+```sh
+node bin/profile.mjs convert examples/sample.profile.json gedcom7 --out ines.ged
+node bin/profile.mjs convert my-bundle/ gedcom7 --gedzip --out ines.gdz   # the file and its media in one archive
+```
+
+The evidence model here came from genealogy, and this sends a working life back to it: a [FamilySearch GEDCOM 7.0](https://gedcom.io) file with one individual, for family-history software and archives. See [`examples/out/sample.ged`](examples/out/sample.ged).
+
+| In the profile | In the GEDCOM file |
+|---|---|
+| Each name the person may show | `NAME`, with `GIVN` and `SURN`, a `TYPE` (birth, professional, also known as), and a `NOTE` saying when it was in use, since GEDCOM has no dates on names |
+| Each title held in a job | `OCCU`, with `DATE`, `PLAC`, and `AGNC`: the employer's name as it was then |
+| Education | `EDUC`, with the institution as `AGNC`. Unfinished study says "(not completed)" |
+| A residence on the timeline | `RESI` |
+| Other timeline events, and service | `EVEN` with a `TYPE`: Voyage, Founding, Military service, Board service… |
+| Citations | `SOUR` pointing at a source record, with `PAGE`, the quoted text, and `QUAY` |
+| Approved public media | `OBJE` records with `FILE`, `FORM` and the alt text as a note |
+| Confidence (high or medium) | `_CONF`, an extension tag declared in the header's `SCHMA` |
+
+- **Dates keep their doubt.** "About 1996" is `ABT 1996`, "before 1998" is `BEF 1998`, "1990 or 1991" is `BET 1990 AND 1991`. A span is a period (`FROM MAR 2019 TO OCT 2026`; a current job has no `TO`). A period can only hold plain dates, so when one end is uncertain the wording goes beside it as a `PHRASE` ("c. 1996 – May 2009"). A lone date is a moment, not "from then on".
+- **Evidence quality becomes `QUAY`:** primary 3; secondary and published 2; self-reported 1; hearsay 0.
+- **Only public, approved entries** at high or medium confidence, as in the other public outputs. Internal notes, contact details, where a source's original is kept, and other people (recommenders, references) never go in. Sources are written only when a written fact cites them.
+- **GEDZip (`--gedzip`).** A `.gdz` is a zip holding `gedcom.ged` and the bundle's media at the paths the file names. Without it, media are named by web address (`--media-base` or `meta.mediaBaseUrl`), and a bundle file with nowhere to point is left out.
+- **Not exported:** credentials, awards, projects, publications, skills and languages have no natural GEDCOM structure and are left out. Say so in an issue if you need them as events.
+- **Checked against the standard.** The tests hold every example's output to FamilySearch's own structure tables (which tag may sit where, how often, with what value), using a checker that must first accept FamilySearch's own test files. Both are in [`upstream/gedcom7/`](upstream/gedcom7/). No GEDCOM program has imported these files yet.
 
 ## The résumé view
 
@@ -392,6 +420,8 @@ From code: `reviewMarkdown(profile, { on, locale, mappings })`. Pass your own `m
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
 | [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`, `verification`. |
+| [`lib/gedcom.mjs`](lib/gedcom.mjs) | Writes GEDCOM 7.0 from the `gedcom7` view, converts dates, and packages GEDZip archives. |
+| [`upstream/gedcom7/`](upstream/gedcom7/) | Unmodified structure tables and test files from the FamilySearch GEDCOM 7 specification (Apache 2.0). The tests check our export against them. |
 | [`lib/pdf.mjs`](lib/pdf.mjs) | Prepares the résumé view for the template, runs Typst and explains its failures. |
 | [`templates/`](templates/) | Typst templates for the résumé PDF. Layout only. |
 | [`lib/review.mjs`](lib/review.mjs) | Writes the review file: every entry with its status, sources and which outputs show it. |
@@ -457,7 +487,7 @@ A mapping is JSON: an `include` filter and an `output` template.
 
 - **Europass:** copy `jsonresume.json` and rename keys to the Europass model. Map `languages[].cefr` to the language levels and `skills[].escoUri` to ESCO skills. Europass imports XML, so add a JSON-to-XML step.
 - **HR Open Standards / ATS:** map `work` to employment history and `credentials` to certifications the same way. Employee directories and identity providers are covered by the `scim` mapping.
-- **GEDCOM:** `timeline`, `service`, `education` and `names` map naturally to GEDCOM events, attributes and name structures, if a family-history export is ever wanted.
+- **GEDCOM:** see [GEDCOM 7](#gedcom-7). GEDCOM 5.5.1 is on the [roadmap](ROADMAP.md).
 
 ## Photos, recommendations, endorsements and badges (2.6)
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased (2.8): exports
+
+### GEDCOM 7.0 and GEDZip
+- **`convert <profile | bundle> gedcom7`** writes a FamilySearch GEDCOM 7.0 file with one individual: `NAME` per name (with type, and a note for when it was in use), `OCCU` per title held (dates, place, and the employer's name at the time as `AGNC`), `EDUC`, `RESI`, `EVEN` with a `TYPE` for timeline events and service, `SOUR` citations with `PAGE` and `QUAY`, and `OBJE` for approved public media.
+- **Dates keep their doubt:** `ABT`, `EST`, `CAL`, `BEF`, `AFT`, `BET … AND`; spans are `FROM … TO` periods with a `PHRASE` when an end is uncertain.
+- **`--gedzip`** writes a `.gdz` archive with `gedcom.ged` and the bundle's media. The zip writer stores files uncompressed and adds no dependency; media are taken only from inside the bundle.
+- **One extension tag,** `_CONF` (confidence), declared in `HEAD.SCHMA`.
+- Public, approved entries only; notes, contacts, source locations and other people are never written.
+- **Checked against the standard:** FamilySearch's structure tables and test files are vendored in `upstream/gedcom7/` (Apache 2.0), and the tests hold every example's output to them.
+- A mapping can now set `"format": "gedcom7"`. New helpers: `gedcomDate`, `gedcomPeriod`, `gedcomPeriodPhrase`, `sources`.
+- `examples/out/*.ged` are generated and checked in CI.
+
 ## Unreleased (2.7): review file, résumé view and accessible PDF
 
 ### Résumé PDF

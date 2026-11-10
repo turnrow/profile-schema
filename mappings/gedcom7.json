@@ -1,0 +1,509 @@
+{
+  "target": "gedcom7",
+  "description": "FamilySearch GEDCOM 7.0: one individual with the facts of their working life, for genealogy software and family archives. Each title held is an occupation (OCCU) with its dates, place and the employer's name as it was then (AGNC); study is EDUC; residences are RESI; other life events and service are EVEN with a TYPE. Facts cite their sources (SOUR, with PAGE and a QUAY from the evidence quality), and approved public images travel as OBJE. Uncertain dates keep their meaning (ABT, EST, BEF, AFT, BET…AND). Public, approved entries only; internal notes, other people's contact details and where a source is kept never go in. Add --gedzip to package the file with its media.",
+  "include": {
+    "visibility": [
+      "public"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high",
+      "medium"
+    ]
+  },
+  "orgNameStyle": "atTheTime",
+  "format": "gedcom7",
+  "ruleExemptKeys": [
+    "id",
+    "source",
+    "tag",
+    "file",
+    "form",
+    "confidence"
+  ],
+  "output": {
+    "product": {
+      "id": "https://github.com/turnrow/profile-schema",
+      "name": "Profile Schema, a Turnrow Solution"
+    },
+    "date": {
+      "$fn": "onDate",
+      "args": []
+    },
+    "lang": {
+      "$fn": "locale",
+      "args": []
+    },
+    "name": "$.person.name",
+    "names": {
+      "$each": "$$.person.names",
+      "$map": {
+        "full": "$.full",
+        "given": "$.given",
+        "family": "$.family",
+        "prefix": "$.prefix",
+        "suffix": "$.suffix",
+        "type": "$.type",
+        "usedText": {
+          "$if": {
+            "$fn": "coalesce",
+            "args": [
+              "$.from",
+              "$.to"
+            ]
+          },
+          "$then": {
+            "$fn": "concat",
+            "args": [
+              "In use: ",
+              {
+                "$fn": "dateRangeText",
+                "args": [
+                  "$.from",
+                  "$.to"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "facts": {
+      "$fn": "concatLists",
+      "args": [
+        {
+          "$each": {
+            "$fn": "flatPositions",
+            "args": [
+              "$$.work"
+            ]
+          },
+          "$sort": "startDate",
+          "$map": {
+            "tag": "OCCU",
+            "id": "$.id",
+            "value": "$.title",
+            "date": {
+              "$fn": "gedcomPeriod",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                "$.current"
+              ]
+            },
+            "datePhrase": {
+              "$fn": "gedcomPeriodPhrase",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                "$.current"
+              ]
+            },
+            "place": {
+              "$fn": "place",
+              "args": [
+                "$.location"
+              ]
+            },
+            "agency": {
+              "$fn": "employer",
+              "args": [
+                "$.organization",
+                "$.startDate",
+                "$.endDate"
+              ]
+            },
+            "note": {
+              "$fn": "joinLines",
+              "args": [
+                "$.summary",
+                {
+                  "$fn": "responsibilityLines",
+                  "args": [
+                    "$"
+                  ]
+                },
+                "$.jobMetrics"
+              ]
+            },
+            "citations": "$.work.citations",
+            "confidence": {
+              "$fn": "coalesce",
+              "args": [
+                "$.confidence",
+                "medium"
+              ]
+            }
+          }
+        },
+        {
+          "$each": "$$.education",
+          "$sort": "startDate",
+          "$map": {
+            "tag": "EDUC",
+            "id": "$.id",
+            "value": {
+              "$if": "$.completed",
+              "$then": {
+                "$fn": "join",
+                "args": [
+                  [
+                    "$.credential",
+                    {
+                      "$fn": "text",
+                      "args": [
+                        "$.area"
+                      ]
+                    }
+                  ],
+                  ", "
+                ]
+              },
+              "$else": {
+                "$if": "$.credential",
+                "$then": {
+                  "$fn": "label",
+                  "args": [
+                    "notCompleted",
+                    {
+                      "x": {
+                        "$fn": "join",
+                        "args": [
+                          [
+                            "$.credential",
+                            {
+                              "$fn": "text",
+                              "args": [
+                                "$.area"
+                              ]
+                            }
+                          ],
+                          ", "
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "$else": {
+                  "$fn": "text",
+                  "args": [
+                    "$.area"
+                  ]
+                }
+              }
+            },
+            "date": {
+              "$fn": "gedcomPeriod",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                null
+              ]
+            },
+            "datePhrase": {
+              "$fn": "gedcomPeriodPhrase",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                null
+              ]
+            },
+            "place": {
+              "$fn": "place",
+              "args": [
+                "$.location"
+              ]
+            },
+            "agency": {
+              "$fn": "org",
+              "args": [
+                "$.institution"
+              ]
+            },
+            "note": {
+              "$fn": "text",
+              "args": [
+                "$.summary"
+              ]
+            },
+            "citations": "$.citations",
+            "confidence": {
+              "$fn": "coalesce",
+              "args": [
+                "$.confidence",
+                "medium"
+              ]
+            }
+          }
+        },
+        {
+          "$each": "$$.timeline",
+          "$where": {
+            "type": [
+              "residence"
+            ]
+          },
+          "$sort": "startDate",
+          "$map": {
+            "tag": "RESI",
+            "id": "$.id",
+            "value": {
+              "$fn": "text",
+              "args": [
+                "$.title"
+              ]
+            },
+            "date": {
+              "$fn": "gedcomPeriod",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                "$.current"
+              ]
+            },
+            "datePhrase": {
+              "$fn": "gedcomPeriodPhrase",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                "$.current"
+              ]
+            },
+            "place": {
+              "$fn": "place",
+              "args": [
+                {
+                  "$fn": "first",
+                  "args": [
+                    "$.places"
+                  ]
+                }
+              ]
+            },
+            "note": {
+              "$fn": "text",
+              "args": [
+                "$.summary"
+              ]
+            },
+            "citations": "$.citations",
+            "confidence": {
+              "$fn": "coalesce",
+              "args": [
+                "$.confidence",
+                "medium"
+              ]
+            }
+          }
+        },
+        {
+          "$each": "$$.timeline",
+          "$where": {
+            "type": [
+              "journey",
+              "voyage",
+              "relocation",
+              "milestone",
+              "founding",
+              "first",
+              "story",
+              "other"
+            ]
+          },
+          "$sort": "startDate",
+          "$map": {
+            "tag": "EVEN",
+            "id": "$.id",
+            "value": {
+              "$fn": "text",
+              "args": [
+                "$.title"
+              ]
+            },
+            "type": {
+              "$fn": "enumMap",
+              "args": [
+                "$.type",
+                {
+                  "$literal": {
+                    "journey": "Journey",
+                    "voyage": "Voyage",
+                    "relocation": "Relocation",
+                    "milestone": "Milestone",
+                    "founding": "Founding",
+                    "first": "First",
+                    "story": "Story",
+                    "other": "Event"
+                  }
+                }
+              ]
+            },
+            "date": {
+              "$fn": "gedcomPeriod",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                "$.current"
+              ]
+            },
+            "datePhrase": {
+              "$fn": "gedcomPeriodPhrase",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                "$.current"
+              ]
+            },
+            "place": {
+              "$fn": "place",
+              "args": [
+                {
+                  "$fn": "first",
+                  "args": [
+                    "$.places"
+                  ]
+                }
+              ]
+            },
+            "note": {
+              "$fn": "joinLines",
+              "args": [
+                {
+                  "$fn": "text",
+                  "args": [
+                    "$.summary"
+                  ]
+                },
+                {
+                  "$fn": "metricText",
+                  "args": [
+                    "$.metrics",
+                    "$"
+                  ]
+                }
+              ]
+            },
+            "citations": "$.citations",
+            "confidence": {
+              "$fn": "coalesce",
+              "args": [
+                "$.confidence",
+                "medium"
+              ]
+            }
+          }
+        },
+        {
+          "$each": "$$.service",
+          "$sort": "startDate",
+          "$map": {
+            "tag": "EVEN",
+            "id": "$.id",
+            "value": {
+              "$fn": "coalesce",
+              "args": [
+                {
+                  "$fn": "text",
+                  "args": [
+                    "$.role"
+                  ]
+                },
+                "$.rank"
+              ]
+            },
+            "type": {
+              "$fn": "enumMap",
+              "args": [
+                "$.kind",
+                {
+                  "$literal": {
+                    "military": "Military service",
+                    "reserve": "Reserve service",
+                    "scouting": "Scouting",
+                    "volunteer": "Volunteer service",
+                    "civic": "Civic service",
+                    "board": "Board service"
+                  }
+                }
+              ]
+            },
+            "date": {
+              "$fn": "gedcomPeriod",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                "$.current"
+              ]
+            },
+            "datePhrase": {
+              "$fn": "gedcomPeriodPhrase",
+              "args": [
+                "$.startDate",
+                "$.endDate",
+                "$.current"
+              ]
+            },
+            "place": {
+              "$fn": "place",
+              "args": [
+                "$.location"
+              ]
+            },
+            "agency": {
+              "$fn": "org",
+              "args": [
+                "$.organization"
+              ]
+            },
+            "note": {
+              "$fn": "joinLines",
+              "args": [
+                {
+                  "$fn": "text",
+                  "args": [
+                    "$.summary"
+                  ]
+                },
+                "$.highlights"
+              ]
+            },
+            "citations": "$.citations",
+            "confidence": {
+              "$fn": "coalesce",
+              "args": [
+                "$.confidence",
+                "medium"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "media": {
+      "$each": "$$.media",
+      "$map": {
+        "id": "$.id",
+        "file": "$.url",
+        "form": "$.mediaType",
+        "title": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "alt": {
+          "$fn": "text",
+          "args": [
+            "$.alt"
+          ]
+        }
+      }
+    },
+    "sources": {
+      "$fn": "sources",
+      "args": []
+    }
+  }
+}

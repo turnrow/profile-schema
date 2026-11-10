@@ -22,6 +22,7 @@ import { readImageInfo, stripGps } from "../lib/media.mjs";
 import { parseBadge } from "../lib/badges.mjs";
 import { reviewMarkdown } from "../lib/review.mjs";
 import { renderResumePdf, PdfError } from "../lib/pdf.mjs";
+import { gedzip, gedzipMedia, readBundleMedia, GEDZIP_MEDIA } from "../lib/gedcom.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS } from "../index.mjs";
 
 const HELP = `turnrow-profile: validate, convert and share Turnrow Profiles.
@@ -49,6 +50,7 @@ Options
   --on <yyyy-mm-dd>          the date the output is made for (default: today, UTC)
   --json                     validate: machine-readable result on standard output
   convert:    --visibility public[,network[,private]]   --media-base <https://…/>   --allow-rule-violations
+              --gedzip (with gedcom7: write a .gdz archive holding the file and its media)
   release:    --method <oidc|saml|dnsTxt|wellKnown|signedRequest|emailDomain> --domain <domain> | --recipient <name>
               --format <mapping> (default scim)   --application <name>   --receipt <file>   --record
   writeback:  --method <…> --domain <domain>
@@ -70,7 +72,7 @@ function fail(message, code = 1) { console.error(`error: ${message}`); process.e
 const VALUE_FLAGS = ["--locale", "--out", "--format", "--domain", "--method", "--application", "--receipt", "--on", "--recipient",
   "--visibility", "--media-base", "--id", "--alt", "--kind", "--purpose", "--from",
   "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst"];
-const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version", "--photo", "--no-photo"];
+const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version", "--photo", "--no-photo", "--gedzip"];
 const flags = {};
 const argv = [];
 {
@@ -220,8 +222,21 @@ try {
       const r = validateProfile(profile, { bundleDir });
       if (!r.valid) { console.error("Profile is not valid; run validate first.\n  " + r.errors.join("\n  ")); process.exit(1); }
       const mapping = loadMappingArg(rest[1]);
-      const { text, violations } = convert(profile, mapping, { locale, allowRuleViolations: allow, on, visibility, mediaBaseUrl });
+      const asGedzip = takeBool("--gedzip");
+      if (asGedzip && mapping.format !== "gedcom7") fail("--gedzip goes with the gedcom7 output", 2);
+      if (asGedzip && !out) fail("--gedzip needs --out <file.gdz>: an archive can't be printed to the screen", 2);
+      // In a GEDZip the media travel inside the archive, so bundle: links become paths in it.
+      const { text, output, violations } = convert(profile, mapping, { locale, allowRuleViolations: allow, on, visibility, mediaBaseUrl: asGedzip ? GEDZIP_MEDIA : mediaBaseUrl });
       for (const v of violations) console.error(`warning: rule ${v.rule} matched "${v.match}"`);
+      if (asGedzip) {
+        const paths = gedzipMedia(output);
+        if (paths.length && !bundleDir) fail("--gedzip needs a bundle folder to take the media from", 2);
+        const media = paths.length ? readBundleMedia(bundleDir, paths) : [];
+        mkdirSync(dirname(resolve(out)), { recursive: true });
+        writeFileSync(out, gedzip(text, media));
+        console.error(`Wrote ${out}: gedcom.ged and ${media.length} media file${media.length === 1 ? "" : "s"}.`);
+        break;
+      }
       emit(text);
       break;
     }
