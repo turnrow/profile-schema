@@ -178,7 +178,7 @@ test("--record adds each release to its profile; wrong usage says what is missin
   assert.equal(JSON.parse(readFileSync(join(dir, "people/lee-park.profile.json"), "utf8")).releases, undefined);
 
   const need = (args, re) => { const x = cli("directory", "diff", ...args); assert.equal(x.status, 2, x.stderr); assert.match(x.stderr, re); };
-  need([PEOPLE, "--against", EXPORT, "--out", dir, "--domain", "acme.example", "--method", "oidc"], /needs --target: one of scim/);
+  need([PEOPLE, "--against", EXPORT, "--out", dir, "--domain", "acme.example", "--method", "oidc"], /needs --target: one of scim, google-csv, ldif/);
   need([PEOPLE, "--target", "scim", "--out", dir, "--domain", "acme.example", "--method", "oidc"], /needs --against/);
   need([PEOPLE, "--target", "scim", "--against", EXPORT, "--domain", "acme.example", "--method", "oidc"], /needs --out/);
   need([PEOPLE, "--target", "scim", "--against", EXPORT, "--out", dir], /needs --method and --domain/);

@@ -12,7 +12,7 @@
 - **People with changes:** 1 (7 fields).
 - **People already up to date:** 1.
 - **People left out:** 2.
-- **Differences the directory decides:** 3.
+- **Differences left as they are:** 3.
 - **Directory users with no profile in the folder:** 2. They are not touched.
 
 ## Before you approve
@@ -37,15 +37,15 @@ Directory user sam.rivera@acme.example, matched by employee number. Profile: sam
 | photoUrl | photos\[type eq "photo"\].value | (empty) | https://example.com/images/sam-rivera.jpg |
 | shortBio | urn:turnrow:params:scim:schemas:extension:profile:2.0:User:shortBio | (empty) | Platform engineer who makes other engineers faster: build systems, internal tooling and the paved road from laptop to production. |
 
-## Differences the directory decides
+## Differences left as they are
 
-The employer is the authority for these fields, so they are not changed. If the directory is right, the profile learns it through write-back. If the profile is right, correct the directory at its source (usually the HR system).
+These are not changed. Where the employer is the authority for a field: if the directory is right, the profile learns it through write-back; if the profile is right, correct the directory at its source (usually the HR system).
 
-| Person | Field | The directory says | The profile says |
-| --- | --- | --- | --- |
-| Sam Rivera | department | Platform Engineering | Engineering |
-| Sam Rivera | workLocation | (empty) | Austin, Texas |
-| Dana Okoye | workLocation | (empty) | Austin, Texas |
+| Person | Field | The directory says | The profile says | Why it is not changed |
+| --- | --- | --- | --- | --- |
+| Sam Rivera | department | Platform Engineering | Engineering | the employer is the authority |
+| Sam Rivera | workLocation | (empty) | Austin, Texas | the employer is the authority |
+| Dana Okoye | workLocation | (empty) | Austin, Texas | the employer is the authority |
 
 ## People left out
 

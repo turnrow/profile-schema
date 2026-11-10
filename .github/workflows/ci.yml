@@ -60,6 +60,9 @@ jobs:
           node scripts/make-directory-example.mjs
           rm -rf examples/out/directory
           node bin/profile.mjs directory diff examples/directory/people --against examples/directory/acme-users.scim.json --target scim --domain acme.example --method oidc --on 2026-11-07 --out examples/out/directory
+          rm -rf examples/out/directory-google-csv examples/out/directory-ldif
+          node bin/profile.mjs directory diff examples/directory/people --against examples/directory/acme-users.google.csv --target google-csv --domain acme.example --method oidc --on 2026-11-07 --out examples/out/directory-google-csv
+          node bin/profile.mjs directory diff examples/directory/people --against examples/directory/acme-users.ldif --target ldif --domain acme.example --method oidc --on 2026-11-07 --out examples/out/directory-ldif
           git diff --exit-code -- examples/recommended examples/directory examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'
 
   pdf:

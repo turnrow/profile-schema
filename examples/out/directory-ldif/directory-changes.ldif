@@ -1,0 +1,11 @@
+version: 1
+
+# Sam Rivera
+dn: CN=Samantha Rivera,OU=People,DC=acme,DC=example
+changetype: modify
+replace: givenName
+givenName: Sam
+-
+replace: displayName
+displayName: Sam Rivera
+-

@@ -1,0 +1,36 @@
+{
+  "receiptVersion": "turnrow-1",
+  "receiptId": "release-a8c73600-c08c-b3c1-429b-8b1588004fa5",
+  "issued": "2026-11-07T00:00:00.000Z",
+  "subject": "Sam Rivera",
+  "recipient": {
+    "organization": "acme",
+    "domain": "acme.example",
+    "verifiedBy": "oidc"
+  },
+  "purpose": {
+    "code": "employeeDirectory",
+    "description": "Directory listing, chat and email profile, org chart."
+  },
+  "shared": {
+    "person": [
+      "name",
+      "preferredName",
+      "pronouns",
+      "image",
+      "email",
+      "jobTitle",
+      "shortBio",
+      "profiles"
+    ],
+    "sections": [
+      "skills",
+      "languages",
+      "credentials"
+    ],
+    "entries": 8
+  },
+  "expires": "onSeparation",
+  "payloadSha256": "5ebd9f45c8711c1a54a685e3d7bfb69fb1aff5cdc26fb6349ee67d698b945cb8",
+  "notice": "Stopping this release stops future updates. Copies already delivered stay with the recipient."
+}

@@ -82,4 +82,21 @@ for (const [id, profile] of Object.entries(people)) {
   writeFileSync(join(dir, "people", `${id}.profile.json`), JSON.stringify(profile, null, 2) + "\n");
 }
 writeFileSync(join(dir, "acme-users.scim.json"), JSON.stringify({ schemas: ["urn:ietf:params:scim:api:messages:2.0:ListResponse"], totalResults: users.length, Resources: users }, null, 2) + "\n");
+
+// The same four users as Google's Admin console exports them ("Download users"), and as LDIF.
+const csvCell = (v) => (/[",\r\n]/.test(v ?? "") ? `"${v.replace(/"/g, '""')}"` : v ?? "");
+const header = ["First Name [Required]", "Last Name [Required]", "Email Address [Required]", "Password [Required]", "Password Hash Function [UPLOAD ONLY]", "Org Unit Path [Required]", "New Primary Email [UPLOAD ONLY]", "Work Phone", "Employee ID", "Employee Title", "Department", "Cost Center", "Last Sign In [READ ONLY]"];
+const units = { "u-1001": "/Engineering", "u-1002": "/Design", "u-1003": "/Finance", "u-1000": "/Engineering" };
+const csv = [header, ...users.map((u) => [u.name.givenName, u.name.familyName, u.userName, "****", "", units[u.id], "", "", u[ENT].employeeNumber, u.title, u[ENT].department, "", "2026/11/01 09:00:00"])];
+writeFileSync(join(dir, "acme-users.google.csv"), csv.map((r) => r.map(csvCell).join(",")).join("\r\n") + "\r\n");
+
+const dn = (u) => `CN=${u.displayName},OU=People,DC=acme,DC=example`;
+const ldif = ["version: 1", "", "dn: OU=People,DC=acme,DC=example", "objectClass: organizationalUnit", "ou: People", ""];
+for (const u of users) {
+  ldif.push(`dn: ${dn(u)}`, "objectClass: top", "objectClass: person", "objectClass: organizationalPerson", "objectClass: user",
+    `givenName: ${u.name.givenName}`, `sn: ${u.name.familyName}`, `displayName: ${u.displayName}`, `mail: ${u.userName}`,
+    `employeeID: ${u[ENT].employeeNumber}`, `title: ${u.title}`, `department: ${u[ENT].department}`,
+    ...(u[ENT].manager ? [`manager: ${dn(users.find((x) => x.id === u[ENT].manager.value))}`] : []), "");
+}
+writeFileSync(join(dir, "acme-users.ldif"), ldif.join("\n"));
 console.error(`wrote ${dir}`);
