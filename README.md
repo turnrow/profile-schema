@@ -261,6 +261,8 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
 | Send an approved change set to a directory's API | `directory apply <change-set.json> --apply --approved <sha256> --out <folder>` |
+| Build an org chart from a directory and a folder of profiles | `orgchart build <folder> --against <export> --target … --domain … --method … --name … --out acme.org.json` |
+| See the organization on a date, and what changed since another | `orgchart show acme.org.json --on 2026-11-07 --compare 2026-01-05` |
 | See what a folder of profiles would change in a directory | `directory diff <folder> --against <export> --target scim --domain … --method … --out <folder>` |
 
 Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `europass`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
@@ -579,6 +581,35 @@ ENTRA_GRAPH_TOKEN=… node bin/profile.mjs directory apply run/change-set.json \
 - **Not run against a real tenant.** The requests follow each vendor's reference as read on 2026-11-10 and are tested against a stand-in directory. Try `directory apply` without `--apply` first, then with one person.
 
 The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-directory-sync-design.md`](docs/superpowers/specs/2026-11-10-directory-sync-design.md).
+
+## The org chart
+
+```sh
+node bin/profile.mjs orgchart show examples/orgchart/acme.org.json --on 2026-11-07 --compare 2026-01-05
+```
+
+An **organization file** (`*.org.json`, checked by [`schema/organization.schema.json`](schema/organization.schema.json)) is a time-based org chart. It is made of **posts**: seats that exist whether or not anyone sits in them. A person *holds* a post for a time, and a post *reports to* another for a time. Every one of those carries its dates, so:
+
+- a **vacancy** is a post nobody holds on the day you ask about;
+- a **planned role** is a post that starts later;
+- **history** is the same file read on an earlier date.
+
+Whether a post is filled, vacant or planned is worked out from the dates and never stored, so the file can't contradict itself. The model follows the W3C Organization Ontology (`org:Post`, `org:holds`, `org:reportsTo`). See [`examples/orgchart/acme.org.json`](examples/orgchart/acme.org.json) and the view of it in [`examples/out/orgchart/acme.md`](examples/out/orgchart/acme.md).
+
+| Command | What it does |
+|---|---|
+| `orgchart validate <file>` | Checks the file: every reference resolves, nothing ends before it starts, one line manager at a time, holders add up to no more than the seat, no loop in the reporting lines on any date. |
+| `orgchart build <folder> --against <export> --target <connector> …` | Builds the file from a directory export and a folder of profiles, or carries an existing one forward with `--base`. |
+| `orgchart show <file> [--on <date>] [--compare <date>] [--format table\|csv] [--budget]` | The organization on a date, one row per post in reporting order, and what changed since another date. |
+
+**People and privacy.**
+
+- **A person is named only by their own release** to this employer, the same one [directory sync](#directory-sync) uses. Someone who has not consented, or has no profile in the folder, is not named: the seat shows as "Filled (person not shown)", so headcount and spans stay right.
+- **Budget figures** (`budget`: band, FTE, annual cost) are the seat's, never a person's pay. They are left out of every view unless you pass `--budget`, and that view says it is internal.
+
+**Building and keeping history.** The export gives the seats (title, department, manager); the profiles give the names. With `--base`, nothing is deleted: a seat the directory no longer has is **ended** the day before the run, a seat whose title or department changed is replaced by a new post that `succeeds` it (so a comparison reads as a change, not as one seat closing and another opening), and posts you wrote by hand are left alone. Run it each month and the history accumulates. Vacancies, planned roles, budgets and the units above departments are written by hand: no directory knows about a seat nobody holds.
+
+The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-org-chart-design.md`](docs/superpowers/specs/2026-11-10-org-chart-design.md). An interactive view, a PDF and the analysis (span of control, layers, headcount over time) are next.
 
 ## The review file
 
