@@ -1,0 +1,48 @@
+Pat Example
+Enterprise architect | Release engineering | Consulting
+Dallas–Fort Worth, Texas
+
+EXPERIENCE
+
+EDS (now DXC Technology), Plano, Texas
+06/2005 - 03/2011
+
+Solutions Architect
+02/2010 - 03/2011
+Release engineering and architecture for state government outsourcing accounts.
+- Continued: Led the release-engineering team for the account. (8 engineers (Jul 2009–Mar 2011))
+- Owned the target architecture for the claims-system modernization.
+
+Technology Consultant III
+01/2009 - 01/2010
+Same job; the title changed when HP mapped EDS roles onto its own job architecture.
+- Continued: Ran nightly batch operations for a state Medicaid claims system.
+- Continued: Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009); 8 engineers (Jul 2009–Mar 2011))
+- Continued: Mentored new engineers through the onboarding program.
+
+Senior Systems Engineer
+04/2007 - 12/2008
+- Continued: Ran nightly batch operations for a state Medicaid claims system.
+- Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009))
+- Mentored new engineers through the onboarding program.
+
+Systems Engineer
+06/2005 - 03/2007
+- Ran nightly batch operations for a state Medicaid claims system.
+
+Network Engineer
+Buchanan Associates (now Buchanan Technologies), Grapevine, Texas
+07/1999 - 05/2005
+Managed network services for outsourcing clients.
+
+Coopers & Lybrand (now PwC), Dallas, Texas
+03/1996 - 06/1999
+
+Senior Associate
+07/1998 - 06/1999
+Continued with the merged firm, PricewaterhouseCoopers.
+- Continued: Delivered ERP integration work for manufacturing clients.
+
+Associate
+03/1996 - 06/1998
+- Delivered ERP integration work for manufacturing clients.

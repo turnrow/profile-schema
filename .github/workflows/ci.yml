@@ -39,6 +39,7 @@ jobs:
             done
             node bin/profile.mjs convert "$src" gedcom7 --on 2026-11-07 --out "examples/out/$ex.ged"
             node bin/profile.mjs convert "$src" gedcom551 --on 2026-11-07 --out "examples/out/$ex.551.ged"
+            node bin/profile.mjs convert "$src" ats --on 2026-11-07 --out "examples/out/$ex.ats.txt"
           done
           node bin/profile.mjs review examples/sample.profile.json --on 2026-11-07 --out examples/out/sample.review.md
           git diff --exit-code -- examples/recommended examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'

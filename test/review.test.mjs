@@ -82,12 +82,12 @@ test("each entry says which outputs show it, and why the others don't", () => {
   const row = rowOf(md, p.work[0].id);
   assert.equal(row.length, 9);
   assert.match(row[8], /Shown in: [a-z0-9, ]*linkedin/);
-  assert.match(row[8], /Hidden from: brief \(priority 40 is below 80\)/);
+  assert.match(row[8], /Hidden from: .*brief \(priority 40 is below 80\)/);
   assert.match(row[8], /Not used by: scim/);
   const pending = rowOf(md, "consulting-gap");
   assert.equal(pending[2], "pending");
   assert.match(pending[7], /Open question: Was this paid work/);
-  assert.match(pending[8], /Shown in: no output\. Hidden from: brief \(status is pending\)/);
+  assert.match(pending[8], /Shown in: no output\. Hidden from: .*brief \(status is pending\)/);
 });
 
 test("positions and figures follow their entry: hidden when it is, never by priority", () => {
@@ -96,7 +96,7 @@ test("positions and figures follow their entry: hidden when it is, never by prio
   job.priority = 10;
   job.confidence = "high";
   const md = review(p);
-  assert.match(rowOf(md, job.id)[8], /Hidden from: brief \(priority 10 is below 80\)/);
+  assert.match(rowOf(md, job.id)[8], /Hidden from: .*brief \(priority 10 is below 80\)/);
   assert.match(rowOf(md, `${job.id} › position ${job.positions[0].id}`)[8], /brief \(its entry is hidden: priority 10 is below 80\)/);
 });
 

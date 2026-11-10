@@ -1,0 +1,9 @@
+{
+  "target": "ats",
+  "extends": "resume",
+  "followsTargets": [
+    "resume"
+  ],
+  "format": "ats",
+  "description": "The résumé as plain text for applicant tracking systems (ATS): one column of UTF-8 text with plain headings, dates as MM/YYYY, links written out, and no tables, columns or graphics for a parser to misread. It is written from the résumé view, so it says what the PDF says; an entry left out of, or reworded for, the résumé (targets.resume) is treated the same here."
+}
