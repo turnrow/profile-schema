@@ -3,6 +3,9 @@ name: Release
 # Tags and publishes a GitHub release for the version in package.json, once, when it reaches main.
 # To release: bump "version" in package.json, add a "## <version> (<date>): …" entry to CHANGELOG.md,
 # and merge. Nothing happens when the tag already exists.
+# It also backfills: any version with a CHANGELOG entry but no tag is tagged at the commit on main
+# where package.json first reached it (scripts/missing-releases.mjs), and published as a release
+# that is not marked latest.
 
 on:
   push:
@@ -26,6 +29,19 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Backfill releases for earlier versions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/missing-releases.mjs | while read -r v sha; do
+            [ "$v" = "$(node -p "require('./package.json').version")" ] && continue
+            awk -v v="$v" '
+              /^## / { if (found) exit; if (index($0, "## " v " ") == 1 || $0 == "## " v) { found = 1; next } }
+              found { print }
+            ' CHANGELOG.md > "notes-$v.md"
+            echo "Backfilling v$v at $sha"
+            gh release create "v$v" --target "$sha" --title "Profile Schema $v" --notes-file "notes-$v.md" --latest=false
+          done
       - name: Read the version
         id: version
         run: |
