@@ -183,6 +183,26 @@ test("renders the two-column layout, on one page and across pages", { skip: noTy
 });
 
 
+test("every résumé entry has a title: an entry with none (service without a role) is titled by its organization", () => {
+  const p = sample();
+  p.service = [{ id: "navy", organization: "us-navy", startDate: "1973", endDate: "1975", summary: "Two years of active duty.", status: "approved", confidence: "high" }];
+  p.organizations = { ...p.organizations, "us-navy": { name: "United States Navy", kind: "government" } };
+  const { view } = resumeViewForPdf(p, { on: ON });
+  const e = view.sections.find((s) => s.id === "service").entries[0];
+  assert.equal(e.title, "United States Navy");
+  assert.equal(e.organization, undefined, "not repeated on the second line");
+  for (const s of view.sections) for (const x of s.entries) assert.ok(x.title, `${s.id}/${x.id} has a title`);
+});
+
+test("renders an entry that had no title of its own", { skip: noTypst }, () => {
+  const p = sample();
+  p.service = [{ id: "navy", organization: "us-navy", startDate: "1973", endDate: "1975", status: "approved", confidence: "high" }];
+  p.organizations = { ...p.organizations, "us-navy": { name: "United States Navy", kind: "government" } };
+  const out = join(tmp(), "cv.pdf");
+  renderResumePdf(p, { out, on: ON });
+  assert.ok(readFileSync(out).length > 5000);
+});
+
 test("renders the academic layout", { skip: noTypst }, () => {
   const out = join(tmp(), "cv.pdf");
   renderResumePdf(load("examples/employee.profile.json"), { out, on: ON, layout: "academic" });
