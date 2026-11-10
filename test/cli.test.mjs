@@ -89,9 +89,9 @@ test("a zip, a missing file and a bad mapping name each get a plain explanation"
   writeFileSync(zip, Buffer.from([0x50, 0x4b, 0x03, 0x04, 0, 0]));
   assert.match(cli("validate", zip).stderr, /zip archive: unzip it/);
   assert.match(cli("validate", join(dir, "nope.json")).stderr, /no such file or folder/);
-  const r = cli("convert", SAMPLE, "europass");
+  const r = cli("convert", SAMPLE, "xing");
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /unknown mapping "europass": use one of ats, brief, clr, gedcom551, gedcom7, hropen, jsonresume, linkedin, ob3, resume, schemaorg, scim, timeline, verification/);
+  assert.match(r.stderr, /unknown mapping "xing": use one of ats, brief, clr, europass, gedcom551, gedcom7, hropen, jsonresume, linkedin, ob3, resume, schemaorg, scim, timeline, verification/);
   assert.match(cli("convert", SAMPLE, join(dir, "mine.json")).stderr, /no such mapping file/);
 });
 

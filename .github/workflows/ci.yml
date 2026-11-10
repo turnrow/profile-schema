@@ -51,6 +51,7 @@ jobs:
             node bin/profile.mjs convert "$src" gedcom7 --on 2026-11-07 --out "examples/out/$ex.ged"
             node bin/profile.mjs convert "$src" gedcom551 --on 2026-11-07 --out "examples/out/$ex.551.ged"
             node bin/profile.mjs convert "$src" ats --on 2026-11-07 --out "examples/out/$ex.ats.txt"
+            node bin/profile.mjs convert "$src" europass --on 2026-11-07 --out "examples/out/$ex.europass.xml"
           done
           for m in ob3 clr; do
             node bin/profile.mjs convert examples/recommended "$m" --on 2026-11-07 --out "examples/out/recommended.$m.json"

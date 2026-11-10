@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Candidate xsi:schemaLocation="http://www.europass.eu/1.0 Candidate.xsd" xmlns="http://www.europass.eu/1.0" xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:eures="http://www.europass_eures.eu/1.0" xmlns:hr="http://www.hr-xml.org/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <hr:DocumentID schemeID="77915a91-c6b4-58ea-86c2-b67c0a5d98a4" schemeName="DocumentIdentifier" schemeAgencyName="EUROPASS" schemeVersionID="4.0"/>
+  <CandidateSupplier>
+    <hr:PartyID schemeID="77915a91-c6b4-58ea-86c2-b67c0a5d98a4" schemeName="PartyID" schemeAgencyName="EUROPASS" schemeVersionID="1.0"/>
+    <hr:PartyName>Owner</hr:PartyName>
+    <PersonContact>
+      <PersonName>
+        <oa:GivenName>Pat</oa:GivenName>
+        <hr:FamilyName>Example</hr:FamilyName>
+      </PersonName>
+    </PersonContact>
+    <hr:PrecedenceCode>1</hr:PrecedenceCode>
+  </CandidateSupplier>
+  <CandidatePerson>
+    <PersonName>
+      <oa:GivenName>Pat</oa:GivenName>
+      <hr:FamilyName>Example</hr:FamilyName>
+    </PersonName>
+    <Communication>
+      <UseCode>home</UseCode>
+      <Address type="home">
+        <CountryCode>us</CountryCode>
+      </Address>
+    </Communication>
+  </CandidatePerson>
+  <CandidateProfile languageCode="en">
+    <EmploymentHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>HP Enterprise Services (now DXC Technology)</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <Address>
+              <oa:CityName>Plano</oa:CityName>
+              <CountryCode>us</CountryCode>
+            </Address>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Solutions Architect</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:StartDate>
+              <hr:FormattedDateTime>2010-02</hr:FormattedDateTime>
+            </eures:StartDate>
+            <eures:EndDate>
+              <hr:FormattedDateTime>2011-03</hr:FormattedDateTime>
+            </eures:EndDate>
+            <hr:CurrentIndicator>false</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;p&gt;Release engineering and architecture for state government outsourcing accounts.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Continued: Led the release-engineering team for the account. (8 engineers (Jul 2009–Mar 2011))&lt;/li&gt;&lt;li&gt;Owned the target architecture for the claims-system modernization.&lt;/li&gt;&lt;/ul&gt;</oa:Description>
+          <City>Plano</City>
+          <Country>us</Country>
+        </PositionHistory>
+      </EmployerHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>EDS, an HP Company (now DXC Technology)</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <Address>
+              <oa:CityName>Plano</oa:CityName>
+              <CountryCode>us</CountryCode>
+            </Address>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Technology Consultant III</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:StartDate>
+              <hr:FormattedDateTime>2009-01</hr:FormattedDateTime>
+            </eures:StartDate>
+            <eures:EndDate>
+              <hr:FormattedDateTime>2010-01</hr:FormattedDateTime>
+            </eures:EndDate>
+            <hr:CurrentIndicator>false</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;p&gt;Same job; the title changed when HP mapped EDS roles onto its own job architecture.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Continued: Ran nightly batch operations for a state Medicaid claims system.&lt;/li&gt;&lt;li&gt;Continued: Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009); 8 engineers (Jul 2009–Mar 2011))&lt;/li&gt;&lt;li&gt;Continued: Mentored new engineers through the onboarding program.&lt;/li&gt;&lt;/ul&gt;</oa:Description>
+          <City>Plano</City>
+          <Country>us</Country>
+        </PositionHistory>
+      </EmployerHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>EDS (now DXC Technology)</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <Address>
+              <oa:CityName>Plano</oa:CityName>
+              <CountryCode>us</CountryCode>
+            </Address>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Senior Systems Engineer</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:StartDate>
+              <hr:FormattedDateTime>2007-04</hr:FormattedDateTime>
+            </eures:StartDate>
+            <eures:EndDate>
+              <hr:FormattedDateTime>2008-12</hr:FormattedDateTime>
+            </eures:EndDate>
+            <hr:CurrentIndicator>false</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;ul&gt;&lt;li&gt;Continued: Ran nightly batch operations for a state Medicaid claims system.&lt;/li&gt;&lt;li&gt;Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009))&lt;/li&gt;&lt;li&gt;Mentored new engineers through the onboarding program.&lt;/li&gt;&lt;/ul&gt;</oa:Description>
+          <City>Plano</City>
+          <Country>us</Country>
+        </PositionHistory>
+      </EmployerHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>EDS (now DXC Technology)</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <Address>
+              <oa:CityName>Plano</oa:CityName>
+              <CountryCode>us</CountryCode>
+            </Address>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Systems Engineer</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:StartDate>
+              <hr:FormattedDateTime>2005-06</hr:FormattedDateTime>
+            </eures:StartDate>
+            <eures:EndDate>
+              <hr:FormattedDateTime>2007-03</hr:FormattedDateTime>
+            </eures:EndDate>
+            <hr:CurrentIndicator>false</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;ul&gt;&lt;li&gt;Ran nightly batch operations for a state Medicaid claims system.&lt;/li&gt;&lt;/ul&gt;</oa:Description>
+          <City>Plano</City>
+          <Country>us</Country>
+        </PositionHistory>
+      </EmployerHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>Buchanan Associates (now Buchanan Technologies)</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <Address>
+              <oa:CityName>Grapevine</oa:CityName>
+              <CountryCode>us</CountryCode>
+            </Address>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Network Engineer</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:StartDate>
+              <hr:FormattedDateTime>1999-07</hr:FormattedDateTime>
+            </eures:StartDate>
+            <eures:EndDate>
+              <hr:FormattedDateTime>2005-05</hr:FormattedDateTime>
+            </eures:EndDate>
+            <hr:CurrentIndicator>false</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;p&gt;Managed network services for outsourcing clients.&lt;/p&gt;</oa:Description>
+          <City>Grapevine</City>
+          <Country>us</Country>
+        </PositionHistory>
+      </EmployerHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>PricewaterhouseCoopers (now PwC)</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <Address>
+              <oa:CityName>Dallas</oa:CityName>
+              <CountryCode>us</CountryCode>
+            </Address>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Senior Associate</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:StartDate>
+              <hr:FormattedDateTime>1998-07</hr:FormattedDateTime>
+            </eures:StartDate>
+            <eures:EndDate>
+              <hr:FormattedDateTime>1999-06</hr:FormattedDateTime>
+            </eures:EndDate>
+            <hr:CurrentIndicator>false</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;p&gt;Continued with the merged firm, PricewaterhouseCoopers.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Continued: Delivered ERP integration work for manufacturing clients.&lt;/li&gt;&lt;/ul&gt;</oa:Description>
+          <City>Dallas</City>
+          <Country>us</Country>
+        </PositionHistory>
+      </EmployerHistory>
+      <EmployerHistory>
+        <hr:OrganizationName>Coopers &amp; Lybrand (now PwC)</hr:OrganizationName>
+        <OrganizationContact>
+          <Communication>
+            <Address>
+              <oa:CityName>Dallas</oa:CityName>
+              <CountryCode>us</CountryCode>
+            </Address>
+          </Communication>
+        </OrganizationContact>
+        <PositionHistory>
+          <PositionTitle typeCode="FREETEXT">Associate</PositionTitle>
+          <eures:EmploymentPeriod>
+            <eures:StartDate>
+              <hr:FormattedDateTime>1996-03</hr:FormattedDateTime>
+            </eures:StartDate>
+            <eures:EndDate>
+              <hr:FormattedDateTime>1998-06</hr:FormattedDateTime>
+            </eures:EndDate>
+            <hr:CurrentIndicator>false</hr:CurrentIndicator>
+          </eures:EmploymentPeriod>
+          <oa:Description>&lt;ul&gt;&lt;li&gt;Delivered ERP integration work for manufacturing clients.&lt;/li&gt;&lt;/ul&gt;</oa:Description>
+          <City>Dallas</City>
+          <Country>us</Country>
+        </PositionHistory>
+      </EmployerHistory>
+    </EmploymentHistory>
+  </CandidateProfile>
+  <RenderingInformation>
+    <Design>
+      <Template>Template1</Template>
+      <Color>Default</Color>
+      <FontSize>Medium</FontSize>
+      <Logo>FirstPage</Logo>
+      <PageNumbers>true</PageNumbers>
+      <SectionsOrder>
+        <Section>
+          <Title>work-experience</Title>
+        </Section>
+      </SectionsOrder>
+    </Design>
+  </RenderingInformation>
+</Candidate>
