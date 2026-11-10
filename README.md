@@ -260,6 +260,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Take an employer's corrections | `writeback <profile> <audience> <scim-user.json> --method … --domain …` |
 | Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
+| See what a folder of profiles would change in a directory | `directory diff <folder> --against <export> --target scim --domain … --method … --out <folder>` |
 
 Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `europass`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
 
@@ -496,6 +497,41 @@ What to know:
 - **Qualified dates are not rounded.** HR Open dates are exact, so "about 1996" is left out of `start` and said in words in the entry's `descriptions`.
 - **Left out:** awards, projects and interests have no place in a Candidate.
 - **Checked against the standard.** The tests validate every example against HR Open's JSON Schemas and, because those schemas accept any extra key, also check that every key written is one the standard defines. `node scripts/fetch-hropen-schemas.mjs` downloads the release (it is HR Open's to distribute, under its own licence, so it is not kept here). Not done: no ATS or HR system has imported the output. The LER-RS résumé that 4.5 also defines is not written yet.
+
+## Directory sync
+
+```sh
+node bin/profile.mjs directory diff examples/directory/people \
+  --against examples/directory/acme-users.scim.json --target scim \
+  --domain acme.example --method oidc --out directory-run
+```
+
+An organization that keeps a folder of its people's profiles can see what those profiles would change in its directory. `directory diff` reads the folder and the directory's own export of its users, and writes to `--out`:
+
+| File | What it holds |
+|---|---|
+| `report.md` | What will change, what will not and why, and who was left out. For a person to read and approve. |
+| `change-set.json` | Every change, with the export's hash and who the run was for. |
+| `changes/<user>.json` | One file per person. |
+| `refusals.json` | Who was left out, and the reason. |
+| `receipts/<user>.json` | The consent receipt for each person's release. |
+| the connector's own file | For `scim`: `scim-bulk.json`, one SCIM Bulk request. |
+
+See [`examples/out/directory/`](examples/out/directory/), made from the fictional people in [`examples/directory/`](examples/directory/).
+
+**It changes nothing.** It reads and compares. Applying is a separate step that a person takes after reading the report.
+
+The rule it follows: **a directory update is a release, to an employer, of fields the person is the authority for.**
+
+- **Every update is a [release](#releases-and-consent-receipts).** The person must have consented, the profile must have an active audience with the purpose `employeeDirectory` that the given `--domain` qualifies for, and each release leaves a receipt. A person who has not consented is left out, and nothing of theirs is compared.
+- **The person's own fields are pushed:** given and family name, display name, nickname, pronouns, preferred title, photo, headline, short bio and phone, as far as the audience grants them.
+- **The employer's fields are compared, never pushed:** official title, department, division, cost center, employee number, manager and work location. The directory, or the HR system behind it, is the source of truth for those; a difference is listed in the report for [write-back](#write-back-corrections-from-the-employer) to resolve. An audience's own `writeBack.authority` rules can hand a field to the person.
+- **People are matched** by employee number, then by e-mail address. Never by name. No match, or more than one, leaves the person out.
+- **It never** creates, removes or renames a user, clears a value, or touches groups, licences or passwords.
+
+Profiles are read-only unless you pass `--record`, which adds each release to its profile as `release --record` does. With `--on <date>` a run is reproducible. A run's output holds personal data: keep it out of public repositories and shared folders.
+
+The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-directory-sync-design.md`](docs/superpowers/specs/2026-11-10-directory-sync-design.md). `scim` is the first connector; Google Workspace, Microsoft Entra ID, Okta, OneLogin and LDAP are planned on the same base.
 
 ## The review file
 

@@ -1,0 +1,54 @@
+{
+  "schemas": [
+    "urn:ietf:params:scim:api:messages:2.0:BulkRequest"
+  ],
+  "failOnErrors": 1,
+  "Operations": [
+    {
+      "method": "PATCH",
+      "path": "/Users/u-1001",
+      "data": {
+        "schemas": [
+          "urn:ietf:params:scim:api:messages:2.0:PatchOp"
+        ],
+        "Operations": [
+          {
+            "op": "replace",
+            "path": "name.givenName",
+            "value": "Sam"
+          },
+          {
+            "op": "replace",
+            "path": "displayName",
+            "value": "Sam Rivera"
+          },
+          {
+            "op": "replace",
+            "path": "nickName",
+            "value": "Sam"
+          },
+          {
+            "op": "replace",
+            "path": "urn:turnrow:params:scim:schemas:extension:profile:2.0:User:pronouns",
+            "value": "she/her"
+          },
+          {
+            "op": "replace",
+            "path": "urn:turnrow:params:scim:schemas:extension:profile:2.0:User:preferredTitle",
+            "value": "Platform Engineering Lead"
+          },
+          {
+            "op": "replace",
+            "path": "photos[type eq \"photo\"].value",
+            "value": "https://example.com/images/sam-rivera.jpg"
+          },
+          {
+            "op": "replace",
+            "path": "urn:turnrow:params:scim:schemas:extension:profile:2.0:User:shortBio",
+            "value": "Platform engineer who makes other engineers faster: build systems, internal tooling and the paved road from laptop to production."
+          }
+        ]
+      }
+    }
+  ]
+}

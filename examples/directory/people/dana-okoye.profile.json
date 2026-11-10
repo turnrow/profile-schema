@@ -1,0 +1,255 @@
+{
+  "$schema": "../schema/profile.schema.json",
+  "schemaVersion": "2.5.0",
+  "meta": {
+    "defaultLocale": "en-US",
+    "locales": [
+      "en-US",
+      "es"
+    ],
+    "updated": "2026-11-02T15:00:00Z",
+    "owner": "Dana Okoye",
+    "subjectConsent": {
+      "given": true,
+      "on": "2026-11-02",
+      "note": "Fictional sample."
+    },
+    "notes": "FICTIONAL SAMPLE made by scripts/make-directory-example.mjs; do not edit by hand."
+  },
+  "person": {
+    "name": "Dana Okoye",
+    "names": [
+      {
+        "type": "preferred",
+        "full": "Dana Okoye",
+        "given": "Dana",
+        "family": "Okoye"
+      }
+    ],
+    "pronouns": "they/them",
+    "jobTitle": "Product Designer",
+    "contact": {
+      "email": "dana.okoye@acme.example",
+      "emailVisibility": "network"
+    }
+  },
+  "organizations": {
+    "acme": {
+      "name": "Acme Example Corp",
+      "kind": "company",
+      "url": "https://acme.example",
+      "domains": [
+        "acme.example",
+        "acme-corp.example"
+      ],
+      "identifiers": [
+        {
+          "scheme": "lei",
+          "value": "5493000EXAMPLEACME64"
+        },
+        {
+          "scheme": "uei",
+          "value": "JM5AQKH7XYZ1",
+          "label": "SAM.gov UEI (example)"
+        },
+        {
+          "scheme": "cage",
+          "value": "1AB23"
+        },
+        {
+          "scheme": "ein",
+          "value": "12-3456789",
+          "audiences": [
+            "current-employer"
+          ]
+        },
+        {
+          "scheme": "stateEntityNumber",
+          "value": "0801234567",
+          "jurisdiction": "US-TX",
+          "label": "Texas SOS file number"
+        },
+        {
+          "scheme": "stateTaxId",
+          "value": "32012345678",
+          "jurisdiction": "US-TX",
+          "label": "Texas taxpayer number"
+        }
+      ],
+      "classifications": [
+        {
+          "system": "naics",
+          "code": "541512",
+          "version": "2022",
+          "label": "Computer Systems Design Services"
+        }
+      ]
+    },
+    "northwind": {
+      "name": "Northwind Example Ltd",
+      "kind": "company",
+      "url": "https://northwind.example",
+      "domains": [
+        "northwind.example"
+      ],
+      "identifiers": [
+        {
+          "scheme": "ein",
+          "value": "98-7654321",
+          "audiences": [
+            "former-employers"
+          ]
+        },
+        {
+          "scheme": "duns",
+          "value": "123456789",
+          "to": "2022-04-04",
+          "status": "replaced"
+        },
+        {
+          "scheme": "uei",
+          "value": "VN1AJFAD19J9",
+          "from": "2022-04-04"
+        },
+        {
+          "scheme": "stateEntityNumber",
+          "value": "603123456",
+          "jurisdiction": "US-WA",
+          "label": "Washington UBI"
+        }
+      ]
+    },
+    "red-cross-example": {
+      "name": "Example Red Cross Chapter",
+      "kind": "nonprofit"
+    }
+  },
+  "audiences": {
+    "current-employer": {
+      "label": "My current employer's employee directory",
+      "kind": "employer",
+      "relation": "current",
+      "purpose": "employeeDirectory",
+      "purposeDescription": "Directory listing, chat and email profile, org chart.",
+      "baseVisibility": [
+        "public",
+        "network"
+      ],
+      "person": [
+        "name",
+        "preferredName",
+        "pronouns",
+        "image",
+        "email",
+        "jobTitle",
+        "shortBio",
+        "profiles"
+      ],
+      "sections": [
+        "skills",
+        "languages",
+        "credentials"
+      ],
+      "verification": {
+        "methods": [
+          "oidc",
+          "saml",
+          "dnsTxt"
+        ],
+        "writeBackMethods": [
+          "oidc"
+        ]
+      },
+      "expires": "onSeparation",
+      "writeBack": {
+        "allowed": true,
+        "authority": [
+          {
+            "field": "employerRecord.*",
+            "authority": "employer"
+          },
+          {
+            "field": "startDate",
+            "authority": "employer"
+          }
+        ]
+      }
+    },
+    "former-employers": {
+      "label": "Employment verification for past employers",
+      "kind": "employer",
+      "relation": "former",
+      "purpose": "employmentVerification",
+      "person": [
+        "name",
+        "legalName"
+      ],
+      "verification": {
+        "methods": [
+          "oidc",
+          "signedRequest"
+        ]
+      },
+      "expires": "never"
+    }
+  },
+  "work": [
+    {
+      "id": "acme-platform",
+      "status": "approved",
+      "confidence": "high",
+      "priority": 100,
+      "organization": "acme",
+      "title": "Product Designer",
+      "employmentType": "fullTime",
+      "workplaceType": "hybrid",
+      "startDate": "2026-11-02",
+      "current": true,
+      "location": {
+        "label": "Austin, Texas",
+        "countryCode": "US"
+      },
+      "summary": "Leads the internal developer platform team.",
+      "employerRecord": {
+        "officialTitle": "Product Designer II",
+        "department": "Design",
+        "employeeNumber": "E-104310"
+      },
+      "citations": [
+        {
+          "source": "offer-letter",
+          "quality": "primary"
+        }
+      ],
+      "occupations": [
+        {
+          "system": "soc",
+          "code": "11-3021"
+        },
+        {
+          "system": "onetSoc",
+          "code": "11-3021.00"
+        },
+        {
+          "system": "soc",
+          "code": "15-1252",
+          "match": "secondary"
+        }
+      ]
+    }
+  ],
+  "sources": {
+    "offer-letter": {
+      "title": "Acme offer letter",
+      "kind": "document",
+      "date": "2026-10-01",
+      "defaultQuality": "primary"
+    },
+    "northwind-letter": {
+      "title": "Northwind employment verification letter",
+      "kind": "document",
+      "date": "2026-10-31",
+      "defaultQuality": "primary"
+    }
+  }
+}

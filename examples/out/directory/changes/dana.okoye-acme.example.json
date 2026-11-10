@@ -1,0 +1,25 @@
+{
+  "user": {
+    "id": "u-1002",
+    "primaryEmail": "dana.okoye@acme.example",
+    "employeeNumber": "E-104310"
+  },
+  "person": "Dana Okoye",
+  "profile": "dana-okoye.profile.json",
+  "matchedBy": "employee number",
+  "release": {
+    "id": "release-e3352c73-1746-6086-face-b3772f6d3f92",
+    "audience": "current-employer",
+    "payloadSha256": "68eb769e8bc800ce99e0b74d9eecc61a508d65634d1645ef176b48ee5cfb0191"
+  },
+  "fields": [],
+  "notes": [
+    {
+      "field": "workLocation",
+      "attribute": "urn:turnrow:params:scim:schemas:extension:profile:2.0:User:workLocation",
+      "directory": null,
+      "profile": "Austin, Texas",
+      "reason": "the employer is the authority for this field, so it is not changed; correct the profile through write-back, or the directory at its source"
+    }
+  ]
+}

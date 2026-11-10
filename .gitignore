@@ -8,3 +8,6 @@ review.md
 
 # The 1EdTech JSON Schemas are fetched for the tests (scripts/fetch-1edtech-schemas.mjs), not redistributed.
 .cache/
+
+# A directory run's output holds personal data (the report, the change files, the receipts). Only the fictional example is kept.
+directory-run/

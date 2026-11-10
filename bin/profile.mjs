@@ -24,6 +24,7 @@ import { reviewMarkdown } from "../lib/review.mjs";
 import { renderResumePdf, PdfError } from "../lib/pdf.mjs";
 import { gedzip, gedzipMedia, readBundleMedia, GEDZIP_MEDIA } from "../lib/gedcom.mjs";
 import { bundleFileReader } from "../lib/ob3.mjs";
+import { CONNECTORS, readProfileFolder, diffDirectory, changeReport, userFileName } from "../lib/directory/index.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS, resolveMapping } from "../index.mjs";
 
 const HELP = `turnrow-profile: validate, convert and share Turnrow Profiles.
@@ -41,6 +42,9 @@ Commands
   writeback <profile> <audience> <scim-user.json>   take an employer's corrections as claims
   media add <bundle> <image>               add a photo to a bundle, hashed and versioned
   badges import <bundle> <file | url>      add an Open Badge (2.0 or 3.0) to a bundle
+  directory diff <folder> --against <export> --target <connector> --out <folder>
+                                           compare a folder of profiles with a directory export and write the
+                                           changes, a report to approve and who was left out (changes nothing)
   help, version
 
 A profile is a .json file; a bundle is a folder holding profile.json and its media/ and badges/.
@@ -57,6 +61,8 @@ Options
   writeback:  --method <…> --domain <domain>
   media add:  --id <id> --alt <text>   --kind <kind>   --purpose <purpose>   --from <yyyy-mm>   --strip-gps
   badges import:  --id <id>   --fetch (needed before a URL is fetched)
+  directory diff: --target <${Object.keys(CONNECTORS).join("|")}>   --method <…> --domain <the employer's domain>
+              --audience <id> (default: each profile's directory audience)   --record (add each release to its profile)
   pdf:        --pages <1|auto>   --photo | --no-photo (default: no photo)   --density <comfortable|compact>
               --paper <us-letter|a4>   --min-priority <0-100>   --layout <classic|academic|two-column>   --typst <path to typst>
 
@@ -72,7 +78,7 @@ function fail(message, code = 1) { console.error(`error: ${message}`); process.e
 // Flags are declared here so that a misspelled one is refused instead of silently ignored.
 const VALUE_FLAGS = ["--locale", "--out", "--format", "--domain", "--method", "--application", "--receipt", "--on", "--recipient",
   "--visibility", "--media-base", "--id", "--alt", "--kind", "--purpose", "--from",
-  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst"];
+  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst", "--against", "--target", "--audience"];
 const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version", "--photo", "--no-photo", "--gedzip"];
 const flags = {};
 const argv = [];
@@ -117,6 +123,9 @@ const fromDate = takeFlag("--from");
 const stripGpsFlag = takeBool("--strip-gps");
 const fetchFlag = takeBool("--fetch");
 const asJson = takeBool("--json");
+const against = takeFlag("--against");
+const targetFlag = takeFlag("--target");
+const audienceFlag = takeFlag("--audience");
 const visibility = visibilityFlag ? visibilityFlag.split(",").map((v) => v.trim()) : undefined;
 if (visibility && visibility.some((v) => !["public", "network", "private"].includes(v))) {
   fail(`--visibility takes public, network and/or private (got ${visibilityFlag})`, 2);
@@ -161,7 +170,7 @@ function writeNew(path, bytes, what) {
 function writeOut(path, text) { mkdirSync(dirname(resolve(path)), { recursive: true }); writeFileSync(path, text); }
 function emit(text) { if (out) writeOut(out, text); else process.stdout.write(text); }
 function usage() {
-  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import> …\nRun "turnrow-profile help" for the commands and options.`);
+  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import|directory diff> …\nRun "turnrow-profile help" for the commands and options.`);
   process.exit(2);
 }
 if (flags["--version"] || command === "version") {
@@ -283,6 +292,44 @@ try {
         writeFileSync(file, JSON.stringify(profile, null, 2) + "\n");
         console.error(`Recorded ${r.record.id} in ${file}`);
       }
+      break;
+    }
+    case "directory": {
+      if (rest[0] !== "diff" || !rest[1]) usage();
+      const connector = CONNECTORS[targetFlag ?? ""];
+      if (!connector) fail(`directory diff needs --target: one of ${Object.keys(CONNECTORS).join(", ")}`, 2);
+      if (!against) fail("directory diff needs --against <export>: the directory's own export of its users", 2);
+      if (!out) fail("directory diff needs --out <folder> for the change set, the report and the receipts", 2);
+      if (!requester?.method || !requester?.domain) fail("directory diff needs --method and --domain: the employer's domain, and how you verified it", 2);
+      const folder = resolve(rest[1]);
+      if (!existsSync(folder) || !statSync(folder).isDirectory()) fail(`${rest[1]} is not a folder of profiles`);
+      if (!existsSync(against) || statSync(against).isDirectory()) fail(`no such export file: ${against}`);
+      if (existsSync(out) && !statSync(out).isDirectory()) fail(`--out ${out} is a file; a folder is expected`, 2);
+      const exportBytes = readFileSync(against);
+      let users;
+      try { users = connector.readExport(exportBytes); } catch (err) { fail(`${against}: ${err.message}`); }
+      const profiles = readProfileFolder(folder);
+      if (!profiles.length) fail(`${rest[1]} holds no profiles (files named *.profile.json, or bundle folders)`);
+      // With --on the run is reproducible: releases are stamped with that day, not with the clock.
+      const result = diffDirectory({ profiles, users, connector, requester, audience: audienceFlag, on, now: on ? `${on}T00:00:00.000Z` : undefined, exportSha256: createHash("sha256").update(exportBytes).digest("hex") });
+      const files = connector.render ? connector.render(result.changeSet) : [];
+      const put = (name, text) => writeOut(join(out, name), text);
+      put("change-set.json", result.text);
+      put("refusals.json", JSON.stringify(result.changeSet.refusals, null, 2) + "\n");
+      for (const c of result.changeSet.changes) put(join("changes", `${userFileName(c.user)}.json`), JSON.stringify(c, null, 2) + "\n");
+      for (const r of result.receipts) put(join("receipts", `${userFileName(result.changeSet.changes.find((c) => c.user.id === r.user).user)}.json`), JSON.stringify(r.receipt, null, 2) + "\n");
+      for (const f of files) put(f.name, f.data);
+      put("report.md", changeReport(result.changeSet, { sha256: result.sha256, files: files.map((f) => f.how) }));
+      if (recordIt) {
+        for (const r of result.records) {
+          const p = profiles.find((x) => x.name === r.name);
+          p.profile.releases = [...(p.profile.releases ?? []), r.record];
+          writeFileSync(p.file, JSON.stringify(p.profile, null, 2) + "\n");
+        }
+      }
+      const changed = result.changeSet.changes.filter((c) => c.fields.length);
+      console.error(`${changed.length} ${changed.length === 1 ? "person has" : "people have"} changes, ${result.changeSet.changes.length - changed.length} up to date, ${result.changeSet.refusals.length} left out. Nothing was changed in the directory.`);
+      console.error(`Read ${join(out, "report.md")} before applying. It holds personal data: keep it out of public repositories and shared folders.`);
       break;
     }
     case "media": {
