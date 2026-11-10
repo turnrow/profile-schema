@@ -23,7 +23,7 @@ import { parseBadge } from "../lib/badges.mjs";
 import { reviewMarkdown } from "../lib/review.mjs";
 import { renderResumePdf, PdfError } from "../lib/pdf.mjs";
 import { gedzip, gedzipMedia, readBundleMedia, GEDZIP_MEDIA } from "../lib/gedcom.mjs";
-import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS } from "../index.mjs";
+import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS, resolveMapping } from "../index.mjs";
 
 const HELP = `turnrow-profile: validate, convert and share Turnrow Profiles.
 
@@ -223,7 +223,7 @@ try {
       if (!r.valid) { console.error("Profile is not valid; run validate first.\n  " + r.errors.join("\n  ")); process.exit(1); }
       const mapping = loadMappingArg(rest[1]);
       const asGedzip = takeBool("--gedzip");
-      if (asGedzip && mapping.format !== "gedcom7") fail("--gedzip goes with the gedcom7 output", 2);
+      if (asGedzip && resolveMapping(mapping).format !== "gedcom7") fail("--gedzip goes with the gedcom7 output (GEDZip is a GEDCOM 7 format)", 2);
       if (asGedzip && !out) fail("--gedzip needs --out <file.gdz>: an archive can't be printed to the screen", 2);
       // In a GEDZip the media travel inside the archive, so bundle: links become paths in it.
       const { text, output, violations } = convert(profile, mapping, { locale, allowRuleViolations: allow, on, visibility, mediaBaseUrl: asGedzip ? GEDZIP_MEDIA : mediaBaseUrl });

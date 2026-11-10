@@ -1,14 +1,14 @@
 import { readFileSync, readdirSync } from "node:fs";
 
 export { validateProfile, getField, canonical, SECTIONS } from "./lib/validate.mjs";
-export { convert, checkRules, stringsOf, renderText, RuleViolationError, DEFAULT_INCLUDE, withoutNotes, withPublishedMedia, inclusion, sectionsRead } from "./lib/convert.mjs";
+export { convert, checkRules, stringsOf, renderText, RuleViolationError, DEFAULT_INCLUDE, withoutNotes, withPublishedMedia, inclusion, sectionsRead, resolveMapping } from "./lib/convert.mjs";
 export { fromJsonResume } from "./lib/import-jsonresume.mjs";
 export { resolveAudience, checkRequester, authorityFor, isCurrent, DEFAULT_AUTHORITY } from "./lib/audience.mjs";
 export { buildRelease, scopeProfile, consentReceipt, ReleaseRefusedError } from "./lib/release.mjs";
 export { officialTitle, checkCode, codeSet, socLevel, BUNDLED as BUNDLED_CODE_LISTS } from "./lib/codes.mjs";
 export { applyWriteBack, readScim } from "./lib/writeback.mjs";
 export { reviewMarkdown } from "./lib/review.mjs";
-export { renderGedcom7, gedcomDate, gedcomDateValue, gedcomPeriod, gedzip, gedzipMedia, readBundleMedia, storeZip, GEDZIP_MEDIA, EXTENSIONS as GEDCOM_EXTENSIONS } from "./lib/gedcom.mjs";
+export { renderGedcom7, renderGedcom551, gedcomDate, gedcomDateValue, gedcomPeriod, gedzip, gedzipMedia, readBundleMedia, storeZip, GEDZIP_MEDIA, EXTENSIONS as GEDCOM_EXTENSIONS } from "./lib/gedcom.mjs";
 export { renderResumePdf, resumeViewForPdf, dropCandidates, PdfError, LAYOUTS as PDF_LAYOUTS } from "./lib/pdf.mjs";
 
 /** The Turnrow Profile JSON Schema (draft 2020-12). */

@@ -1,0 +1,112 @@
+0 HEAD
+1 SOUR TURNROW_PROFILE
+2 NAME Profile Schema, a Turnrow Solution
+1 DATE 7 NOV 2026
+1 SUBM @U1@
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 CHAR UTF-8
+1 LANG English
+0 @U1@ SUBM
+1 NAME Ines Calloway
+0 @I1@ INDI
+1 NAME Ines /Calloway/
+2 GIVN Ines
+2 SURN Calloway
+1 OCCU Research Biologist
+2 DATE FROM 1996 TO MAY 2009
+2 PLAC Azores, Portugal
+2 AGNC Coastal Ecology Lab
+2 NOTE Date as recorded: c. 1996 – May 2009
+2 NOTE Field research on reef recovery; led survey dives and small-boat operations.
+2 NOTE Confidence: medium
+2 SOUR @S1@
+3 PAGE p3
+3 QUAY 1
+1 OCCU Director of Development
+2 DATE FROM JUN 2009 TO DEC 2023
+2 PLAC Cartagena, Colombia
+2 AGNC Harborline Resorts
+2 NOTE Led development of three waterfront resorts from site selection through opening.
+3 CONT 3 resorts opened
+3 CONT ~$240M development portfolio
+2 NOTE Confidence: high
+2 SOUR @S2@
+3 QUAY 3
+2 SOUR @S1@
+3 PAGE p1
+3 QUAY 1
+1 OCCU Founder & CEO
+2 DATE FROM MAR 2024
+2 PLAC New York, NY
+2 AGNC Tidewater Trails
+2 NOTE Building a trip-planning service for coastal and marine travel.
+2 NOTE Confidence: high
+2 SOUR @S3@
+3 QUAY 3
+1 EDUC BS, Marine Biology
+2 DATE FROM 1987 TO 1991
+2 AGNC State University (fictional)
+2 NOTE Confidence: high
+2 SOUR @S4@
+3 QUAY 3
+1 RESI
+2 DATE ABT 2008
+2 PLAC Paris, France
+2 NOTE A year in Paris studying hotel management in the evenings
+2 NOTE Confidence: medium
+2 SOUR @S5@
+3 QUAY 1
+1 EVEN
+2 TYPE Voyage
+2 DATE FROM JUN 1995 TO JUL 1995
+2 PLAC Lisbon, Portugal
+2 NOTE Sailed from Lisbon to the Azores
+2 NOTE Crewed a 40-foot research sloop to join the lab, her first ocean passage.
+3 CONT ~900 sea miles
+2 NOTE Confidence: medium
+2 SOUR @S5@
+3 PAGE 05:10
+3 QUAY 1
+1 EVEN
+2 TYPE Founding
+2 DATE MAR 2024
+2 PLAC New York, NY
+2 NOTE Founded Tidewater Trails
+2 NOTE Confidence: high
+2 SOUR @S3@
+3 QUAY 3
+1 EVEN
+2 TYPE Reserve service
+2 DATE FROM 1990 TO 1995
+2 AGNC Coast Guard Auxiliary (fictional unit)
+2 NOTE Boat crew member
+2 NOTE Date as recorded: between 1990 and 1991 – 1995
+2 NOTE Search-and-rescue boat crew on weekends.
+2 NOTE Confidence: medium
+2 SOUR @S5@
+3 PAGE 12:40
+3 QUAY 1
+1 OBJE @O1@
+0 @O1@ OBJE
+1 FILE https://example.com
+2 FORM com
+2 TITL Tidewater Trails
+0 @S1@ SOUR
+1 AUTH Ines Calloway
+1 TITL Ines Calloway CV, 2024
+1 PUBL 2024-01
+0 @S2@ SOUR
+1 TITL Harborline offer letter
+1 PUBL 2009-05
+0 @S3@ SOUR
+1 TITL Certificate of incorporation, Tidewater Trails
+1 PUBL 2024-03
+0 @S4@ SOUR
+1 TITL BS diploma
+1 PUBL 1991
+0 @S5@ SOUR
+1 TITL Bio interview recording
+1 PUBL 2026-10-15
+0 TRLR

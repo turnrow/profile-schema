@@ -1,0 +1,6 @@
+{
+  "target": "gedcom551",
+  "extends": "gedcom7",
+  "format": "gedcom551",
+  "description": "GEDCOM 5.5.1, for the many genealogy programs that don't read 7.0 yet. It says what the gedcom7 output says: the same individual, facts, sources and media, chosen by the same filter. What 5.5.1 has no place for is kept as a note so nothing is dropped without a trace: the wording of an uncertain date, the confidence, and the title of a residence or event. Long text is continued with CONC and CONT within the 255-character line limit."
+}
