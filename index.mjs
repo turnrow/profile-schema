@@ -8,6 +8,7 @@ export { buildRelease, scopeProfile, consentReceipt, ReleaseRefusedError } from 
 export { officialTitle, checkCode, codeSet, socLevel, BUNDLED as BUNDLED_CODE_LISTS } from "./lib/codes.mjs";
 export { applyWriteBack, readScim } from "./lib/writeback.mjs";
 export { reviewMarkdown } from "./lib/review.mjs";
+export { renderResumePdf, resumeViewForPdf, dropCandidates, PdfError, LAYOUTS as PDF_LAYOUTS } from "./lib/pdf.mjs";
 
 /** The Turnrow Profile JSON Schema (draft 2020-12). */
 export const schema = JSON.parse(readFileSync(new URL("./schema/profile.schema.json", import.meta.url), "utf8"));

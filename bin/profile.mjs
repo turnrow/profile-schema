@@ -4,6 +4,8 @@
 //   turnrow-profile validate <profile.json | bundle-folder>... [--json]
 //   turnrow-profile convert  <profile.json | bundle-folder> <mapping-name | mapping.json> [--locale xx] [--out file] [--allow-rule-violations]
 //                            [--visibility public[,network]] [--media-base https://example.com/profile/] [--on yyyy-mm-dd]
+//   turnrow-profile pdf      <profile.json | bundle-folder> --out resume.pdf [--pages 1|auto] [--photo] [--density compact] [--paper a4]
+//                            [--min-priority n] [--locale xx] [--on yyyy-mm-dd] [--typst path]   (needs Typst: https://typst.app)
 //   turnrow-profile import   <resume.json> [--locale xx] [--out file]
 //   turnrow-profile open     <profile.json | bundle-folder>      list items waiting on confirmation
 //   turnrow-profile review   <profile.json | bundle-folder> [--on yyyy-mm-dd] [--locale xx] [--out review.md]   the whole profile, for checking (internal)
@@ -19,6 +21,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { readImageInfo, stripGps } from "../lib/media.mjs";
 import { parseBadge } from "../lib/badges.mjs";
 import { reviewMarkdown } from "../lib/review.mjs";
+import { renderResumePdf, PdfError } from "../lib/pdf.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS } from "../index.mjs";
 
 const HELP = `turnrow-profile: validate, convert and share Turnrow Profiles.
@@ -30,6 +33,7 @@ Commands
                                            it includes drafts, private entries, notes and other people's details)
   convert   <profile | bundle> <mapping>   write an output: ${BUNDLED_MAPPINGS.join(", ")},
                                            or the path to your own mapping .json
+  pdf       <profile | bundle> --out <file>   write an accessible résumé PDF (PDF/UA-1); needs Typst installed
   import    <resume.json>                  start a profile from a JSON Resume (everything arrives as a draft)
   release   <profile> <audience>           build an audience's payload and consent receipt
   writeback <profile> <audience> <scim-user.json>   take an employer's corrections as claims
@@ -50,6 +54,8 @@ Options
   writeback:  --method <…> --domain <domain>
   media add:  --id <id> --alt <text>   --kind <kind>   --purpose <purpose>   --from <yyyy-mm>   --strip-gps
   badges import:  --id <id>   --fetch (needed before a URL is fetched)
+  pdf:        --pages <1|auto>   --photo | --no-photo (default: no photo)   --density <comfortable|compact>
+              --paper <us-letter|a4>   --min-priority <0-100>   --layout <classic>   --typst <path to typst>
 
 Exit codes
   0 success   1 invalid profile, or an error   2 wrong usage   3 output breaks a content rule   4 release refused
@@ -62,8 +68,9 @@ function fail(message, code = 1) { console.error(`error: ${message}`); process.e
 
 // Flags are declared here so that a misspelled one is refused instead of silently ignored.
 const VALUE_FLAGS = ["--locale", "--out", "--format", "--domain", "--method", "--application", "--receipt", "--on", "--recipient",
-  "--visibility", "--media-base", "--id", "--alt", "--kind", "--purpose", "--from"];
-const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version"];
+  "--visibility", "--media-base", "--id", "--alt", "--kind", "--purpose", "--from",
+  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst"];
+const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version", "--photo", "--no-photo"];
 const flags = {};
 const argv = [];
 {
@@ -151,7 +158,7 @@ function writeNew(path, bytes, what) {
 function writeOut(path, text) { mkdirSync(dirname(resolve(path)), { recursive: true }); writeFileSync(path, text); }
 function emit(text) { if (out) writeOut(out, text); else process.stdout.write(text); }
 function usage() {
-  console.error(`usage: turnrow-profile <validate|open|review|convert|import|release|writeback|media add|badges import> …\nRun "turnrow-profile help" for the commands and options.`);
+  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import> …\nRun "turnrow-profile help" for the commands and options.`);
   process.exit(2);
 }
 if (flags["--version"] || command === "version") {
@@ -216,6 +223,22 @@ try {
       const { text, violations } = convert(profile, mapping, { locale, allowRuleViolations: allow, on, visibility, mediaBaseUrl });
       for (const v of violations) console.error(`warning: rule ${v.rule} matched "${v.match}"`);
       emit(text);
+      break;
+    }
+    case "pdf": {
+      if (!rest[0]) usage();
+      if (!out) fail("pdf needs --out <file.pdf>: a PDF can't be printed to the screen", 2);
+      if (flags["--photo"] && flags["--no-photo"]) fail("--photo and --no-photo can't both be given", 2);
+      const minPriority = flags["--min-priority"] === undefined ? 0 : Number(flags["--min-priority"]);
+      if (!Number.isInteger(minPriority) || minPriority < 0 || minPriority > 100) fail(`--min-priority takes a whole number from 0 to 100 (got ${flags["--min-priority"]})`, 2);
+      const { profile, bundleDir } = loadProfile(rest[0]);
+      const v = validateProfile(profile, { bundleDir });
+      if (!v.valid) { console.error("Profile is not valid; run validate first.\n  " + v.errors.join("\n  ")); process.exit(1); }
+      const r = renderResumePdf(profile, {
+        out, bundleDir, on, locale, visibility, minPriority, photo: takeBool("--photo"),
+        layout: flags["--layout"], pages: flags["--pages"], density: flags["--density"], paper: flags["--paper"], typst: flags["--typst"],
+      });
+      console.error(`Wrote ${out} (PDF/UA-1, ${r.typstVersion}). Check it with a screen reader before sending it widely.`);
       break;
     }
     case "import": {
@@ -341,6 +364,15 @@ try {
 } catch (err) {
   if (err instanceof RuleViolationError) { console.error(err.message); process.exit(3); }
   if (err instanceof ReleaseRefusedError) { console.error(err.message); process.exit(4); }
+  if (err instanceof PdfError) {
+    console.error(`error: ${err.message}`);
+    if (err.candidates) {
+      console.error("To fit one page, leave out the least important entries. Lowest priority first:");
+      for (const c of err.candidates) console.error(`  - ${c.section}: "${c.title}" (${c.id}, priority ${c.priority})`);
+      console.error(`Ways to do it: --min-priority <n> drops everything below n; "targets": { "resume": { "omit": true } } drops one entry${err.density === "compact" ? "" : "; --density compact fits more on the page"}. Or use --pages auto.`);
+    }
+    process.exit(1);
+  }
   // Anything else is reported plainly; set TURNROW_DEBUG=1 for the stack.
   console.error(`error: ${err.message}`);
   if (process.env.TURNROW_DEBUG) console.error(err.stack);

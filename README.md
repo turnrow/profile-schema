@@ -247,6 +247,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | See what still needs confirming | `open <profile \| bundle>` |
 | Get the whole profile as one file to check | `review <profile \| bundle> --out review.md` |
 | Write an output | `convert <profile \| bundle> <mapping> [--out file]` |
+| Write an accessible résumé PDF | `pdf <profile \| bundle> --out resume.pdf` |
 | Start from a JSON Resume | `import <resume.json> --out my.profile.json` |
 | Share with an audience, with a consent receipt | `release <profile> <audience> --method … --domain …` |
 | Take an employer's corrections | `writeback <profile> <audience> <scim-user.json> --method … --domain …` |
@@ -305,6 +306,38 @@ Every entry has the same shape, whatever its section: `id`, `priority`, `title`,
 - **Other people's words** appear only with their consent, and only to its scope.
 - Headings and levels are translated in English, Spanish, French, German and Portuguese; other locales fall back to English words with their own date formats.
 
+## The résumé PDF
+
+```sh
+node bin/profile.mjs pdf examples/sample.profile.json --out resume.pdf
+node bin/profile.mjs pdf my-bundle/ --out resume.pdf --pages 1 --photo --locale es
+```
+
+`pdf` lays out the [résumé view](#the-résumé-view) with a [Typst](https://typst.app) template and writes a tagged PDF that declares PDF/UA-1, the accessibility standard for PDF. Typst is a separate program: install it from [typst.app/open-source](https://typst.app/open-source/), or point to it with `--typst <path>`. Without it the command says so and stops.
+
+| Option | What it does |
+|---|---|
+| `--out <file>` | Where the PDF goes. Required. |
+| `--pages 1` | One page is a hard limit: if the résumé runs longer, nothing is written and the least important entries are named. Default `auto`. |
+| `--min-priority <n>` | Leave out entries whose `priority` is below `n` (0–100). |
+| `--density compact` | Smaller type and margins. Default `comfortable`. |
+| `--paper a4` | Default `us-letter`. |
+| `--photo` | Show the photo in force, with its alt text. Off by default; many employers ask for résumés without one. The photo must be stored in the bundle. |
+| `--locale`, `--on` | The language of headings and dates, and the date the résumé is made for. |
+
+- **Accessible by construction.** The document title and language are set; the name, sections and entries are real headings in order; reading order is visual order (one column); links are underlined and named; the photo carries its alt text; decorative rules are marked as decoration; no line is stranded at the top or bottom of a page. Text is Atkinson Hyperlegible Next in the brand colors, each at WCAG AAA contrast (7:1).
+- **Still check it.** Typst refuses to write a PDF/UA-1 file it knows is wrong, but a tool can't judge reading order or plain language. Listen to it with a screen reader before sending it widely. Automated veraPDF validation is on the [roadmap](ROADMAP.md).
+- **One layout so far:** `classic` ([`templates/resume/classic.typ`](templates/resume/classic.typ)). A template holds layout only; to make your own, copy it and read the same view.
+
+When one page isn't enough:
+
+```
+error: the résumé runs to 2 pages, and one was asked for
+To fit one page, leave out the least important entries. Lowest priority first:
+  - Awards: "Waterfront Project of the Year" (harbor-award, priority 40)
+  …
+```
+
 ## The review file
 
 ```sh
@@ -347,8 +380,10 @@ From code: `reviewMarkdown(profile, { on, locale, mappings })`. Pass your own `m
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
 | [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`, `verification`. |
+| [`lib/pdf.mjs`](lib/pdf.mjs) | Prepares the résumé view for the template, runs Typst and explains its failures. |
+| [`templates/`](templates/) | Typst templates for the résumé PDF. Layout only. |
 | [`lib/review.mjs`](lib/review.mjs) | Writes the review file: every entry with its status, sources and which outputs show it. |
-| [`bin/profile.mjs`](bin/profile.mjs) | Command line: `validate`, `open`, `review`, `convert`, `import`, `release`, `writeback`, `media add`, `badges import`. |
+| [`bin/profile.mjs`](bin/profile.mjs) | Command line: `validate`, `open`, `review`, `convert`, `pdf`, `import`, `release`, `writeback`, `media add`, `badges import`. |
 | [`examples/`](examples/) | Three fictional people: a founder; a new employee with audiences; and someone whose employers (EDS, Coopers & Lybrand, Buchanan) changed around them, with real company histories cited to public sources. Plus a sample SCIM write-back and every generated output. |
 | [`upstream/jsonresume/`](upstream/jsonresume/) | An unmodified copy of the current JSON Resume schema (1.7.1). The tests validate our JSON Resume export against it. |
 | [`test/`](test/) | `node --test`: schema, validator, converter, rules and import round trip. |

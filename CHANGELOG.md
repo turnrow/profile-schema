@@ -1,6 +1,15 @@
 # Changelog
 
-## Unreleased (2.7): review file and résumé view
+## Unreleased (2.7): review file, résumé view and accessible PDF
+
+### Résumé PDF
+- **`pdf <profile | bundle> --out resume.pdf`** lays out the résumé view with a Typst template (`templates/resume/classic.typ`) and writes a tagged PDF that declares PDF/UA-1. Typst is found on `PATH` or named with `--typst`; without it the command says where to get it.
+- **`--pages 1`** is a hard limit: when the résumé runs longer, nothing is written and the least important entries are listed. `--min-priority`, `--density compact` and `--paper a4` adjust the fit.
+- **`--photo`** shows the photo in force with its alt text. It is off by default and takes only a photo stored in the bundle, with the same path guards as validation.
+- Document title and language, real headings in order, one reading order, underlined and named links, decorative rules marked as decoration, no widows or orphans.
+- Atkinson Hyperlegible Next is added as TrueType (`brand/fonts/*.ttf`, SIL Open Font License) because Typst does not read WOFF2.
+- CI installs a pinned Typst so the rendering tests run; on a machine without Typst they are skipped.
+- From code: `renderResumePdf`, `resumeViewForPdf`, `dropCandidates`, `PdfError`.
 
 ### Résumé view
 - **`resume` mapping:** a neutral JSON view for résumé templates. It holds the document title, language and direction, the person (with the photo in force and its alt text), a summary, and ordered sections whose entries all share one shape. Templates only lay out.
