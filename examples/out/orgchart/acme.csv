@@ -1,0 +1,7 @@
+Level,Post,Held by,Unit,Reports to,Status,Direct reports
+1,Data Analyst I,Filled (person not shown),Finance,,Filled,0
+1,Director of Engineering,Filled (person not shown),Engineering,,Filled,3
+2,"Engineering Manager, Platform",Vacant,Platform Engineering,Director of Engineering,"Vacant (open, new post), wanted by 2026-12-15",0
+2,Senior Software Engineer II,Sam Rivera (she/her),Platform Engineering,Director of Engineering,Filled,0
+2,Staff Platform Engineer,Planned,Platform Engineering,Director of Engineering (dotted line to Senior Software Engineer II),"Planned (new post), from 2027-01-01",0
+1,Product Designer II,Dana Okoye (they/them),Design,,Filled,0

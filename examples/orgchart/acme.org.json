@@ -1,0 +1,275 @@
+{
+  "orgSchemaVersion": "1.0.0",
+  "meta": {
+    "name": "Acme Example Corp",
+    "updated": "2026-11-07",
+    "domains": [
+      "acme.example"
+    ],
+    "notes": "FICTIONAL SAMPLE made by scripts/make-orgchart-example.mjs; do not edit by hand."
+  },
+  "units": {
+    "acme": {
+      "name": "Acme Example Corp",
+      "kind": "company"
+    },
+    "platform-engineering": {
+      "name": "Platform Engineering",
+      "kind": "department",
+      "from": "2026-01-05",
+      "source": "export-2026-01-05",
+      "parent": "acme"
+    },
+    "design": {
+      "name": "Design",
+      "kind": "department",
+      "from": "2026-01-05",
+      "source": "export-2026-01-05",
+      "parent": "acme"
+    },
+    "finance": {
+      "name": "Finance",
+      "kind": "department",
+      "from": "2026-01-05",
+      "source": "export-2026-01-05",
+      "parent": "acme"
+    },
+    "engineering": {
+      "name": "Engineering",
+      "kind": "department",
+      "from": "2026-01-05",
+      "source": "export-2026-01-05",
+      "parent": "acme"
+    },
+    "customer-support": {
+      "name": "Customer Support",
+      "kind": "department",
+      "from": "2026-01-05",
+      "source": "export-2026-01-05",
+      "parent": "acme"
+    }
+  },
+  "posts": [
+    {
+      "id": "senior-software-engineer-i-e-104233",
+      "title": "Senior Software Engineer I",
+      "unit": "platform-engineering",
+      "from": "2026-01-05",
+      "source": "export-2026-01-05",
+      "directoryId": "u-1001",
+      "holders": [
+        {
+          "from": "2026-01-05",
+          "source": "export-2026-01-05",
+          "to": "2026-11-06"
+        }
+      ],
+      "reportsTo": [
+        {
+          "post": "director-of-engineering-e-100001",
+          "kind": "line",
+          "from": "2026-01-05",
+          "source": "export-2026-01-05",
+          "to": "2026-11-06"
+        }
+      ],
+      "to": "2026-11-06"
+    },
+    {
+      "id": "product-designer-ii-e-104310",
+      "title": "Product Designer II",
+      "unit": "design",
+      "from": "2026-01-05",
+      "source": "export-2026-01-05",
+      "directoryId": "u-1002",
+      "holders": [
+        {
+          "from": "2026-01-05",
+          "source": "export-2026-01-05",
+          "to": "2026-11-06"
+        },
+        {
+          "person": "dana-okoye",
+          "from": "2026-11-07",
+          "source": "profiles-2026-11-07"
+        }
+      ]
+    },
+    {
+      "id": "data-analyst-i-e-104377",
+      "title": "Data Analyst I",
+      "unit": "finance",
+      "from": "2026-01-05",
+      "source": "export-2026-01-05",
+      "directoryId": "u-1003",
+      "holders": [
+        {
+          "from": "2026-01-05",
+          "source": "export-2026-01-05"
+        }
+      ]
+    },
+    {
+      "id": "director-of-engineering-e-100001",
+      "title": "Director of Engineering",
+      "unit": "engineering",
+      "from": "2026-01-05",
+      "source": "export-2026-01-05",
+      "directoryId": "u-1000",
+      "holders": [
+        {
+          "from": "2026-01-05",
+          "source": "export-2026-01-05"
+        }
+      ]
+    },
+    {
+      "id": "support-team-lead-e-100950",
+      "title": "Support Team Lead",
+      "unit": "customer-support",
+      "from": "2026-01-05",
+      "source": "export-2026-01-05",
+      "directoryId": "u-0990",
+      "holders": [
+        {
+          "from": "2026-01-05",
+          "source": "export-2026-01-05",
+          "to": "2026-11-06"
+        }
+      ],
+      "to": "2026-11-06"
+    },
+    {
+      "id": "senior-software-engineer-ii-e-104233",
+      "title": "Senior Software Engineer II",
+      "unit": "platform-engineering",
+      "from": "2026-11-07",
+      "source": "export-2026-11-07",
+      "directoryId": "u-1001",
+      "succeeds": "senior-software-engineer-i-e-104233",
+      "holders": [
+        {
+          "person": "sam-rivera",
+          "from": "2026-11-07",
+          "source": "profiles-2026-11-07"
+        }
+      ],
+      "reportsTo": [
+        {
+          "post": "director-of-engineering-e-100001",
+          "kind": "line",
+          "from": "2026-11-07",
+          "source": "export-2026-11-07"
+        }
+      ]
+    },
+    {
+      "id": "engineering-manager-platform",
+      "title": "Engineering Manager, Platform",
+      "unit": "platform-engineering",
+      "from": "2026-09-01",
+      "source": "plan-2027",
+      "reportsTo": [
+        {
+          "post": "director-of-engineering-e-100001",
+          "kind": "line",
+          "from": "2026-09-01",
+          "source": "plan-2027"
+        }
+      ],
+      "vacancy": {
+        "status": "open",
+        "reason": "new",
+        "targetDate": "2026-12-15",
+        "requisition": "REQ-2041"
+      },
+      "budget": {
+        "costCenter": "CC-410",
+        "band": "M2",
+        "fte": 1,
+        "annualCost": {
+          "amount": 210000,
+          "currency": "USD"
+        }
+      }
+    },
+    {
+      "id": "staff-platform-engineer",
+      "title": "Staff Platform Engineer",
+      "unit": "platform-engineering",
+      "from": "2027-01-01",
+      "source": "plan-2027",
+      "reportsTo": [
+        {
+          "post": "director-of-engineering-e-100001",
+          "kind": "line",
+          "from": "2027-01-01",
+          "source": "plan-2027"
+        },
+        {
+          "post": "senior-software-engineer-ii-e-104233",
+          "kind": "dotted",
+          "from": "2027-01-01",
+          "source": "plan-2027"
+        }
+      ],
+      "vacancy": {
+        "status": "planned",
+        "reason": "new",
+        "targetDate": "2027-03-01"
+      },
+      "budget": {
+        "costCenter": "CC-410",
+        "band": "IC5",
+        "fte": 1,
+        "annualCost": {
+          "amount": 235000,
+          "currency": "USD"
+        }
+      }
+    }
+  ],
+  "sources": {
+    "export-2026-01-05": {
+      "kind": "directoryExport",
+      "title": "SCIM 2.0 export",
+      "date": "2026-01-05"
+    },
+    "export-2026-11-07": {
+      "kind": "directoryExport",
+      "title": "SCIM 2.0 export",
+      "date": "2026-11-07"
+    },
+    "profiles-2026-11-07": {
+      "kind": "profile",
+      "title": "Profiles released to this employer",
+      "date": "2026-11-07"
+    },
+    "plan-2027": {
+      "kind": "manual",
+      "title": "2027 headcount plan (fictional)",
+      "date": "2026-11-07"
+    }
+  },
+  "people": {
+    "sam-rivera": {
+      "name": "Sam Rivera",
+      "pronouns": "she/her",
+      "preferredTitle": "Platform Engineering Lead",
+      "email": "sam.rivera@acme.example",
+      "employeeNumber": "E-104233",
+      "photoUrl": "https://example.com/images/sam-rivera.jpg",
+      "profile": "sam-rivera.profile.json",
+      "release": "release-a8c73600-c08c-b3c1-429b-8b1588004fa5"
+    },
+    "dana-okoye": {
+      "name": "Dana Okoye",
+      "pronouns": "they/them",
+      "preferredTitle": "Product Designer",
+      "email": "dana.okoye@acme.example",
+      "employeeNumber": "E-104310",
+      "profile": "dana-okoye.profile.json",
+      "release": "release-e3352c73-1746-6086-face-b3772f6d3f92"
+    }
+  }
+}

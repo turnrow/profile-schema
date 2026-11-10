@@ -26,6 +26,9 @@ import { gedzip, gedzipMedia, readBundleMedia, GEDZIP_MEDIA } from "../lib/gedco
 import { bundleFileReader } from "../lib/ob3.mjs";
 import { CONNECTORS, readProfileFolder, diffDirectory, changeReport, userFileName } from "../lib/directory/index.mjs";
 import { withMap, planRequests, applyChangeSet, ApplyRefusedError } from "../lib/directory/api.mjs";
+import { validateOrganization } from "../lib/orgchart/index.mjs";
+import { buildOrganization } from "../lib/orgchart/build.mjs";
+import { orgMarkdown, orgCsv } from "../lib/orgchart/views.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS, resolveMapping } from "../index.mjs";
 
 const HELP = `turnrow-profile: validate, convert and share Turnrow Profiles.
@@ -48,6 +51,11 @@ Commands
                                            changes, a report to approve and who was left out (changes nothing)
   directory apply <change-set.json>        show the requests an approved change set would send to a directory API;
                                            with --apply, --approved <sha256> and --out <folder>, send them and keep a log
+  orgchart validate <file.org.json>        check an organization file (posts, holders and reporting lines, all dated)
+  orgchart build <folder> --against <export> --target <connector> --out <file.org.json>
+                                           build or carry forward an organization file from a directory export
+                                           and a folder of profiles; people are named only as they have released
+  orgchart show <file.org.json>            the organization on a date, as a table
   help, version
 
 A profile is a .json file; a bundle is a folder holding profile.json and its media/ and badges/.
@@ -70,6 +78,8 @@ Options
   directory apply: --approved <the sha256 of the change set, from the report>   --apply   --out <folder>   --max-age <days> (default 7)
               The access token is read from an environment variable (GOOGLE_DIRECTORY_TOKEN, ENTRA_GRAPH_TOKEN, OKTA_TOKEN,
               ONELOGIN_TOKEN), never from the command line. Okta and OneLogin also need OKTA_ORG_URL or ONELOGIN_URL.
+  orgchart build: --method <…> --domain <domain>   --name <organization> | --base <existing.org.json>   --audience <id>
+  orgchart show:  --on <date>   --compare <date>   --format <table|csv>   --budget (include budget figures: internal)
   pdf:        --pages <1|auto>   --photo | --no-photo (default: no photo)   --density <comfortable|compact>
               --paper <us-letter|a4>   --min-priority <0-100>   --layout <classic|academic|two-column>   --typst <path to typst>
 
@@ -85,8 +95,8 @@ function fail(message, code = 1) { console.error(`error: ${message}`); process.e
 // Flags are declared here so that a misspelled one is refused instead of silently ignored.
 const VALUE_FLAGS = ["--locale", "--out", "--format", "--domain", "--method", "--application", "--receipt", "--on", "--recipient",
   "--visibility", "--media-base", "--id", "--alt", "--kind", "--purpose", "--from",
-  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst", "--against", "--target", "--audience", "--approved", "--max-age", "--map"];
-const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version", "--photo", "--no-photo", "--gedzip", "--apply"];
+  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst", "--against", "--target", "--audience", "--approved", "--max-age", "--map", "--base", "--name", "--compare"];
+const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version", "--photo", "--no-photo", "--gedzip", "--apply", "--budget"];
 const flags = {};
 const argv = [];
 {
@@ -137,6 +147,10 @@ const approved = takeFlag("--approved");
 const maxAge = takeFlag("--max-age");
 const mapFlag = takeFlag("--map");
 const applyFlag = takeBool("--apply");
+const baseFlag = takeFlag("--base");
+const nameFlag = takeFlag("--name");
+const compareFlag = takeFlag("--compare");
+const budgetFlag = takeBool("--budget");
 const visibility = visibilityFlag ? visibilityFlag.split(",").map((v) => v.trim()) : undefined;
 if (visibility && visibility.some((v) => !["public", "network", "private"].includes(v))) {
   fail(`--visibility takes public, network and/or private (got ${visibilityFlag})`, 2);
@@ -181,7 +195,7 @@ function writeNew(path, bytes, what) {
 function writeOut(path, text) { mkdirSync(dirname(resolve(path)), { recursive: true }); writeFileSync(path, text); }
 function emit(text) { if (out) writeOut(out, text); else process.stdout.write(text); }
 function usage() {
-  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import|directory diff|directory apply> …\nRun "turnrow-profile help" for the commands and options.`);
+  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import|directory diff|directory apply|orgchart validate|orgchart build|orgchart show> …\nRun "turnrow-profile help" for the commands and options.`);
   process.exit(2);
 }
 if (flags["--version"] || command === "version") {
@@ -376,6 +390,58 @@ try {
       const changed = result.changeSet.changes.filter((c) => c.fields.length);
       console.error(`${changed.length} ${changed.length === 1 ? "person has" : "people have"} changes, ${result.changeSet.changes.length - changed.length} up to date, ${result.changeSet.refusals.length} left out. Nothing was changed in the directory.`);
       console.error(`Read ${join(out, "report.md")} before applying. It holds personal data: keep it out of public repositories and shared folders.`);
+      break;
+    }
+    case "orgchart": {
+      const sub = rest[0];
+      const isDate = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d ?? "") && !Number.isNaN(Date.parse(`${d}T00:00:00Z`));
+      const loadOrg = (path) => {
+        const org = readJson(path, "organization file");
+        const v = validateOrganization(org);
+        return { org, v };
+      };
+      if (sub === "validate") {
+        if (!rest[1]) usage();
+        const { v } = loadOrg(rest[1]);
+        for (const w of v.warnings) console.error(`warning: ${w}`);
+        if (!v.valid) { console.error(`${rest[1]} is not a valid organization file:\n  ${v.errors.join("\n  ")}`); process.exit(1); }
+        console.log(`${rest[1]} is valid.`);
+        break;
+      }
+      if (sub === "show") {
+        if (!rest[1]) usage();
+        const fmt = flags["--format"] === undefined ? "table" : format;
+        if (!["table", "csv"].includes(fmt)) fail(`orgchart show --format takes table or csv (got ${fmt})`, 2);
+        if (compareFlag !== undefined && !isDate(compareFlag)) fail(`--compare takes a date as yyyy-mm-dd (got ${compareFlag})`, 2);
+        const { org, v } = loadOrg(rest[1]);
+        if (!v.valid) { console.error(`${rest[1]} is not a valid organization file; run orgchart validate first.\n  ${v.errors.join("\n  ")}`); process.exit(1); }
+        const opts = { on, compare: compareFlag, budget: budgetFlag };
+        emit(fmt === "csv" ? orgCsv(org, opts) : orgMarkdown(org, opts));
+        break;
+      }
+      if (sub !== "build" || !rest[1]) usage();
+      let connector = CONNECTORS[targetFlag ?? ""];
+      if (!connector) fail(`orgchart build needs --target: one of ${Object.keys(CONNECTORS).join(", ")}`, 2);
+      if (!against) fail("orgchart build needs --against <export>: the directory's own export of its users", 2);
+      if (!out) fail("orgchart build needs --out <file.org.json>", 2);
+      if (!requester?.method || !requester?.domain) fail("orgchart build needs --method and --domain: the employer's domain, and how you verified it", 2);
+      if (!baseFlag && !nameFlag) fail("orgchart build needs --name <the organization's name>, or --base <an existing organization file> to carry forward", 2);
+      const folder = resolve(rest[1]);
+      if (!existsSync(folder) || !statSync(folder).isDirectory()) fail(`${rest[1]} is not a folder of profiles`);
+      if (!existsSync(against) || statSync(against).isDirectory()) fail(`no such export file: ${against}`);
+      const exportBytes = readFileSync(against);
+      let users;
+      try { users = connector.readExport(exportBytes); } catch (err) { fail(`${against}: ${err.message}`); }
+      const base = baseFlag ? readJson(baseFlag, "organization file") : undefined;
+      let built;
+      try { built = buildOrganization({ profiles: readProfileFolder(folder), users, connector, requester, name: nameFlag, on, now: on ? `${on}T00:00:00.000Z` : undefined, audience: audienceFlag, base, exportSha256: createHash("sha256").update(exportBytes).digest("hex") }); }
+      catch (err) { fail(err.message); }
+      writeOut(out, JSON.stringify(built.org, null, 2) + "\n");
+      const r = built.report;
+      console.error(`Wrote ${out}: ${r.opened.length} post${r.opened.length === 1 ? "" : "s"} opened, ${r.ended.length} ended, ${r.replaced.length} changed, ${r.kept} unchanged.`);
+      console.error(`${r.named} ${r.named === 1 ? "person is" : "people are"} named, by their own release. ${r.notNamed} ${r.notNamed === 1 ? "seat is" : "seats are"} filled by someone not shown (no profile here, or no consent).`);
+      for (const t of r.replaced) console.error(`  changed: ${t}`);
+      for (const t of r.ended) console.error(`  ended: ${t} (no longer in the directory; if the seat stays open, add it back as a vacancy)`);
       break;
     }
     case "media": {

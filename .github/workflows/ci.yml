@@ -63,7 +63,11 @@ jobs:
           rm -rf examples/out/directory-google-csv examples/out/directory-ldif
           node bin/profile.mjs directory diff examples/directory/people --against examples/directory/acme-users.google.csv --target google-csv --domain acme.example --method oidc --on 2026-11-07 --out examples/out/directory-google-csv
           node bin/profile.mjs directory diff examples/directory/people --against examples/directory/acme-users.ldif --target ldif --domain acme.example --method oidc --on 2026-11-07 --out examples/out/directory-ldif
-          git diff --exit-code -- examples/recommended examples/directory examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'
+          node scripts/make-orgchart-example.mjs
+          node bin/profile.mjs orgchart validate examples/orgchart/acme.org.json
+          node bin/profile.mjs orgchart show examples/orgchart/acme.org.json --on 2026-11-07 --compare 2026-01-05 --out examples/out/orgchart/acme.md
+          node bin/profile.mjs orgchart show examples/orgchart/acme.org.json --on 2026-11-07 --format csv --out examples/out/orgchart/acme.csv
+          git diff --exit-code -- examples/recommended examples/directory examples/orgchart examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'
 
   pdf:
     name: Résumé PDFs conform to PDF/UA-1

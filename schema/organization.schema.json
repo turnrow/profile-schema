@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turnrow.dev/schema/organization.schema.json",
+  "title": "Turnrow Organization",
+  "description": "A time-based org chart: posts (seats that exist whether or not anyone holds them), who holds each, and who each reports to, all dated. Modelled on the W3C Organization Ontology (org:Post, org:holds, org:reportsTo, org:OrganizationalUnit). Design: docs/superpowers/specs/2026-11-10-org-chart-design.md.",
+  "type": "object",
+  "required": ["orgSchemaVersion", "meta", "posts"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "orgSchemaVersion": { "const": "1.0.0" },
+    "meta": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "description": "The organization's name." },
+        "domains": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9.-]+\\.[a-z]{2,}$" } },
+        "updated": { "$ref": "#/$defs/date" },
+        "notes": { "type": "string" }
+      }
+    },
+    "units": {
+      "description": "Divisions, departments and teams, as a tree.",
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/id" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "kind": { "enum": ["company", "division", "department", "team", "group", "office", "other"] },
+          "parent": { "$ref": "#/$defs/id" },
+          "from": { "$ref": "#/$defs/date" },
+          "to": { "$ref": "#/$defs/date" },
+          "costCenter": { "type": "string" },
+          "source": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+    "posts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/post" }
+    },
+    "people": {
+      "description": "The people who hold posts, with only what each has released to this employer.",
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/id" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "pronouns": { "type": "string" },
+          "preferredTitle": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "employeeNumber": { "type": "string" },
+          "photoUrl": { "type": "string", "pattern": "^https://[^\\s]+$" },
+          "profile": { "type": "string", "description": "The profile file this person's details came from." },
+          "release": { "type": "string", "description": "The id of the release that allowed them." }
+        }
+      }
+    },
+    "sources": {
+      "description": "Where posts, holders and lines came from.",
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/id" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["kind"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "enum": ["profile", "directoryExport", "hris", "manual"] },
+          "title": { "type": "string" },
+          "date": { "$ref": "#/$defs/date" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "date": { "type": "string", "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?$", "description": "yyyy, yyyy-mm or yyyy-mm-dd. A \"from\" date counts from its first day; a \"to\" date is the last day." },
+    "post": {
+      "description": "A seat. It exists from \"from\" to \"to\" whether or not anyone holds it. Whether it is filled, vacant, planned or closed on a day is worked out from the dates, never stored.",
+      "type": "object",
+      "required": ["id", "title", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 1 },
+        "unit": { "$ref": "#/$defs/id" },
+        "from": { "$ref": "#/$defs/date" },
+        "to": { "$ref": "#/$defs/date" },
+        "level": { "type": "string", "description": "Grade or band name, if useful." },
+        "location": { "type": "string" },
+        "source": { "$ref": "#/$defs/id" },
+        "directoryId": { "type": "string", "description": "The directory's own id for the user this seat was read from, so that the next build finds the same seat." },
+        "succeeds": { "$ref": "#/$defs/id", "description": "The post this one replaced when its title or unit changed, so that a comparison reads as a change and not as one seat closing and another opening." },
+        "reportsTo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["post", "source"],
+            "additionalProperties": false,
+            "properties": {
+              "post": { "$ref": "#/$defs/id" },
+              "kind": { "enum": ["line", "dotted"], "default": "line" },
+              "from": { "$ref": "#/$defs/date" },
+              "to": { "$ref": "#/$defs/date" },
+              "source": { "$ref": "#/$defs/id" }
+            }
+          }
+        },
+        "holders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source"],
+            "additionalProperties": false,
+            "properties": {
+              "person": { "$ref": "#/$defs/id", "description": "Left out when the holder has not agreed to be named: the seat is filled, the person is not shown." },
+              "from": { "$ref": "#/$defs/date" },
+              "to": { "$ref": "#/$defs/date" },
+              "fte": { "type": "number", "exclusiveMinimum": 0, "maximum": 1, "default": 1 },
+              "acting": { "type": "boolean" },
+              "source": { "$ref": "#/$defs/id" }
+            }
+          }
+        },
+        "vacancy": {
+          "description": "What recruiting needs to know about a vacant or planned post.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": { "enum": ["open", "approved", "planned", "frozen"] },
+            "reason": { "enum": ["new", "backfill"] },
+            "targetDate": { "$ref": "#/$defs/date" },
+            "requisition": { "type": "string" }
+          }
+        },
+        "budget": {
+          "description": "The seat's planning figures: never a person's pay. Left out of every view unless asked for.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "costCenter": { "type": "string" },
+            "band": { "type": "string" },
+            "fte": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+            "annualCost": {
+              "type": "object",
+              "required": ["amount", "currency"],
+              "additionalProperties": false,
+              "properties": { "amount": { "type": "number", "minimum": 0 }, "currency": { "type": "string", "pattern": "^[A-Z]{3}$" } }
+            }
+          }
+        }
+      }
+    }
+  }
+}

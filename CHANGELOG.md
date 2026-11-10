@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased (3.0): org chart
+
+### The organization file
+- **`schema/organization.schema.json`**: a time-based org chart of posts (seats), who holds each and who each reports to, all dated, after the W3C Organization Ontology. Vacant, planned and filled are worked out from the dates, never stored.
+- **`orgchart validate`** checks references, dates, one line manager at a time, holders that add up to no more than the seat, and no loop in the reporting lines on any date.
+- **`orgchart build`** makes the file from a directory export and a folder of profiles, and with `--base` carries it forward without deleting anything. A person is named only by their own release to the employer; otherwise the seat is "filled (person not shown)".
+- **`orgchart show`** gives the organization on a date as a table or CSV, and with `--compare` what changed since another date. Budget figures appear only with `--budget`.
+- Design: `docs/superpowers/specs/2026-11-10-org-chart-design.md`, with the decisions made without a brainstorm listed for confirmation.
+- For code: `validateOrganization`, `stateOn`, `compareDates`, `buildOrganization`, `orgRows`, `orgMarkdown`, `orgCsv`.
+
 ## Unreleased (2.9): directory sync
 
 ### The batch runner
