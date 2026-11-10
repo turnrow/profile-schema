@@ -1,8 +1,19 @@
 # Changelog
 
-## Unreleased (3.0): org chart
+## 3.0.0 (2026-11-10): org chart, directory sync, exports, review file and accessible PDF
 
-### The organization file
+Everything planned as 2.7, 2.8, 2.9 and 3.0, released together. **Profile files do not change:** `schemaVersion` stays 2.6.0 and every existing file remains valid. The organization file is new and has its own version (`orgSchemaVersion` 1.0.0).
+
+What to know before relying on it:
+- `directory apply` and the directory connectors have not been run against a real directory.
+- No output has been imported by the system it is for (the Europass editor, an applicant tracking system, an HR system, a badge wallet, a genealogy program).
+- No screen reader has been used on the résumé PDF, the org chart page or its PDF.
+- Translations other than English were written by an AI and not checked by a fluent reader.
+- The designs for directory sync and the org chart were written without a brainstorm; their open decisions are listed in `docs/superpowers/specs/`.
+
+### Org chart
+
+#### The organization file
 - **`schema/organization.schema.json`**: a time-based org chart of posts (seats), who holds each and who each reports to, all dated, after the W3C Organization Ontology. Vacant, planned and filled are worked out from the dates, never stored.
 - **`orgchart validate`** checks references, dates, one line manager at a time, holders that add up to no more than the seat, and no loop in the reporting lines on any date.
 - **`orgchart build`** makes the file from a directory export and a folder of profiles, and with `--base` carries it forward without deleting anything. A person is named only by their own release to the employer; otherwise the seat is "filled (person not shown)".
@@ -10,15 +21,16 @@
 - Design: `docs/superpowers/specs/2026-11-10-org-chart-design.md`, with the decisions made without a brainstorm listed for confirmation.
 - For code: `validateOrganization`, `stateOn`, `compareDates`, `buildOrganization`, `orgRows`, `orgMarkdown`, `orgCsv`.
 
-### Views and analysis
+#### Views and analysis
 - **`orgchart show --format html`** writes one self-contained page: a nested list that becomes a keyboard-and-screen-reader tree with scripting, vacant and planned posts marked in words and by border pattern, light and dark from the brand tokens, the same rows as a table, and what changed between two dates. It fetches nothing.
 - **`orgchart show --format pdf`** writes the table as a tagged PDF/UA-1 document through Typst; CI validates it with veraPDF.
 - **`orgchart stats`** counts posts, people and FTE, filled, vacant and planned per unit, span of control and layers; with `--from` and `--to`, headcount at the start of each month and what changed; with `--budget`, budgeted against filled.
 - For code: `orgHtml`, `renderOrgPdf`, `orgPdfView`, `orgStats`, `orgSeries`, `statsMarkdown`.
+- **History from profiles.** When a seat is first built and the person holding it has dated positions for that job in their profile, the seat starts when the current position did and each earlier position becomes an ended post that the next one succeeds, sourced to the profile. A promotion then reads as one seat retitled.
 
-## Unreleased (2.9): directory sync
+### Directory sync
 
-### The batch runner
+#### The batch runner
 - **`directory diff <folder> --against <export> --target <connector> --domain … --method … --out <folder>`** compares a folder of profiles with a directory's export and writes a change set, one change file per person, a report to approve, the people left out with reasons, and a consent receipt for each release. It changes nothing.
 - Every update is a release to an employer. The person's own fields (name, nickname, pronouns, preferred title, photo, bio) become changes; fields the employer is the authority for (official title, department, manager…) are compared and reported, never pushed. People are matched by employee number, then e-mail, never by name. A missing value never clears the directory's.
 - `scim` is the first connector: it reads a list of SCIM Users and writes one SCIM Bulk request.
@@ -26,46 +38,53 @@
 - **`--target ldif`** reads an LDIF export (OpenLDAP or Active Directory) and writes `changetype: modify` records for `ldapmodify`. The tool opens no connection.
 - A connector that can read a field but not write it says so in the report.
 
-### Directory APIs
+#### Directory APIs
 - **`--target google | entra | okta | onelogin`**: `directory diff` compares against a saved list of users from each directory's API. `--map field=attribute` sends a person's own field to an attribute the administrator names.
 - **`directory apply <change-set.json>`** prints the requests a change set would send. With `--apply --approved <sha256> --out <folder>` it sends them: only the approved change set, no older than seven days; each user is read again and a field is changed only if the directory still holds the approved value; it stops at the first error; it writes a log and a rollback change set. The access token comes from an environment variable and is written nowhere.
 - Not run against a real tenant.
+
+#### Photos
+- **LDAP:** a released JPEG photo is written as `jpegPhoto` in the LDIF file, and compared with the directory's by hash. A PNG is not written, and the report says why.
+- **Google:** a released photo is sent with `users.photos.update` in a request of its own; its hash is kept in the `TurnrowProfile` custom schema so the next run can tell it is already there.
+- A photo is sent only from a bundle, only when the audience grants the image, the image is approved and within the audience's visibility, and the file still matches its recorded hash.
+- **Not built, on purpose:** Entra's API-driven inbound provisioning (`bulkUpload`). It creates and updates users from an HR source, which is the opposite of what a sync may do here (never create a user, never write the employer's fields). The Graph connector is the way to update Entra.
 - Design: `docs/superpowers/specs/2026-11-10-directory-sync-design.md`, with the decisions made without a brainstorm listed for confirmation.
 - For code: `readProfileFolder`, `matchUser`, `diffDirectory`, `changeReport`, `DIRECTORY_CONNECTORS`, `DIRECTORY_FIELDS`.
 
-## Unreleased (2.8): exports
+### Exports
 
-### Europass
+#### Europass
 - **`convert <profile | bundle> europass`** writes a CV in the XML the Europass editor imports: personal information, work experience (one entry per position), education, mother tongues and language skills, publications, and the résumé's other sections as custom sections.
 - It says what the résumé says: `europass` extends `resume` and follows its per-entry choices. A mapping can now add keys to its parent's output with `"extendOutput"`.
 - The format is not published as a schema; the rules come from a documented study of the editor's importer (credited in the README), and a checker written from them runs on every example. Not yet uploaded to the editor itself.
 
-### HR Open Standards
+#### HR Open Standards
 - **`convert <profile | bundle> hropen`** writes an HR Open Standards 4.5 `Candidate` (HR-JSON): jobs with their positions as `positionHistories`, education with whether the degree was granted, licenses, certifications, clearances, affiliations, military service, publications, patents, skills and languages as qualifications, and references.
 - Qualified dates are left out of exact date fields and said in words in the entry's descriptions.
 - The tests validate every example against HR Open's schemas, fetched by `scripts/fetch-hropen-schemas.mjs` (pinned by hash, not kept in the repository), and check that every key written is one the standard defines. `ajv-draft-04` is a new development dependency for this (HR Open's schemas are JSON Schema draft-04).
+- **`convert <profile | bundle> lerrs`** writes the LER-RS résumé of the same release (Learning and Employment Record Resume Standard), with the same entries and rules as the Candidate, validated the same way. Every entry is the person's own statement; nothing is a Verifiable Credential.
 
-### Open Badges 3.0 and CLR 2.0
+#### Open Badges 3.0 and CLR 2.0
 - **`convert <bundle> ob3`** writes an unsigned Verifiable Presentation carrying the Open Badges 3.0 credentials exactly as their issuers signed them (a VC-JWT in an `EnvelopedVerifiableCredential`).
 - **`convert <bundle> clr`** writes a CLR 2.0 `ClrCredential` template: those credentials, plus Open Badges 2.0 badges, active licenses and certifications and completed education as achievements, for an institution or the holder to sign. A badge that stands for a credentials entry is counted once.
 - Only approved, public badges in good standing are carried: not ones that failed their check, were revoked, or have run out by `--on`. An original that no longer matches its recorded hash is refused. Nothing is signed.
 - Both are validated in the tests against 1EdTech's JSON Schemas, fetched by `scripts/fetch-1edtech-schemas.mjs` (pinned by hash, not kept in the repository).
 - For code: `bundleFileReader`, `renderPresentation`, `renderClr`, `originalCredential`, `NothingToExportError`, and `convert`'s `readBundleFile` option. The review file reads a bundle's originals the same way, and leaves these outputs out quietly when a profile has no such badge.
 
-### Plain-text ATS résumé
+#### Plain-text ATS résumé
 - **`convert <profile | bundle> ats`** writes the résumé view as one column of UTF-8 text for applicant tracking systems: plain capital headings, `MM/YYYY` dates with a plain hyphen, links written out, `- ` bullets, and no tables, columns, tabs or graphics.
 - It says what the PDF says: `ats` extends `resume` and follows its per-entry choices (`"followsTargets"`, new), so an entry left out of or reworded for the résumé is treated the same.
 - `examples/out/*.ats.txt` are generated and checked in CI.
 - Fix (from #66): a résumé entry with no title of its own is titled by its organization, which no longer crashes the PDF.
 
-### GEDCOM 5.5.1
+#### GEDCOM 5.5.1
 - **`convert <profile | bundle> gedcom551`** writes the same individual for programs that don't read 7.0: `GEDC VERS 5.5.1`, `FORM LINEAGE-LINKED`, `CHAR UTF-8`, a required `SUBM` record, languages by name, 5.5.1-shaped `OBJE` records, every `@` doubled, and lines within 255 bytes continued with `CONC` and `CONT`.
 - **Nothing is dropped silently.** A date's phrase, the confidence, and the title of a residence or event become notes; a value too long for its field is cut there and kept whole in a note.
 - **`"extends"` in a mapping.** `gedcom551` extends `gedcom7` and only changes how it is written, so the two can't drift apart.
 - **Checked against the specification's grammar,** extracted from its text into `upstream/gedcom551/`. Two limits are passed on purpose (30-character file references; a format list older than PNG) and a test says so.
 - `examples/out/*.551.ged` are generated and checked in CI.
 
-### GEDCOM 7.0 and GEDZip
+#### GEDCOM 7.0 and GEDZip
 - **`convert <profile | bundle> gedcom7`** writes a FamilySearch GEDCOM 7.0 file with one individual: `NAME` per name (with type, and a note for when it was in use), `OCCU` per title held (dates, place, and the employer's name at the time as `AGNC`), `EDUC`, `RESI`, `EVEN` with a `TYPE` for timeline events and service, `SOUR` citations with `PAGE` and `QUAY`, and `OBJE` for approved public media.
 - **Dates keep their doubt:** `ABT`, `EST`, `CAL`, `BEF`, `AFT`, `BET … AND`; spans are `FROM … TO` periods with a `PHRASE` when an end is uncertain.
 - **`--gedzip`** writes a `.gdz` archive with `gedcom.ged` and the bundle's media. The zip writer stores files uncompressed and adds no dependency; media are taken only from inside the bundle.
@@ -75,9 +94,9 @@
 - A mapping can now set `"format": "gedcom7"`. New helpers: `gedcomDate`, `gedcomPeriod`, `gedcomPeriodPhrase`, `sources`.
 - `examples/out/*.ged` are generated and checked in CI.
 
-## Unreleased (2.7): review file, résumé view and accessible PDF
+### Review file, résumé view and accessible PDF
 
-### Résumé PDF
+#### Résumé PDF
 - **Right-to-left output (experimental).** Arabic and Hebrew profiles are laid out right to left, with bundled fonts that have the letters (Vazirmatn and Noto Sans Hebrew, both SIL Open Font License), translated headings and each language's own punctuation. `examples/rtl.profile.json` is a fictional Arabic profile; CI renders and validates it.
   - **Known defect:** Arabic text extracted from the PDF has lam-alef pairs reversed and vowel marks doubled, so a screen reader may misread it. Hebrew extracts correctly. The Arabic variants are named as skipped in the text-order check, with this reason.
   - The Arabic and Hebrew wording was written by an AI and awaits a fluent reader.
@@ -98,7 +117,7 @@
 - CI installs a pinned Typst so the rendering tests run; on a machine without Typst they are skipped.
 - From code: `renderResumePdf`, `resumeViewForPdf`, `dropCandidates`, `PdfError`.
 
-### Résumé view
+#### Résumé view
 - **`resume` mapping:** a neutral JSON view for résumé templates. It holds the document title, language and direction, the person (with the photo in force and its alt text), a summary, and ordered sections whose entries all share one shape. Templates only lay out.
 - Dates are given twice, in the reader's language and as `MM/YYYY`. Every entry carries its `priority`.
 - New mapping helpers: `label` (a fixed phrase in the output's language), `labelFor` (a translated enum value), `section` (drops itself when empty), `count`, `direction`, `onDate`. `dateRangeText` takes a format, and `numeric` is a new date format.
@@ -106,7 +125,7 @@
 - A mapping can set `ruleExemptKeys` so content rules don't read identifiers as prose; the résumé view exempts entry ids (`state-u-ms` was matching the forbidden "MS").
 - `examples/out/*.resume.json` are generated and checked in CI.
 
-### Review file
+#### Review file
 
 - **`review <profile | bundle> [--on] [--locale] [--out review.md]`** writes the whole profile as one Markdown file for checking: a summary (consent, counts, open items, rule hits), every entry with its status, confidence, visibility, sources, codes, notes and **which outputs show it**, claims beside the profile's own value, other people's data with consent per item, and audiences and releases.
 - "Which outputs show it" uses each mapping's own filter and gives the reason an entry is hidden ("priority 40 is below 80").
