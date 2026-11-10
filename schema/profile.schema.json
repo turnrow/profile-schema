@@ -324,7 +324,7 @@
         "published",
         "hearsay"
       ],
-      "description": "Quality of one citation (after GEDCOM QUAY). primary: an original record made at the time (licence, pay record, certificate). secondary: a later record by someone else. selfReported: the subject's own CV, bio or interview. published: press or a third-party profile. hearsay: second-hand, unverified."
+      "description": "Quality of one citation (after GEDCOM QUAY). primary: an original record made at the time (license, pay record, certificate). secondary: a later record by someone else. selfReported: the subject's own CV, bio or interview. published: press or a third-party profile. hearsay: second-hand, unverified."
     },
     "citation": {
       "type": "object",
@@ -979,7 +979,7 @@
           "type": "string"
         },
         "identifiers": {
-          "description": "External ids for the person that are safe to hold (ORCID, a professional licence registry). Never put government identity or tax numbers here (SSN, ITIN, passport, driver's licence): a profile is meant to be shared, and those numbers should not be in it at all.",
+          "description": "External ids for the person that are safe to hold (ORCID, a professional license registry). Never put government identity or tax numbers here (SSN, ITIN, passport, driver's license): a profile is meant to be shared, and those numbers should not be in it at all.",
           "type": "object",
           "additionalProperties": {
             "type": "string",
@@ -1547,7 +1547,7 @@
       }
     },
     "credential": {
-      "description": "Licences and certifications. credentialId is a real issuer number only, never a note.",
+      "description": "Licenses and certifications. credentialId is a real issuer number only, never a note.",
       "allOf": [
         {
           "$ref": "#/$defs/entryBase"
@@ -1618,7 +1618,7 @@
         "jurisdiction": {
           "type": "string",
           "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$",
-          "description": "Where a licence is valid: US-TX for a Texas PE licence or bar admission."
+          "description": "Where a license is valid: US-TX for a Texas PE license or bar admission."
         },
         "compactStates": {
           "type": "array",
@@ -2290,7 +2290,7 @@
         },
         "statement": {
           "$ref": "#/$defs/text",
-          "description": "For notTrue: the thing that is not true, e.g. 'Does not hold a current captain's licence.'"
+          "description": "For notTrue: the thing that is not true, e.g. 'Does not hold a current captain's license.'"
         },
         "appliesTo": {
           "type": "array",
@@ -3135,7 +3135,7 @@
             "figi",
             "other"
           ],
-          "description": "ein: US Employer Identification Number (IRS), nn-nnnnnnn. Private by default.; uei: US Unique Entity ID (SAM.gov), 12 characters, no I or O, not starting with 0; replaced DUNS for federal awards in April 2022.; duns: D-U-N-S Number (Dun & Bradstreet), 9 digits.; cage: CAGE or NCAGE code, 5 characters (US codes start and end with a digit).; secCik: SEC Central Index Key.; lei: Legal Entity Identifier (ISO 17442), 20 characters with ISO 7064 check digits.; stateEntityNumber: Secretary of State filing, charter or entity number (Texas file number, Delaware file number, Washington UBI…). Needs jurisdiction.; stateTaxId: State taxpayer, sales-tax or withholding number (Texas taxpayer number, Oregon BIN…). Needs jurisdiction. Private by default.; stateBusinessId: Other state business identifier or licence number. Needs jurisdiction.; npi: US National Provider Identifier (healthcare organizations).; ipeds: IPEDS Unit ID (US colleges and universities).; ror: Research Organization Registry id (universities, labs).; wikidata: Wikidata item.; opencorporates: OpenCorporates jurisdiction/company number, e.g. us_tx/0801234567.; companyNumber: National company register number (UK Companies House, etc.). Needs jurisdiction.; vat: EU/UK VAT number, with country prefix.; abn: Australian Business Number.; bn: Canada Business Number, optionally with program account.; siren: France SIREN.; siret: France SIRET (establishment).; ticker: Exchange:symbol, e.g. NYSE:EDS.; isin: ISIN of the organization's listed shares.; figi: Financial Instrument Global Identifier.; other: Anything else; say what it is in label."
+          "description": "ein: US Employer Identification Number (IRS), nn-nnnnnnn. Private by default.; uei: US Unique Entity ID (SAM.gov), 12 characters, no I or O, not starting with 0; replaced DUNS for federal awards in April 2022.; duns: D-U-N-S Number (Dun & Bradstreet), 9 digits.; cage: CAGE or NCAGE code, 5 characters (US codes start and end with a digit).; secCik: SEC Central Index Key.; lei: Legal Entity Identifier (ISO 17442), 20 characters with ISO 7064 check digits.; stateEntityNumber: Secretary of State filing, charter or entity number (Texas file number, Delaware file number, Washington UBI…). Needs jurisdiction.; stateTaxId: State taxpayer, sales-tax or withholding number (Texas taxpayer number, Oregon BIN…). Needs jurisdiction. Private by default.; stateBusinessId: Other state business identifier or license number. Needs jurisdiction.; npi: US National Provider Identifier (healthcare organizations).; ipeds: IPEDS Unit ID (US colleges and universities).; ror: Research Organization Registry id (universities, labs).; wikidata: Wikidata item.; opencorporates: OpenCorporates jurisdiction/company number, e.g. us_tx/0801234567.; companyNumber: National company register number (UK Companies House, etc.). Needs jurisdiction.; vat: EU/UK VAT number, with country prefix.; abn: Australian Business Number.; bn: Canada Business Number, optionally with program account.; siren: France SIREN.; siret: France SIRET (establishment).; ticker: Exchange:symbol, e.g. NYSE:EDS.; isin: ISIN of the organization's listed shares.; figi: Financial Instrument Global Identifier.; other: Anything else; say what it is in label."
         },
         "value": {
           "type": "string",

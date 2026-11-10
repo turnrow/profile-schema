@@ -12,7 +12,7 @@
 [![JSON Schema draft 2020-12](https://img.shields.io/badge/JSON%20Schema-2020--12-023341)](schema/profile.schema.json)
 [![Exports to JSON Resume 1.7.1](https://img.shields.io/badge/JSON%20Resume-1.7.1-023341)](upstream/jsonresume/)
 [![Node.js 20 or later](https://img.shields.io/badge/node-%3E%3D20-023341?logo=nodedotjs&logoColor=white)](package.json)
-[![MIT licence](https://img.shields.io/badge/licence-MIT-023341)](LICENSE.md)
+[![MIT license](https://img.shields.io/badge/license-MIT-023341)](LICENSE.md)
 [![Design system: WCAG AAA](https://img.shields.io/badge/design%20system-WCAG%20AAA-023341)](brand/README.md)
 
 One JSON file holds a person's whole professional record. Every output (a JSON Resume, schema.org JSON-LD for a profile page, a LinkedIn paste sheet, a slide bio, a timeline or map) is a filtered, mapped view of that file. Fix a fact once and every output picks it up.
@@ -126,7 +126,7 @@ Organizations carry the ids that registries and tax authorities issue, each chec
 
 - **Tax ids are private by default.** An EIN or state tax id appears only where its visibility allows, or in a release to an audience it names. For a sole proprietor, an EIN identifies a person. Registry ids (UEI, DUNS, LEI, CAGE, state entity numbers) are public.
 - **Dates matter.** `orgIdentifier` returns the id in force on a date, so a DUNS retired in 2022 isn't presented as current, while a verification of a 2019 job still gets the DUNS from then.
-- **Personal government ids are refused.** SSNs, ITINs, passport and driver's licence numbers can't be stored as person identifiers.
+- **Personal government ids are refused.** SSNs, ITINs, passport and driver's license numbers can't be stored as person identifiers.
 - **The `verification` mapping** gives what background checks match on: the employer's legal name at the time, its EIN (where shared), state entity numbers, the employer of record, dates and official titles.
 - `classifications` hold NAICS, SIC, NACE, ISIC or ANZSIC codes.
 
@@ -175,7 +175,7 @@ Jobs, positions and responsibilities can carry **occupation codes**; organizatio
 - **Validation:** unknown codes are errors. Warnings cover a SOC group used where a detailed occupation exists, a `label` that differs from the official title, two primary codes in one system, and an O*NET-SOC code that isn't under the primary SOC code. Codes from an edition the package doesn't bundle (SOC 2028 when it arrives, say) are accepted unchecked. `label` can be left out: outputs fill in the official title.
 - **Outputs:** schema.org gets `occupationalCategory` (a `CategoryCode` with its code set; primary and secondary codes only, since a related code is a nearest fit, not a claim) on each position and `DefinedTerm`s for coded skills; the `verification` mapping lists each job's SOC codes; the LinkedIn sheet and JSON Resume have no place for them.
 
-The lists are in [`data/`](data/), with their sources and licences in [`data/README.md`](data/README.md). O*NET data is © the O*NET Resource Center, used under CC BY 4.0.
+The lists are in [`data/`](data/), with their sources and licenses in [`data/README.md`](data/README.md). O*NET data is © the O*NET Resource Center, used under CC BY 4.0.
 
 ## Audiences: share different things with different recipients
 
@@ -211,7 +211,7 @@ node bin/profile.mjs release examples/employee.profile.json current-employer \
   --out directory.json --receipt receipt.json --record
 ```
 
-A release is refused unless `meta.subjectConsent.given` is true. It is the scoped payload plus a **consent receipt**: recipient, purpose, what was shared, expiry and the SHA-256 of the payload. `--record` appends it to the profile's `releases` log. Stopping a release stops future updates; copies already delivered stay with the recipient, and the receipt says so. The `scim` mapping produces a SCIM 2.0 User with the Enterprise User extension (employee number, department, division, cost centre, manager), the format directories and identity providers already accept.
+A release is refused unless `meta.subjectConsent.given` is true. It is the scoped payload plus a **consent receipt**: recipient, purpose, what was shared, expiry and the SHA-256 of the payload. `--record` appends it to the profile's `releases` log. Stopping a release stops future updates; copies already delivered stay with the recipient, and the receipt says so. The `scim` mapping produces a SCIM 2.0 User with the Enterprise User extension (employee number, department, division, cost center, manager), the format directories and identity providers already accept.
 
 ### Write-back: corrections from the employer
 
@@ -311,6 +311,61 @@ A mapping is JSON: an `include` filter and an `output` template.
 - **HR Open Standards / ATS:** map `work` to employment history and `credentials` to certifications the same way. Employee directories and identity providers are covered by the `scim` mapping.
 - **GEDCOM:** `timeline`, `service`, `education` and `names` map naturally to GEDCOM events, attributes and name structures, if a family-history export is ever wanted.
 
+## Photos, recommendations, endorsements and badges (2.6)
+
+**Photos are versioned assets, not bare URLs.** A `media` entry can carry:
+- `uuid`, `version` and `supersedes`, so a re-shot headshot is a new version of the same asset;
+- `sha256`, `width`, `height` and `byteSize`;
+- `renditions` (square, banner…);
+- `credit`, `license` and `consent`;
+- `capturedOn`, and the extracted `metadata` (camera, orientation).
+
+`person.images` says which photo is in force when (`{ media, purpose, from, to }`). A job or a position can name its own photo with `media`. Every output then asks one helper which image applies on its date.
+
+`profile media add <bundle> <file> --id … --alt …` copies a photo into the bundle, hashes it and records its size. A photo with GPS coordinates is refused unless you pass `--strip-gps`, which blanks the location in place and keeps everything else. In a 2.6.0 file, a bundled image that still has GPS is an error.
+
+**Other people** live in `people`: recommenders, endorsers, references and managers. Their names, roles, identifiers, contacts and photos are all dated, so a recommendation from 2019 shows the author's title and employer from 2019, and a name change is kept, not overwritten. Contacts are private by default. They never reach an output, and they reach a release only when the audience has the `personContacts` grant.
+
+**Recommendations** keep the full text verbatim, with:
+- `highlights`, checked to be verbatim parts of the text (whitespace and Unicode normalization aside);
+- the date and time;
+- the relationship (manager, peer, client…, linked to the job);
+- who the author was then (`authorAt`);
+- where it came from (`source`, with an optional screenshot).
+
+A recommendation needs the author's consent before it is shown anywhere. `consent.scope` decides what is shown:
+
+| Scope | Shown |
+|---|---|
+| `full` | The text and the author's name. |
+| `highlights` | The featured highlights only, with the name. |
+| `nameOnly` | The author's name and title, and no text. |
+| `anonymous` | The text, credited to the author's title alone ("Director of Terminal Operations", or "A colleague"); the employer is left out too, since a title at a named employer can identify someone. |
+
+Outputs:
+- schema.org: `Recommendation` on the profile page;
+- JSON Resume: `references`;
+- LinkedIn sheet: a Recommendations list;
+- brief: a featured quote.
+
+**Endorsements** are someone vouching for a skill, credential or badge, optionally as an Open Badges 3.0 `EndorsementCredential`. `endorsementCount` counts only approved, consented endorsements.
+
+**Badges** use the [Open Badges 3.0](https://www.imsglobal.org/spec/ob/v3p0/) vocabulary (1EdTech, built on W3C Verifiable Credentials 2.0): `achievement` (with `achievementType`, criteria and alignments), `issuer`, `validFrom`/`validUntil`. The issuer's original credential is kept byte for byte in the bundle, with its hash.
+
+`profile badges import <bundle> <file | url>` reads:
+- Open Badges 3.0 as JSON-LD or a VC-JWT;
+- Open Badges 2.0 hosted or signed assertions;
+- baked PNG and SVG images.
+
+A URL is fetched only with `--fetch`. Alignments to O*NET or SOC are checked like occupation codes. A badge that stands for a `credentials` entry (`credentialRef`) is listed once.
+
+Outputs:
+- schema.org: an `EducationalOccupationalCredential` with `credentialCategory: "badge"`;
+- JSON Resume: `certificates`;
+- LinkedIn sheet: Licenses & certifications, with the credential URL.
+
+See [`examples/recommended/`](examples/recommended/), a fictional bundle made entirely by `scripts/make-fixtures.mjs` (`npm run fixtures`).
+
 ## Profile bundles
 
 A bundle is a folder, or a zip of one:
@@ -321,15 +376,17 @@ ines-calloway/
   media/
     cv-2024.pdf
     headshot.jpg
+  badges/
+    harbor-ops-badge.json
 ```
 
-Refer to files as `bundle:media/cv-2024.pdf`. `validate <folder>` checks that each file exists and that any `sha256` matches. Keeping the evidence with the data means a source can't quietly go missing.
+Refer to files as `bundle:media/cv-2024.pdf`. `validate <folder>` checks that each file exists and that any `sha256` matches, including each rendition and each badge's original credential. Keeping the evidence with the data means a source can't quietly go missing.
 
 ## What this schema deliberately doesn't hold
 
 Some things don't belong in a file meant for sharing, so the schema has no place for them, and where it can it refuses them:
 
-- **Government identity and tax numbers for a person** (SSN, ITIN, passport, driver's licence). `person.identifiers` refuses such keys, and any value shaped like an SSN.
+- **Government identity and tax numbers for a person** (SSN, ITIN, passport, driver's license). `person.identifiers` refuses such keys, and any value shaped like an SSN.
 - **Date of birth and age.** Graduation dates can still act as an age proxy; leave education dates out of outputs where that matters (a per-target override does this).
 - **Compensation and salary history.** Many places bar employers from asking for it.
 - **Health details, sexual orientation, religion, immigration status, criminal history.** If a career break was for health reasons, the validator asks you to keep it private or describe it as "personal".
@@ -351,7 +408,7 @@ Individual person fields (location, pronouns, photo and others) can be hidden fr
 
 ## Versioning
 
-`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 added organization history, positions and responsibilities; 2.3.0 added registry and tax identifiers; 2.4.0 hardens security and privacy, localizes outputs and fills model gaps; 2.5.0 adds occupation, industry and skill codes, internal notes and open-recipient audiences, and refuses releases without consent. Earlier files remain valid; a 2.5.0 file is held to two stricter checks (see the changelog). Git tags and GitHub releases for each version are still to be created.
+`schemaVersion` follows semantic versioning. Changes that break existing files bump the major version; new optional fields bump the minor version. 2.0.0 was the first public release (1.0 was an internal draft); 2.1.0 added audiences, releases and write-back; 2.2.0 added organization history, positions and responsibilities; 2.3.0 added registry and tax identifiers; 2.4.0 hardens security and privacy, localizes outputs and fills model gaps; 2.5.0 adds occupation, industry and skill codes, internal notes and open-recipient audiences, and refuses releases without consent; 2.6.0 adds versioned photos, other people, recommendations, endorsements and Open Badges 3.0 badges. Earlier files remain valid; a 2.5.0 or 2.6.0 file is held to stricter checks (see the changelog). Git tags and GitHub releases for each version are still to be created.
 
 ## Brand and design system
 
@@ -362,17 +419,17 @@ Profile Schema has its own logo and design system in [`brand/`](brand/). The mar
 | Logo on a light page | [`brand/svg/profile-schema-lockup-light.svg`](brand/svg/profile-schema-lockup-light.svg) |
 | Logo on a dark page | [`brand/svg/profile-schema-lockup-dark.svg`](brand/svg/profile-schema-lockup-dark.svg) |
 | App icon or avatar | [`brand/svg/profile-schema-icon.svg`](brand/svg/profile-schema-icon.svg), or PNGs in [`brand/png/`](brand/png/) |
-| Favicons, manifest and theme colour | [`brand/head-snippet.html`](brand/head-snippet.html) |
-| Colours, type, spacing in CSS | [`brand/design-system/tokens.css`](brand/design-system/tokens.css), which follows the reader's light or dark setting |
+| Favicons, manifest and theme color | [`brand/head-snippet.html`](brand/head-snippet.html) |
+| Colors, type, spacing in CSS | [`brand/design-system/tokens.css`](brand/design-system/tokens.css), which follows the reader's light or dark setting |
 | Tokens for design tools | [`brand/design-system/tokens.dtcg.json`](brand/design-system/tokens.dtcg.json) (W3C format) |
 
 - **Name.** In writing, the product is **Profile Schema**, and the full form is **Profile Schema, a Turnrow Solution**. The lowercase `profile-schema` belongs to the logo and to code (the package `@turnrow/profile-schema`, file names, URLs).
-- **Accessible by default.** Every text colour meets WCAG AAA (7:1) on every surface in both themes, and `brand/tools/contrast.py` fails if one stops meeting it. Type is Atkinson Hyperlegible Next and Mono, sized in `rem` and mobile-first.
-- **Dark mode and localisation.** Each colour has a light and a dark value. Layouts use logical properties so right-to-left locales mirror; the logo itself never mirrors, and the product name is never translated.
+- **Accessible by default.** Every text color meets WCAG AAA (7:1) on every surface in both themes, and `brand/tools/contrast.py` fails if one stops meeting it. Type is Atkinson Hyperlegible Next and Mono, sized in `rem` and mobile-first.
+- **Dark mode and localization.** Each color has a light and a dark value. Layouts use logical properties so right-to-left locales mirror; the logo itself never mirrors, and the product name is never translated.
 - **Generated, not drawn.** Logos come from constructed geometry in `brand/tools/build_brand.py`. Change its constants and re-run; never hand-edit an SVG.
 
-## Credits and licence
+## Credits and license
 
 This repository began as a fork of [jsonresume/resume-schema](https://github.com/jsonresume/resume-schema), which is archived; JSON Resume development continues in [jsonresume/jsonresume.org](https://github.com/jsonresume/jsonresume.org). The evidence model follows ideas from the FamilySearch GEDCOM 7 specification and the GEDCOM X conceptual model.
 
-MIT licence. See [LICENSE.md](LICENSE.md). The fonts in `brand/fonts/` are under the SIL Open Font License; their licences are kept beside them. JSON Resume's own copyright notice is kept there and in [`upstream/jsonresume/LICENSE.md`](upstream/jsonresume/LICENSE.md).
+MIT license. See [LICENSE.md](LICENSE.md). The fonts in `brand/fonts/` are under the SIL Open Font License; their licenses are kept beside them. JSON Resume's own copyright notice is kept there and in [`upstream/jsonresume/LICENSE.md`](upstream/jsonresume/LICENSE.md).

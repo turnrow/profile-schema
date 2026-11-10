@@ -59,6 +59,14 @@ function loadProfile(path) {
   try { profile = JSON.parse(readFileSync(file, "utf8")); } catch (err) { fail(`${file} is not valid JSON: ${err.message}`); }
   return { profile, file, bundleDir: file === p ? undefined : p };
 }
+// The schema's id pattern: an id becomes a file name in the bundle, so nothing else may pass.
+const ID_RE = /^[a-z0-9][a-z0-9-]*$/;
+function checkId(id) { if (!ID_RE.test(id ?? "")) fail(`"${id}" is not a valid id: use lowercase letters, digits and hyphens`, 2); }
+// Write a new file in the bundle, never over an existing one.
+function writeNew(path, bytes, what) {
+  if (existsSync(path)) fail(`${what} already exists; choose another --id (nothing was changed)`, 2);
+  writeFileSync(path, bytes, { flag: "wx" });
+}
 function fail(message, code = 1) { console.error(`error: ${message}`); process.exit(code); }
 function emit(text) { if (out) writeFileSync(out, text); else process.stdout.write(text); }
 function usage(code = 2) {
@@ -133,20 +141,25 @@ try {
       if (!mediaId || !altText) fail("media add needs --id and --alt (describe the image for people who cannot see it)", 2);
       const { profile, file, bundleDir } = loadProfile(rest[1]);
       if (!bundleDir) fail("media add needs a bundle folder (a folder with profile.json), not a single file", 2);
+      checkId(mediaId);
       if (!existsSync(rest[2])) fail(`no such file: ${rest[2]}`);
       let bytes = readFileSync(rest[2]);
       const info = readImageInfo(bytes);
+      if (info.unreadable) fail(`${rest[2]} is not a readable image (${info.unreadable})`, 2);
       if (info.gps && !stripGpsFlag) fail(`${rest[2]} carries location (GPS) metadata in ${info.gpsWhere.join(" and ")}; re-run with --strip-gps to store a copy without it`, 2);
       if (info.gps) bytes = stripGps(bytes, info.mediaType);
+      const after = readImageInfo(bytes);
+      if (after.gps || after.unreadable) fail(`could not remove the location metadata from ${rest[2]} cleanly; nothing was changed`, 2);
       // An existing id means a new version of the same asset: the next free <id>-vN, same uuid.
       const media = profile.media ?? [];
-      const prior = media.filter((m) => m.id === mediaId || m.id.startsWith(`${mediaId}-v`));
+      // Only the id itself and its -vN versions count; "head" is not a version of "head-vintage".
+      const versionOf = (m) => (m.id === mediaId ? 1 : Number(m.id.match(new RegExp(`^${mediaId}-v(\\d+)$`))?.[1] ?? 0));
+      const prior = media.filter((m) => versionOf(m) > 0).sort((a, b) => versionOf(a) - versionOf(b));
       const latest = prior.at(-1);
-      const id = latest ? `${mediaId}-v${prior.length + 1}` : mediaId;
-      const ext = (extname(rest[2]) || { "image/png": ".png", "image/jpeg": ".jpg", "image/svg+xml": ".svg" }[info.mediaType] || "").toLowerCase();
+      const id = latest ? `${mediaId}-v${versionOf(latest) + 1}` : mediaId;
+      const ext = ({ "image/png": ".png", "image/jpeg": ".jpg", "image/svg+xml": ".svg" }[info.mediaType] ?? extname(rest[2]).toLowerCase()).replace(/[^.a-z0-9]/g, "");
       mkdirSync(join(bundleDir, "media"), { recursive: true });
-      writeFileSync(join(bundleDir, "media", `${id}${ext}`), bytes);
-      const after = readImageInfo(bytes);
+      writeNew(join(bundleDir, "media", `${id}${ext}`), bytes, `media/${id}${ext}`);
       const entry = {
         id, title: altText, url: `bundle:media/${id}${ext}`, mediaType: after.mediaType, alt: altText,
         ...(kind ? { kind } : {}),
@@ -180,11 +193,13 @@ try {
         if (!existsSync(rest[2])) fail(`no such file: ${rest[2]}`);
         bytes = readFileSync(rest[2]);
       }
+      if (mediaId) checkId(mediaId);
       const { entry, original, ext } = parseBadge(bytes, { id: mediaId });
+      checkId(entry.id);
       if ((profile.badges ?? []).some((b) => b.id === entry.id)) fail(`a badge with id "${entry.id}" already exists; pass --id`, 2);
       mkdirSync(join(bundleDir, "badges"), { recursive: true });
       const rel = `badges/${entry.id}${ext}`;
-      writeFileSync(join(bundleDir, rel), original);
+      writeNew(join(bundleDir, rel), original, rel);
       entry.credential.file = `bundle:${rel}`;
       entry.credential.sha256 = createHash("sha256").update(original).digest("hex");
       profile.badges = [...(profile.badges ?? []), entry];

@@ -1,0 +1,140 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "inLanguage": "en-US",
+  "url": "https://ines-ortega.example/",
+  "dateModified": "2026-11-07T00:00:00Z",
+  "mainEntity": {
+    "@type": "Person",
+    "@id": "https://ines-ortega.example/#person",
+    "name": "Ines Ortega",
+    "givenName": "Ines",
+    "familyName": "Ortega",
+    "jobTitle": "Senior Operations Planner",
+    "description": "Plans the moves that keep a container terminal running: berths, cranes and yard space.",
+    "image": {
+      "@type": "ImageObject",
+      "contentUrl": "https://ines-ortega.example/files/media/headshot.png",
+      "caption": "Illustrated placeholder portrait of Ines Ortega",
+      "width": 64,
+      "height": 64
+    },
+    "homeLocation": {
+      "@type": "Place",
+      "name": "Long Beach, California",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Long Beach",
+        "addressRegion": "CA",
+        "addressCountry": "US"
+      }
+    },
+    "worksFor": [
+      {
+        "@type": "Organization",
+        "name": "Port of Example",
+        "url": "https://port.example"
+      }
+    ],
+    "hasOccupation": [
+      {
+        "@type": "Occupation",
+        "name": "Senior Operations Planner",
+        "description": "Port of Example, Mar 2019 – Present",
+        "occupationalCategory": [
+          {
+            "@type": "CategoryCode",
+            "codeValue": "13-1081",
+            "name": "Logisticians",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "2018 SOC",
+              "url": "https://www.bls.gov/soc/2018/"
+            }
+          },
+          {
+            "@type": "CategoryCode",
+            "codeValue": "13-1081.00",
+            "name": "Logisticians",
+            "inCodeSet": {
+              "@type": "CategoryCodeSet",
+              "name": "O*NET-SOC 2019",
+              "url": "https://www.onetcenter.org/taxonomy.html"
+            }
+          }
+        ]
+      }
+    ],
+    "hasCredential": [
+      {
+        "@type": "EducationalOccupationalCredential",
+        "name": "Harbor Operations Planner",
+        "description": "Plans berth, crane and yard operations for a container terminal.",
+        "credentialCategory": "badge",
+        "url": "https://badges.example/credentials/harbor-ops-118",
+        "recognizedBy": {
+          "@type": "Organization",
+          "name": "Example Maritime Academy",
+          "url": "https://badges.example/issuers/maritime-academy"
+        },
+        "dateCreated": "2024-03-01T00:00:00Z"
+      },
+      {
+        "@type": "EducationalOccupationalCredential",
+        "name": "Site Safety Lead",
+        "description": "Leads site safety on a working port.",
+        "credentialCategory": "badge",
+        "recognizedBy": {
+          "@type": "Organization",
+          "name": "Example Builders Guild"
+        },
+        "dateCreated": "2021-06-01T00:00:00Z",
+        "expires": "2031-06-01T00:00:00Z"
+      }
+    ],
+    "knowsAbout": [
+      "Berth planning",
+      "Yard scheduling"
+    ]
+  },
+  "review": [
+    {
+      "@type": "Recommendation",
+      "itemReviewed": {
+        "@type": "Person",
+        "@id": "https://ines-ortega.example/#person",
+        "name": "Ines Ortega"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Sam Okafor",
+        "jobTitle": "Shift Lead",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Port of Example"
+        }
+      },
+      "datePublished": "2024-02-12",
+      "reviewBody": "Every shift lead now plans with the tool she built"
+    },
+    {
+      "@type": "Recommendation",
+      "itemReviewed": {
+        "@type": "Person",
+        "@id": "https://ines-ortega.example/#person",
+        "name": "Ines Ortega"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Maria Chen",
+        "jobTitle": "Director of Terminal Operations",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Port of Example"
+        }
+      },
+      "datePublished": "2023-05-02T14:30:00-07:00",
+      "reviewBody": "Ines rebuilt our harbor planning program from nothing. She is the most careful planner I know, and the crews trusted her completely."
+    }
+  ]
+}

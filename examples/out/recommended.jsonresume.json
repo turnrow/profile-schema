@@ -1,0 +1,61 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/jsonresume.org/master/packages/schema/schema.json",
+  "basics": {
+    "name": "Ines Ortega",
+    "label": "Port operations planner | Berth and yard scheduling",
+    "image": "https://ines-ortega.example/files/media/headshot.png",
+    "location": {
+      "city": "Long Beach",
+      "region": "CA",
+      "countryCode": "US"
+    }
+  },
+  "work": [
+    {
+      "name": "Port of Example",
+      "position": "Senior Operations Planner",
+      "url": "https://port.example",
+      "startDate": "2019-03",
+      "summary": "Plans berth, crane and yard operations for the container terminal.",
+      "highlights": [
+        "33% less crane idle time (Jan 2020–Dec 2020)"
+      ]
+    }
+  ],
+  "certificates": [
+    {
+      "name": "Harbor Operations Planner",
+      "issuer": "Example Maritime Academy",
+      "date": "2024-03-01",
+      "url": "https://badges.example/credentials/harbor-ops-118"
+    },
+    {
+      "name": "Site Safety Lead",
+      "issuer": "Example Builders Guild",
+      "date": "2021-06-01"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Berth planning"
+    },
+    {
+      "name": "Yard scheduling"
+    }
+  ],
+  "references": [
+    {
+      "name": "Sam Okafor, Shift Lead at Port of Example",
+      "reference": "Every shift lead now plans with the tool she built"
+    },
+    {
+      "name": "Maria Chen, Director of Terminal Operations at Port of Example",
+      "reference": "Ines rebuilt our harbor planning program from nothing. She is the most careful planner I know, and the crews trusted her completely."
+    }
+  ],
+  "meta": {
+    "canonical": "https://ines-ortega.example/",
+    "version": "2.6.0",
+    "lastModified": "2026-11-07T00:00:00Z"
+  }
+}

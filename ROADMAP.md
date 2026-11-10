@@ -1,15 +1,15 @@
 # Roadmap
 
-Items found in the 2.4.0 review that aren't done yet, roughly in priority order.
+Items not done yet, roughly in priority order. Planned milestones are tracked as GitHub issues: 2.7 (review document and accessible PDF résumé), 2.8 (exports: Open Badges 3.0/CLR 2.0, Europass, HR Open, plain-text ATS, GEDCOM 7.0 and 5.5.1), 2.9 (directory sync) and 3.0 (time-based org chart).
 
 ## Trust
+- **Badge signature checks.** Verify Open Badges 3.0 proofs (Data Integrity and VC-JWT) and Open Badges 2.0 signed assertions, and check revocation lists, instead of reporting them as not implemented.
 - **Signed employer claims.** Accept employer write-backs as W3C Verifiable Credentials and record the signature with the claim, so employment history stays verifiable after the employer is gone.
 - **Revocation follow-through.** When a release is revoked, generate the erasure or stop-processing request for the recipient (GDPR Article 17, CCPA deletion), not just a log entry.
 
 ## Outputs
+- **Endorsements in outputs.** Endorsements are released but not yet rendered; show counts and quotes where a format has a place for them.
 - **Reference renderer.** An HTML résumé and profile page built from the profile: WCAG AAA, mobile-first, dark mode, right-to-left scripts, with the JSON-LD embedded.
-- **Plain-text ATS résumé** that applicant tracking systems parse reliably.
-- **Europass and HR Open Standards** mappings (Europass needs a JSON-to-XML step).
 - **Age-neutral option** for outputs: leave out graduation years and roles older than a set horizon.
 
 ## Data quality
