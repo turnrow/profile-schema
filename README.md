@@ -248,6 +248,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Get the whole profile as one file to check | `review <profile \| bundle> --out review.md` |
 | Write an output | `convert <profile \| bundle> <mapping> [--out file]` |
 | Write a GEDCOM 7 file for genealogy software | `convert <profile \| bundle> gedcom7 --out me.ged` (add `--gedzip` for a `.gdz` with the media) |
+| Write GEDCOM 5.5.1 for older genealogy software | `convert <profile \| bundle> gedcom551 --out me.ged` |
 | Write an accessible résumé PDF | `pdf <profile \| bundle> --out resume.pdf` |
 | Start from a JSON Resume | `import <resume.json> --out my.profile.json` |
 | Share with an audience, with a consent receipt | `release <profile> <audience> --method … --domain …` |
@@ -255,7 +256,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
 
-Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `gedcom7`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
+Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `gedcom7`, `gedcom551`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
 
 Options that apply widely: `--out <file>` (folders are created as needed), `--locale <tag>` (a BCP 47 tag such as `es` or `pt-BR`) and `--on <yyyy-mm-dd>` (the date an output is made for; default today, UTC). An option can be written `--out file` or `--out=file`. A misspelled option stops the command.
 
@@ -310,6 +311,30 @@ The evidence model here came from genealogy, and this sends a working life back 
 - **GEDZip (`--gedzip`).** A `.gdz` is a zip holding `gedcom.ged` and the bundle's media at the paths the file names. Without it, media are named by web address (`--media-base` or `meta.mediaBaseUrl`), and a bundle file with nowhere to point is left out.
 - **Not exported:** credentials, awards, projects, publications, skills and languages have no natural GEDCOM structure and are left out. Say so in an issue if you need them as events.
 - **Checked against the standard.** The tests hold every example's output to FamilySearch's own structure tables (which tag may sit where, how often, with what value), using a checker that must first accept FamilySearch's own test files. Both are in [`upstream/gedcom7/`](upstream/gedcom7/). No GEDCOM program has imported these files yet.
+
+### GEDCOM 5.5.1
+
+```sh
+node bin/profile.mjs convert examples/sample.profile.json gedcom551 --out ines-551.ged
+```
+
+Many genealogy programs still read 5.5.1 and not 7.0. `gedcom551` says exactly what `gedcom7` says (it is the same mapping, written another way) in the older form. See [`examples/out/sample.551.ged`](examples/out/sample.551.ged).
+
+| 7.0 | 5.5.1 |
+|---|---|
+| `GEDC VERS 7.0`, `SCHMA` | `GEDC VERS 5.5.1`, `FORM LINEAGE-LINKED`, `CHAR UTF-8`, and a submitter record (`SUBM`), which 5.5.1 requires: the person the record is about |
+| `LANG en-US` | `LANG English` (5.5.1 names languages) |
+| A date's `PHRASE` | A note: "Date as recorded: c. 1996 – May 2009" |
+| `_CONF high` | A note: "Confidence: high" |
+| `RESI` and `EVEN` with a value | No value (5.5.1 gives them none); what happened is the first note |
+| A leading `@` doubled | Every `@` doubled |
+| Lines of any length | Lines of at most 255 bytes, continued with `CONC`; line breaks with `CONT` |
+| `FORM image/png`, `MEDI PHOTO` | `FORM png`, `TYPE photo` |
+
+- **Nothing is dropped without a trace.** What 5.5.1 has no place for becomes a note. A value too long for its field (an occupation over 90 characters, a place over 120) is cut there with an ellipsis and kept whole in a note.
+- **Two limits of 5.5.1 are passed on purpose.** It allows a file reference 30 characters, which no web address fits, so the whole reference is written; and its list of media formats is older than PNG, so the real format is written. Other software does the same.
+- **GEDZip is a 7.0 format,** so `--gedzip` goes with `gedcom7` only.
+- **Checked against the specification's own grammar.** 5.5.1 has no machine-readable tables, so the structure definitions and size limits were extracted from the specification's text into [`upstream/gedcom551/`](upstream/gedcom551/), and the tests' checker is built from them. Dates and a few enumerations, which the specification gives only in prose, are written into the checker by hand. No official 5.5.1 test files could be found to prove the checker on, and no GEDCOM program has imported these files yet.
 
 ## The résumé view
 
@@ -420,7 +445,8 @@ From code: `reviewMarkdown(profile, { on, locale, mappings })`. Pass your own `m
 | [`lib/release.mjs`](lib/release.mjs) | Builds audience-scoped releases with consent receipts. |
 | [`lib/writeback.mjs`](lib/writeback.mjs) | Turns an employer's SCIM User into claims under the authority rules. |
 | [`mappings/`](mappings/) | `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`, `verification`. |
-| [`lib/gedcom.mjs`](lib/gedcom.mjs) | Writes GEDCOM 7.0 from the `gedcom7` view, converts dates, and packages GEDZip archives. |
+| [`lib/gedcom.mjs`](lib/gedcom.mjs) | Writes GEDCOM 7.0 and 5.5.1 from the `gedcom7` view, converts dates, and packages GEDZip archives. |
+| [`upstream/gedcom551/`](upstream/gedcom551/) | The GEDCOM 5.5.1 grammar, extracted from the specification's text. The tests check the 5.5.1 export against it. |
 | [`upstream/gedcom7/`](upstream/gedcom7/) | Unmodified structure tables and test files from the FamilySearch GEDCOM 7 specification (Apache 2.0). The tests check our export against them. |
 | [`lib/pdf.mjs`](lib/pdf.mjs) | Prepares the résumé view for the template, runs Typst and explains its failures. |
 | [`templates/`](templates/) | Typst templates for the résumé PDF. Layout only. |
@@ -481,13 +507,14 @@ A mapping is JSON: an `include` filter and an `output` template.
   - Documents: `label` (a fixed phrase in the output's language), `labelFor` (a translated enum value), `section` (an `{ id, heading, entries }` block that drops itself when empty), `count`.
   - Context: `locale`, `direction`, `onDate`, `now`.
 - Empty values are dropped, so missing data never renders as a blank field.
+- `"extends": "gedcom7"` takes everything from that bundled mapping and replaces only what this one sets. Use it when two outputs differ in how they are written, not in what they say.
 - `"ruleExemptKeys": ["id"]` keeps the content rules from reading identifiers as prose (an id such as `state-u-ms` is not a claim to an MS). Exempt only keys a reader never sees.
 
 ### Other targets
 
 - **Europass:** copy `jsonresume.json` and rename keys to the Europass model. Map `languages[].cefr` to the language levels and `skills[].escoUri` to ESCO skills. Europass imports XML, so add a JSON-to-XML step.
 - **HR Open Standards / ATS:** map `work` to employment history and `credentials` to certifications the same way. Employee directories and identity providers are covered by the `scim` mapping.
-- **GEDCOM:** see [GEDCOM 7](#gedcom-7). GEDCOM 5.5.1 is on the [roadmap](ROADMAP.md).
+- **GEDCOM:** see [GEDCOM 7](#gedcom-7), which also covers 5.5.1.
 
 ## Photos, recommendations, endorsements and badges (2.6)
 

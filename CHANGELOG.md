@@ -2,6 +2,13 @@
 
 ## Unreleased (2.8): exports
 
+### GEDCOM 5.5.1
+- **`convert <profile | bundle> gedcom551`** writes the same individual for programs that don't read 7.0: `GEDC VERS 5.5.1`, `FORM LINEAGE-LINKED`, `CHAR UTF-8`, a required `SUBM` record, languages by name, 5.5.1-shaped `OBJE` records, every `@` doubled, and lines within 255 bytes continued with `CONC` and `CONT`.
+- **Nothing is dropped silently.** A date's phrase, the confidence, and the title of a residence or event become notes; a value too long for its field is cut there and kept whole in a note.
+- **`"extends"` in a mapping.** `gedcom551` extends `gedcom7` and only changes how it is written, so the two can't drift apart.
+- **Checked against the specification's grammar,** extracted from its text into `upstream/gedcom551/`. Two limits are passed on purpose (30-character file references; a format list older than PNG) and a test says so.
+- `examples/out/*.551.ged` are generated and checked in CI.
+
 ### GEDCOM 7.0 and GEDZip
 - **`convert <profile | bundle> gedcom7`** writes a FamilySearch GEDCOM 7.0 file with one individual: `NAME` per name (with type, and a note for when it was in use), `OCCU` per title held (dates, place, and the employer's name at the time as `AGNC`), `EDUC`, `RESI`, `EVEN` with a `TYPE` for timeline events and service, `SOUR` citations with `PAGE` and `QUAY`, and `OBJE` for approved public media.
 - **Dates keep their doubt:** `ABT`, `EST`, `CAL`, `BEF`, `AFT`, `BET … AND`; spans are `FROM … TO` periods with a `PHRASE` when an end is uncertain.

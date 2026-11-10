@@ -1,0 +1,30 @@
+0 HEAD
+1 SOUR TURNROW_PROFILE
+2 NAME Profile Schema, a Turnrow Solution
+1 DATE 7 NOV 2026
+1 SUBM @U1@
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 CHAR UTF-8
+1 LANG English
+0 @U1@ SUBM
+1 NAME Ines Ortega
+0 @I1@ INDI
+1 NAME Ines /Ortega/
+2 GIVN Ines
+2 SURN Ortega
+1 OCCU Senior Operations Planner
+2 DATE FROM MAR 2019
+2 AGNC Port of Example
+2 NOTE Plans berth, crane and yard operations for the container terminal.
+3 CONT 33% less crane idle time (Jan 2020–Dec 2020)
+2 NOTE Confidence: high
+1 OBJE @O1@
+0 @O1@ OBJE
+1 FILE https://ines-ortega.example/files/media/headshot.png
+2 FORM png
+3 TYPE photo
+2 TITL Ines Ortega, headshot
+1 NOTE Description: Illustrated placeholder portrait of Ines Ortega
+0 TRLR
