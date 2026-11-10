@@ -1,5 +1,41 @@
 # Changelog
 
+## 2.5.0 (2026-11-09): occupation, industry and skill codes; fixes from building a real profile
+
+Built while modelling a real founder's record (a CV, a newspaper article, his own account, a pitch deck and a live LinkedIn profile). Earlier files remain valid. A file that declares 2.5.0 is held to one stricter check: high confidence can't rest on self-reported evidence alone.
+
+### Codes
+- **Occupation codes** (`occupations`) on work, service, positions and responsibilities: U.S. SOC (kept by the Bureau of Labor Statistics), O*NET-SOC, ISCO, ESCO, NOC, ANZSCO, with `match` (primary, secondary, related) and an internal `rationale`.
+- **Skill codes** (`codes`) on skills: O*NET content-model elements (skills, knowledge, software), ESCO, Lightcast. `escoUri` still works.
+- **Industry codes:** organizations' existing NAICS `classifications` are now checked.
+- **Bundled lists** in `data/`: SOC 2018, O*NET-SOC and O*NET 31.0 (August 2026) elements (CC BY 4.0), NAICS 2022, built by `scripts/build-code-lists.mjs`, which records the SHA-256 of each input file in the output. Unknown codes are errors; group-level SOC codes, wrong titles, two primaries and mismatched O*NET/SOC pairs are warnings; other editions are accepted unchecked.
+- **Outputs:** schema.org `occupationalCategory` and coded `knowsAbout` terms; SOC codes per job in the `verification` mapping.
+
+### Privacy and consent
+- **Releases need consent.** `release` refuses, and `buildRelease` throws `ReleaseRefusedError`, unless `meta.subjectConsent.given` is true. Before, a profile its subject hadn't approved could be released to a third party; only a warning was shown.
+- **Internal notes:** `note` on entries, positions, responsibilities, metrics and organizations. Never rendered or released. Rulings like "show without dates, per the subject" no longer have to be stored as open questions or citation notes.
+- **Self-reported evidence is capped at medium confidence** in 2.5.0 files (an error, a warning in older files). The schema.org mapping now takes medium confidence too: a profile page is the person's own account.
+- **JSON Resume is public-only by default** (it was public and network); usually it ends up on a public site.
+
+### Audiences
+- `organizations`: several fixed recipients, any one of which qualifies.
+- `recipients: "anyVerified"`: anyone who passes the audience's verification methods, with the recipient named on the release (`--recipient`). New verification method `invitation`. An email address alone never qualifies.
+
+### Outputs
+- **Uncertain dates** read "between Oct 2025 and Dec 2025" (translated) instead of "Oct 2025/Dec 2025".
+- **`bundle:` links** are rewritten against `meta.mediaBaseUrl` (or `--media-base`) or left out. Before, the bundle path was written into public JSON-LD and JSON Resume.
+- **Organization alternate names** no longer repeat the name shown.
+- **LinkedIn sheet:**
+  - adds Projects, Publications, Languages, and press about you under Featured;
+  - lists military service under Experience, with highlights, instead of under Volunteering;
+  - adds a "Before you paste" list of what LinkedIn will refuse: a missing start date, an uncertain date, a year without a month, military service without a title, credentials without an issuer, press without a link.
+- **`--visibility`** on `convert` (and `visibility` in `convert()` options) replaces a mapping's visibility filter.
+
+### Command line
+- Errors are one plain line (`error: …`; `TURNROW_DEBUG=1` for the stack). A refused release exits 4.
+- `release --record` on a bundle folder writes the record into its `profile.json`. Before, it tried to write to the folder path and failed.
+- `open` also lists open questions on approved entries (as `question`), and `validate` counts them separately. `open` on an invalid file now reports the errors; before, it said "Nothing waiting on confirmation".
+
 ## 2.4.0 (2026-11-07): review hardening, localization and model gaps
 
 A critical review of 2.0–2.3 from several angles: security, privacy, localization, coverage of real careers, and release hygiene. Backwards compatible: earlier files remain valid, except links that weren't http(s), which are now refused (see Security).

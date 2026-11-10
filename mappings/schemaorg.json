@@ -1,6 +1,6 @@
 {
   "target": "schemaorg",
-  "description": "schema.org JSON-LD for a public profile page: ProfilePage with a Person as mainEntity. Public, approved, high-confidence entries only. Place it in <script type=\"application/ld+json\">. Output is HTML-safe (<, > and & escaped), so it can be placed in a <script> element as is.",
+  "description": "schema.org JSON-LD for a public profile page: ProfilePage with a Person as mainEntity. Public, approved, high-confidence entries only. Place it in <script type=\"application/ld+json\">. Output is HTML-safe (<, > and & escaped), so it can be placed in a <script> element as is. Since 2.5 includes medium confidence: a profile page is the person's own account, and self-reported facts can no longer be marked high.",
   "include": {
     "visibility": [
       "public"
@@ -9,7 +9,8 @@
       "approved"
     ],
     "confidence": [
-      "high"
+      "high",
+      "medium"
     ]
   },
   "output": {
@@ -244,6 +245,36 @@
                 ]
               }
             ]
+          },
+          "occupationalCategory": {
+            "$each": {
+              "$fn": "positionOccupations",
+              "args": [
+                "$"
+              ]
+            },
+            "$where": {
+              "system": [
+                "soc",
+                "onetSoc",
+                "isco",
+                "esco"
+              ],
+              "match": [
+                "primary",
+                "secondary"
+              ]
+            },
+            "$map": {
+              "@type": "CategoryCode",
+              "codeValue": "$.code",
+              "name": "$.label",
+              "inCodeSet": {
+                "@type": "CategoryCodeSet",
+                "name": "$.set",
+                "url": "$.setUrl"
+              }
+            }
           }
         }
       },
@@ -326,10 +357,61 @@
         "$each": "$$.skills",
         "$sort": "-pinned,-priority",
         "$map": {
-          "$fn": "text",
-          "args": [
-            "$.name"
-          ]
+          "$if": "$.codes",
+          "$then": {
+            "@type": "DefinedTerm",
+            "name": {
+              "$fn": "text",
+              "args": [
+                "$.name"
+              ]
+            },
+            "termCode": {
+              "$fn": "first",
+              "args": [
+                {
+                  "$fn": "skillCodes",
+                  "args": [
+                    "$"
+                  ]
+                },
+                "code"
+              ]
+            },
+            "inDefinedTermSet": {
+              "@type": "DefinedTermSet",
+              "name": {
+                "$fn": "first",
+                "args": [
+                  {
+                    "$fn": "skillCodes",
+                    "args": [
+                      "$"
+                    ]
+                  },
+                  "set"
+                ]
+              },
+              "url": {
+                "$fn": "first",
+                "args": [
+                  {
+                    "$fn": "skillCodes",
+                    "args": [
+                      "$"
+                    ]
+                  },
+                  "setUrl"
+                ]
+              }
+            }
+          },
+          "$else": {
+            "$fn": "text",
+            "args": [
+              "$.name"
+            ]
+          }
         }
       },
       "knowsLanguage": {

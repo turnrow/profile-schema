@@ -200,6 +200,33 @@
             "$.startDate",
             "$.endDate"
           ]
+        },
+        "occupationCodes": {
+          "$each": {
+            "$fn": "allOccupations",
+            "args": [
+              "$",
+              "soc"
+            ]
+          },
+          "$map": {
+            "soc": "$.code",
+            "title": "$.label",
+            "edition": {
+              "$fn": "coalesce",
+              "args": [
+                "$.version",
+                "2018"
+              ]
+            },
+            "match": "$.match"
+          },
+          "$where": {
+            "match": [
+              "primary",
+              "secondary"
+            ]
+          }
         }
       }
     }

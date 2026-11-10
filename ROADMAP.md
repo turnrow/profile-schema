@@ -13,6 +13,10 @@ Items found in the 2.4.0 review that aren't done yet, roughly in priority order.
 - **Age-neutral option** for outputs: leave out graduation years and roles older than a set horizon.
 
 ## Data quality
+- **Rebuild the code lists from the official downloads** (BLS, O*NET, Census) with a script and a checksum, instead of the public copies 2.5.0 was built from.
+- **SOC 2028** when OMB publishes it (expected 2027), with the BLS crosswalk from 2018 so existing codes can be suggested forward.
+- **ESCO and ISCO lists**, so those codes are checked too, and an O*NET-SOC ↔ ISCO crosswalk.
+- **Suggest codes** from a job title using the O*NET "Sample of Reported Titles" and SOC direct-match titles.
 - **Per-state identifier formats** (Texas file number, Washington UBI, Oregon BIN…) as optional checks.
 - **UEI check character**, if GSA publishes the algorithm.
 - **Wikidata import** of organization history (names, "replaces"/"replaced by", owners), cited automatically.

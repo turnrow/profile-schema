@@ -4,7 +4,6 @@
     "name": "Ines Calloway",
     "label": "Founder & CEO, Tidewater Trails | Marine biologist | 30 years building coastal travel",
     "image": "https://example.com/images/ines-calloway.jpg",
-    "email": "ines@example.com",
     "url": "https://example.com",
     "summary": "I started on research boats and ended up building the places those boats sail to. Tidewater Trails is what I learned along the way: trips planned around the people taking them.",
     "location": {
@@ -54,11 +53,6 @@
   ],
   "volunteer": [
     {
-      "organization": "Open Trails Foundation",
-      "position": "Board member",
-      "startDate": "2020"
-    },
-    {
       "organization": "Coast Guard Auxiliary (fictional unit)",
       "position": "Boat crew member",
       "endDate": "1995",
@@ -72,12 +66,6 @@
       "studyType": "BS",
       "startDate": "1987",
       "endDate": "1991"
-    },
-    {
-      "institution": "State University (fictional)",
-      "area": "Coastal Management",
-      "startDate": "1993",
-      "endDate": "1995"
     }
   ],
   "awards": [

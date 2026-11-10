@@ -1,6 +1,6 @@
 {
   "target": "linkedin",
-  "description": "Paste-ready LinkedIn fields with LinkedIn's names and limits (headline 220, About 2,600, descriptions 2,000). LinkedIn has no import API for personal profiles, so this is a sheet to paste from. Public and network entries; approved; high or medium confidence.",
+  "description": "Paste-ready LinkedIn fields with LinkedIn's names and limits (headline 220, About 2,600, descriptions 2,000). LinkedIn has no import API for personal profiles, so this is a sheet to paste from. Public and network entries; approved; high or medium confidence. 'Before you paste' lists what LinkedIn will refuse: missing start dates, uncertain dates, military service without a title, press without a link.",
   "include": {
     "visibility": [
       "public",
@@ -184,8 +184,71 @@
         }
       }
     },
-    "Volunteering / service": {
+    "Experience: military service (add each as an Experience entry)": {
       "$each": "$$.service",
+      "$where": {
+        "kind": [
+          "military",
+          "reserve"
+        ]
+      },
+      "$sort": "-startDate",
+      "$map": {
+        "Title": {
+          "$fn": "coalesce",
+          "args": [
+            "$.rank",
+            {
+              "$fn": "text",
+              "args": [
+                "$.role"
+              ]
+            }
+          ]
+        },
+        "Company (search LinkedIn for)": {
+          "$fn": "org",
+          "args": [
+            "$.organization"
+          ]
+        },
+        "Employment type": {
+          "$literal": "Full-time"
+        },
+        "Dates": {
+          "$fn": "dateRangeText",
+          "args": [
+            "$.startDate",
+            "$.endDate",
+            "$.current"
+          ]
+        },
+        "Description": {
+          "$fn": "truncate",
+          "args": [
+            {
+              "$fn": "joinLines",
+              "args": [
+                "$.summary",
+                "$.highlights"
+              ]
+            },
+            2000
+          ]
+        }
+      }
+    },
+    "Volunteering": {
+      "$each": "$$.service",
+      "$where": {
+        "kind": [
+          "scouting",
+          "volunteer",
+          "civic",
+          "board",
+          null
+        ]
+      },
       "$sort": "-startDate",
       "$map": {
         "Role": {
@@ -206,6 +269,7 @@
             "$.organization"
           ]
         },
+        "Cause": "$.cause",
         "Dates": {
           "$fn": "dateRangeText",
           "args": [
@@ -215,9 +279,16 @@
           ]
         },
         "Description": {
-          "$fn": "text",
+          "$fn": "truncate",
           "args": [
-            "$.summary"
+            {
+              "$fn": "joinLines",
+              "args": [
+                "$.summary",
+                "$.highlights"
+              ]
+            },
+            2000
           ]
         }
       }
@@ -304,6 +375,75 @@
         }
       }
     },
+    "Projects": {
+      "$each": "$$.projects",
+      "$sort": "-priority,-startDate",
+      "$map": {
+        "Project name": {
+          "$fn": "text",
+          "args": [
+            "$.name"
+          ]
+        },
+        "Dates": {
+          "$fn": "dateRangeText",
+          "args": [
+            "$.startDate",
+            "$.endDate",
+            "$.current"
+          ]
+        },
+        "Associated with": {
+          "$fn": "org",
+          "args": [
+            "$.organization"
+          ]
+        },
+        "Project URL": "$.url",
+        "Description": {
+          "$fn": "truncate",
+          "args": [
+            {
+              "$fn": "joinLines",
+              "args": [
+                {
+                  "$fn": "join",
+                  "args": [
+                    [
+                      {
+                        "$fn": "text",
+                        "args": [
+                          "$.role"
+                        ]
+                      },
+                      {
+                        "$if": "$.value",
+                        "$then": {
+                          "$fn": "concat",
+                          "args": [
+                            {
+                              "$fn": "money",
+                              "args": [
+                                "$.value"
+                              ]
+                            },
+                            " project"
+                          ]
+                        }
+                      }
+                    ],
+                    " · "
+                  ]
+                },
+                "$.summary",
+                "$.highlights"
+              ]
+            },
+            2000
+          ]
+        }
+      }
+    },
     "Honors & awards": {
       "$each": "$$.awards",
       "$map": {
@@ -333,6 +473,69 @@
         }
       }
     },
+    "Publications": {
+      "$each": "$$.publications",
+      "$where": {
+        "aboutPerson": [
+          false,
+          null
+        ]
+      },
+      "$sort": "-date",
+      "$map": {
+        "Title": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "Publisher": {
+          "$fn": "org",
+          "args": [
+            "$.publisher"
+          ]
+        },
+        "Publication date": {
+          "$fn": "dateText",
+          "args": [
+            "$.date"
+          ]
+        },
+        "Publication URL": "$.url",
+        "Description": {
+          "$fn": "text",
+          "args": [
+            "$.summary"
+          ]
+        }
+      }
+    },
+    "Languages": {
+      "$each": "$$.languages",
+      "$map": {
+        "Language": {
+          "$fn": "text",
+          "args": [
+            "$.name"
+          ]
+        },
+        "Proficiency": {
+          "$fn": "enumMap",
+          "args": [
+            "$.fluency",
+            {
+              "$literal": {
+                "elementary": "Elementary proficiency",
+                "limitedWorking": "Limited working proficiency",
+                "professionalWorking": "Professional working proficiency",
+                "fullProfessional": "Full professional proficiency",
+                "native": "Native or bilingual proficiency"
+              }
+            }
+          ]
+        }
+      }
+    },
     "Skills (first 3 pinned)": {
       "$each": "$$.skills",
       "$sort": "-pinned,-priority",
@@ -358,9 +561,181 @@
         "Link or file": "$.url"
       }
     },
+    "Featured: press about you (upload as a PDF or link)": {
+      "$each": "$$.publications",
+      "$where": {
+        "aboutPerson": true
+      },
+      "$sort": "-date",
+      "$map": {
+        "Title": {
+          "$fn": "text",
+          "args": [
+            "$.title"
+          ]
+        },
+        "Publisher": {
+          "$fn": "org",
+          "args": [
+            "$.publisher"
+          ]
+        },
+        "Date": {
+          "$fn": "dateText",
+          "args": [
+            "$.date"
+          ]
+        },
+        "Link or file": "$.url"
+      }
+    },
     "Name pronunciation": {
       "$fn": "pronunciation",
       "args": []
+    },
+    "Before you paste": {
+      "$fn": "concatLists",
+      "args": [
+        {
+          "$fn": "gaps",
+          "args": [
+            "$$.work",
+            {
+              "$literal": {
+                "label": "Experience",
+                "required": [
+                  "startDate"
+                ],
+                "exact": [
+                  "startDate",
+                  "endDate"
+                ],
+                "names": {
+                  "startDate": "a start date"
+                },
+                "dateNames": {
+                  "startDate": "start date",
+                  "endDate": "end date"
+                },
+                "needMonth": true
+              }
+            }
+          ]
+        },
+        {
+          "$fn": "gaps",
+          "args": [
+            "$$.service",
+            {
+              "$literal": {
+                "label": "Experience (military)",
+                "title": [
+                  "rank",
+                  "role"
+                ],
+                "where": {
+                  "kind": [
+                    "military",
+                    "reserve"
+                  ]
+                },
+                "required": [
+                  [
+                    "rank",
+                    "role"
+                  ],
+                  "startDate"
+                ],
+                "exact": [
+                  "startDate",
+                  "endDate"
+                ],
+                "names": {
+                  "rank": "a title (rank or rate)",
+                  "role": "role",
+                  "startDate": "a start date"
+                },
+                "dateNames": {
+                  "startDate": "start date",
+                  "endDate": "end date"
+                },
+                "needMonth": true
+              }
+            }
+          ]
+        },
+        {
+          "$fn": "gaps",
+          "args": [
+            "$$.service",
+            {
+              "$literal": {
+                "label": "Volunteering",
+                "title": [
+                  "role"
+                ],
+                "where": {
+                  "kind": [
+                    "scouting",
+                    "volunteer",
+                    "civic",
+                    "board",
+                    null
+                  ]
+                },
+                "required": [],
+                "exact": [
+                  "startDate"
+                ],
+                "dateNames": {
+                  "startDate": "start date",
+                  "endDate": "end date"
+                },
+                "needMonth": false
+              }
+            }
+          ]
+        },
+        {
+          "$fn": "gaps",
+          "args": [
+            "$$.credentials",
+            {
+              "$literal": {
+                "label": "Licence or certification",
+                "required": [
+                  "issuer"
+                ],
+                "names": {
+                  "issuer": "an issuing organization"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$fn": "gaps",
+          "args": [
+            "$$.publications",
+            {
+              "$literal": {
+                "label": "Featured press",
+                "where": {
+                  "aboutPerson": [
+                    true
+                  ]
+                },
+                "required": [
+                  "url"
+                ],
+                "names": {
+                  "url": "a link or an uploaded PDF"
+                }
+              }
+            }
+          ]
+        }
+      ]
     }
   }
 }
