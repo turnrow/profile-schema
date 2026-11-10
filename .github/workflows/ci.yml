@@ -29,7 +29,7 @@ jobs:
           node scripts/make-fixtures.mjs
           for ex in sample history recommended; do
             src="examples/$ex.profile.json"; [ -d "examples/$ex" ] && src="examples/$ex"
-            for m in jsonresume schemaorg linkedin brief timeline; do
+            for m in jsonresume schemaorg linkedin brief timeline resume; do
               ext=json; [ "$m" = linkedin ] && ext=txt
               node bin/profile.mjs convert "$src" "$m" --on 2026-11-07 --out "examples/out/$ex.$m.$ext"
             done

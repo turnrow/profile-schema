@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { validateProfile, loadMapping, convert, schema, BUNDLED_MAPPINGS, scopeProfile, withPublishedMedia } from "../index.mjs";
 import { readImageInfo, imageFor } from "../lib/media.mjs";
 import { endorsementCount } from "../lib/people.mjs";
-import { t, SUPPORTED_MESSAGE_LANGUAGES } from "../lib/i18n.mjs";
+import { SUPPORTED_MESSAGE_LANGUAGES, MESSAGE_KEYS, translates } from "../lib/i18n.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const CLI = join(root, "bin", "profile.mjs");
@@ -91,7 +91,7 @@ test("a zip, a missing file and a bad mapping name each get a plain explanation"
   assert.match(cli("validate", join(dir, "nope.json")).stderr, /no such file or folder/);
   const r = cli("convert", SAMPLE, "europass");
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /unknown mapping "europass": use one of brief, jsonresume, linkedin, schemaorg, scim, timeline, verification/);
+  assert.match(r.stderr, /unknown mapping "europass": use one of brief, jsonresume, linkedin, resume, schemaorg, scim, timeline, verification/);
   assert.match(cli("convert", SAMPLE, join(dir, "mine.json")).stderr, /no such mapping file/);
 });
 
@@ -129,12 +129,7 @@ test("the schema's $id points at the default branch", () => {
 });
 
 test("every supported language translates every phrase", () => {
-  const keys = ["between", "present", "circa", "before", "after", "since", "nowAlso", "dba", "continued", "acquiredBy", "acquired",
-    "mergedInto", "independent", "spunOff", "splitInto", "renamed", "and", "titleAt", "aColleague"];
-  for (const lang of SUPPORTED_MESSAGE_LANGUAGES) for (const k of keys) {
-    assert.notEqual(t(lang, k), k, `${lang}.${k} exists`);
-    if (lang !== "en" && !["circa"].includes(k)) assert.notEqual(t(lang, k), t("en", k), `${lang}.${k} is translated`);
-  }
+  for (const lang of SUPPORTED_MESSAGE_LANGUAGES) for (const k of MESSAGE_KEYS) assert.ok(translates(lang, k), `${lang} has ${k}`);
 });
 
 test("a recommender's role is phrased in the output's language", () => {

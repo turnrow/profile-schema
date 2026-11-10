@@ -1,0 +1,228 @@
+{
+  "view": "resume",
+  "viewVersion": 1,
+  "locale": "en-US",
+  "direction": "ltr",
+  "madeFor": "2026-11-07",
+  "title": "Ines Calloway: résumé",
+  "person": {
+    "name": "Ines Calloway",
+    "headline": "Founder & CEO, Tidewater Trails | Marine biologist | 30 years building coastal travel",
+    "location": "New York, NY",
+    "website": "https://example.com",
+    "links": [
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/example-ines-calloway/"
+      },
+      {
+        "label": "ORCID",
+        "url": "https://orcid.org/0000-0000-0000-0000"
+      }
+    ],
+    "photo": {
+      "url": "https://example.com/images/ines-calloway.jpg",
+      "alt": "Ines Calloway smiling on a dock, wearing a navy jacket, with sailboats behind her"
+    }
+  },
+  "summary": {
+    "heading": "Summary",
+    "text": "I started on research boats and ended up building the places those boats sail to. Tidewater Trails is what I learned along the way: trips planned around the people taking them."
+  },
+  "sections": [
+    {
+      "id": "experience",
+      "heading": "Experience",
+      "entries": [
+        {
+          "id": "tidewater-ceo",
+          "priority": 100,
+          "title": "Founder & CEO",
+          "organization": "Tidewater Trails",
+          "location": "New York, NY",
+          "dates": "Mar 2024 – Present",
+          "datesNumeric": "03/2024 – Present",
+          "positions": [
+            {
+              "id": "tidewater-ceo-role",
+              "title": "Founder & CEO",
+              "dates": "Mar 2024 – Present",
+              "datesNumeric": "03/2024 – Present",
+              "summary": "Building a trip-planning service for coastal and marine travel."
+            }
+          ]
+        },
+        {
+          "id": "harborline-director",
+          "priority": 95,
+          "title": "Director of Development",
+          "organization": "Harborline Resorts",
+          "location": "Cartagena, Colombia",
+          "dates": "Jun 2009 – Dec 2023",
+          "datesNumeric": "06/2009 – 12/2023",
+          "positions": [
+            {
+              "id": "harborline-director-role",
+              "title": "Director of Development",
+              "dates": "Jun 2009 – Dec 2023",
+              "datesNumeric": "06/2009 – 12/2023",
+              "summary": "Led development of three waterfront resorts from site selection through opening.",
+              "bullets": [
+                "3 resorts opened",
+                "~$240M development portfolio"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "coastal-lab-researcher",
+          "priority": 60,
+          "title": "Research Biologist",
+          "organization": "Coastal Ecology Lab",
+          "location": "Azores, Portugal",
+          "dates": "c. 1996 – May 2009",
+          "datesNumeric": "c. 1996 – 05/2009",
+          "positions": [
+            {
+              "id": "coastal-lab-researcher-role",
+              "title": "Research Biologist",
+              "dates": "c. 1996 – May 2009",
+              "datesNumeric": "c. 1996 – 05/2009",
+              "summary": "Field research on reef recovery; led survey dives and small-boat operations."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "education",
+      "heading": "Education",
+      "entries": [
+        {
+          "id": "state-u-bs",
+          "priority": 50,
+          "title": "BS, Marine Biology",
+          "organization": "State University (fictional)",
+          "dates": "1987 – 1991",
+          "datesNumeric": "1987 – 1991"
+        }
+      ]
+    },
+    {
+      "id": "credentials",
+      "heading": "Licenses and certifications",
+      "entries": [
+        {
+          "id": "captain-license",
+          "priority": 85,
+          "title": "Master Mariner licence (100 GT) (Near Coastal, Auxiliary Sail)",
+          "organization": "Example Maritime Authority",
+          "dates": "Apr 2005",
+          "datesNumeric": "04/2005"
+        },
+        {
+          "id": "divemaster",
+          "priority": 60,
+          "title": "Divemaster",
+          "organization": "Example Diving Association",
+          "dates": "before 1998",
+          "datesNumeric": "before 1998"
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "heading": "Skills",
+      "entries": [
+        {
+          "id": "entrepreneurship",
+          "priority": 90,
+          "title": "Entrepreneurship"
+        },
+        {
+          "id": "travel",
+          "priority": 90,
+          "title": "Travel & Tourism"
+        },
+        {
+          "id": "resort-development",
+          "priority": 90,
+          "title": "Resort Development"
+        },
+        {
+          "id": "marine-biology",
+          "priority": 70,
+          "title": "Marine Biology"
+        }
+      ]
+    },
+    {
+      "id": "languages",
+      "heading": "Languages",
+      "entries": [
+        {
+          "id": "lang-en",
+          "priority": 50,
+          "title": "English",
+          "detail": "Native or bilingual, C2"
+        },
+        {
+          "id": "lang-es",
+          "priority": 50,
+          "title": "Spanish",
+          "detail": "Native or bilingual, C2"
+        },
+        {
+          "id": "lang-pt",
+          "priority": 50,
+          "title": "Portuguese",
+          "detail": "Professional working, B2"
+        }
+      ]
+    },
+    {
+      "id": "projects",
+      "heading": "Projects",
+      "entries": [
+        {
+          "id": "cartagena-marina",
+          "priority": 50,
+          "title": "Cartagena waterfront resort and marina",
+          "organization": "Harborline Resorts",
+          "detail": "Development lead",
+          "dates": "2015 – 2019",
+          "datesNumeric": "2015 – 2019"
+        }
+      ]
+    },
+    {
+      "id": "service",
+      "heading": "Service and volunteering",
+      "entries": [
+        {
+          "id": "coast-guard-aux",
+          "priority": 55,
+          "title": "Boat crew member",
+          "organization": "Coast Guard Auxiliary (fictional unit)",
+          "dates": "between 1990 and 1991 – 1995",
+          "datesNumeric": "between 1990 and 1991 – 1995",
+          "summary": "Search-and-rescue boat crew on weekends."
+        }
+      ]
+    },
+    {
+      "id": "awards",
+      "heading": "Awards",
+      "entries": [
+        {
+          "id": "harbor-award",
+          "priority": 70,
+          "title": "Waterfront Project of the Year",
+          "organization": "The Harbor Gazette",
+          "dates": "Oct 2019",
+          "datesNumeric": "10/2019"
+        }
+      ]
+    }
+  ]
+}

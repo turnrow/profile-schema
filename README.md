@@ -253,7 +253,7 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Add a photo to a bundle | `media add <bundle> <image> --id … --alt "…"` |
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
 
-Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
+Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
 
 Options that apply widely: `--out <file>` (folders are created as needed), `--locale <tag>` (a BCP 47 tag such as `es` or `pt-BR`) and `--on <yyyy-mm-dd>` (the date an output is made for; default today, UTC). An option can be written `--out file` or `--out=file`. A misspelled option stops the command.
 
@@ -281,6 +281,29 @@ Options that apply widely: `--out <file>` (folders are created as needed), `--lo
 | `Output breaks content rules` (exit 3) | An output contains something `rules` forbids. Fix the text, or pass `--allow-rule-violations` to see the output with warnings. |
 | `Release refused` (exit 4) | The reason follows the message: consent isn't recorded, the audience has expired, or the domain or method doesn't qualify. |
 | Anything unexpected | Run again with `TURNROW_DEBUG=1` for a stack trace, and include it in the issue. |
+
+## The résumé view
+
+```sh
+node bin/profile.mjs convert examples/sample.profile.json resume --locale es
+```
+
+The `resume` mapping is not a résumé; it is what a résumé template reads. Every decision is made here, so a template only lays out: the PDF and the plain-text ATS résumé (both on the [roadmap](ROADMAP.md)) will read this view and nothing else, and so will say the same thing. See [`examples/out/sample.resume.json`](examples/out/sample.resume.json).
+
+| Field | What it holds |
+|---|---|
+| `title`, `locale`, `direction`, `madeFor` | The document title, its language, `ltr` or `rtl`, and the date it was made for. |
+| `person` | Name, headline, location, the contact details the output may show, links with labels, and the photo in force with its alt text. |
+| `summary` | A heading and the text. |
+| `sections[]` | In reading order, each with `id`, a `heading` in the output's language and `entries`. A section with no entries is left out, so no heading stands over nothing. |
+
+Every entry has the same shape, whatever its section: `id`, `priority`, `title`, and where they apply `organization`, `location`, `detail`, `dates`, `datesNumeric`, `summary`, `bullets`, `keywords`, `url`. A job also lists its `positions`, newest first, each with its own title, dates and bullets.
+
+- **Dates come twice:** `dates` in the reader's language ("mar 2024 – Actualidad") and `datesNumeric` as `MM/YYYY` for applicant tracking systems. Uncertain dates keep their qualifier in both ("c. 1996").
+- **`priority`** (0–100, default 50) is on every entry, so a one-page layout knows what to drop first.
+- **Study that didn't end in a degree** reads "… (not completed)", or names the subject alone.
+- **Other people's words** appear only with their consent, and only to its scope.
+- Headings and levels are translated in English, Spanish, French, German and Portuguese; other locales fall back to English words with their own date formats.
 
 ## The review file
 
@@ -373,13 +396,15 @@ A mapping is JSON: an `include` filter and an `output` template.
   - Text: `text` (localize), `concat`, `join`, `coalesce`, `truncate`, `enumMap`.
   - Organizations and places: `org`, `orgObj`, `place`, `placeObj`, `placeGeo`, `placeIdUri`.
   - Names: `name`, `names`.
-  - Dates: `isoExact` (exact dates only), `isoLoose` (lower bound), `date`, `dateText` (renders "c. 1996", "before 1998", "1990/91"), `dateRangeText`.
+  - Dates: `isoExact` (exact dates only), `isoLoose` (lower bound), `date`, `dateText` (renders "c. 1996", "before 1998", "1990/91"), `dateRangeText`. The `numeric` format gives `MM/YYYY`.
   - Names: `namesDuring` (names in use during a period), `pronunciation`.
   - Identifiers: `orgIdentifiers`, `orgIdentifier` (in force on a date), `orgClassification`.
   - History and roles: `employer` (in the mapping's `orgNameStyle`), `orgNameAt`, `orgNow`, `orgAlternateNames`, `tenureNotes`, `positions`, `flatPositions`, `responsibilityLines`, `joinLines`, `concatLists`.
   - Values and lookups: `money`, `metricText`, `lookup`, `visible`.
-  - Context: `locale`, `now`.
+  - Documents: `label` (a fixed phrase in the output's language), `labelFor` (a translated enum value), `section` (an `{ id, heading, entries }` block that drops itself when empty), `count`.
+  - Context: `locale`, `direction`, `onDate`, `now`.
 - Empty values are dropped, so missing data never renders as a blank field.
+- `"ruleExemptKeys": ["id"]` keeps the content rules from reading identifiers as prose (an id such as `state-u-ms` is not a claim to an MS). Exempt only keys a reader never sees.
 
 ### Other targets
 

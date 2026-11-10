@@ -1,0 +1,126 @@
+{
+  "view": "resume",
+  "viewVersion": 1,
+  "locale": "en-US",
+  "direction": "ltr",
+  "madeFor": "2026-11-07",
+  "title": "Pat Example: résumé",
+  "person": {
+    "name": "Pat Example",
+    "headline": "Enterprise architect | Release engineering | Consulting",
+    "location": "Dallas–Fort Worth, Texas"
+  },
+  "summary": {
+    "heading": "Summary"
+  },
+  "sections": [
+    {
+      "id": "experience",
+      "heading": "Experience",
+      "entries": [
+        {
+          "id": "eds-job",
+          "priority": 90,
+          "title": "Solutions Architect",
+          "organization": "EDS (now DXC Technology)",
+          "location": "Plano, Texas",
+          "dates": "Jun 2005 – Mar 2011",
+          "datesNumeric": "06/2005 – 03/2011",
+          "positions": [
+            {
+              "id": "eds-sa",
+              "title": "Solutions Architect",
+              "dates": "Feb 2010 – Mar 2011",
+              "datesNumeric": "02/2010 – 03/2011",
+              "summary": "Release engineering and architecture for state government outsourcing accounts.",
+              "bullets": [
+                "Continued: Led the release-engineering team for the account. (8 engineers (Jul 2009–Mar 2011))",
+                "Owned the target architecture for the claims-system modernization."
+              ]
+            },
+            {
+              "id": "eds-tc3",
+              "title": "Technology Consultant III",
+              "dates": "Jan 2009 – Jan 2010",
+              "datesNumeric": "01/2009 – 01/2010",
+              "summary": "Same job; the title changed when HP mapped EDS roles onto its own job architecture.",
+              "bullets": [
+                "Continued: Ran nightly batch operations for a state Medicaid claims system.",
+                "Continued: Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009); 8 engineers (Jul 2009–Mar 2011))",
+                "Continued: Mentored new engineers through the onboarding program."
+              ]
+            },
+            {
+              "id": "eds-sse",
+              "title": "Senior Systems Engineer",
+              "dates": "Apr 2007 – Dec 2008",
+              "datesNumeric": "04/2007 – 12/2008",
+              "bullets": [
+                "Continued: Ran nightly batch operations for a state Medicaid claims system.",
+                "Led the release-engineering team for the account. (3 engineers (Apr 2007–Jun 2009))",
+                "Mentored new engineers through the onboarding program."
+              ]
+            },
+            {
+              "id": "eds-se",
+              "title": "Systems Engineer",
+              "dates": "Jun 2005 – Mar 2007",
+              "datesNumeric": "06/2005 – 03/2007",
+              "bullets": [
+                "Ran nightly batch operations for a state Medicaid claims system."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "buchanan-job",
+          "priority": 60,
+          "title": "Network Engineer",
+          "organization": "Buchanan Associates (now Buchanan Technologies)",
+          "location": "Grapevine, Texas",
+          "dates": "Jul 1999 – May 2005",
+          "datesNumeric": "07/1999 – 05/2005",
+          "positions": [
+            {
+              "id": "buchanan-job-role",
+              "title": "Network Engineer",
+              "dates": "Jul 1999 – May 2005",
+              "datesNumeric": "07/1999 – 05/2005",
+              "summary": "Managed network services for outsourcing clients."
+            }
+          ]
+        },
+        {
+          "id": "cl-job",
+          "priority": 70,
+          "title": "Senior Associate",
+          "organization": "Coopers & Lybrand (now PwC)",
+          "location": "Dallas, Texas",
+          "dates": "Mar 1996 – Jun 1999",
+          "datesNumeric": "03/1996 – 06/1999",
+          "positions": [
+            {
+              "id": "pwc-sassoc",
+              "title": "Senior Associate",
+              "dates": "Jul 1998 – Jun 1999",
+              "datesNumeric": "07/1998 – 06/1999",
+              "summary": "Continued with the merged firm, PricewaterhouseCoopers.",
+              "bullets": [
+                "Continued: Delivered ERP integration work for manufacturing clients."
+              ]
+            },
+            {
+              "id": "cl-assoc",
+              "title": "Associate",
+              "dates": "Mar 1996 – Jun 1998",
+              "datesNumeric": "03/1996 – 06/1998",
+              "bullets": [
+                "Delivered ERP integration work for manufacturing clients."
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

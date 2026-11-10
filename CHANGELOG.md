@@ -1,6 +1,16 @@
 # Changelog
 
-## Unreleased (2.7): review file
+## Unreleased (2.7): review file and résumé view
+
+### Résumé view
+- **`resume` mapping:** a neutral JSON view for résumé templates. It holds the document title, language and direction, the person (with the photo in force and its alt text), a summary, and ordered sections whose entries all share one shape. Templates only lay out.
+- Dates are given twice, in the reader's language and as `MM/YYYY`. Every entry carries its `priority`.
+- New mapping helpers: `label` (a fixed phrase in the output's language), `labelFor` (a translated enum value), `section` (drops itself when empty), `count`, `direction`, `onDate`. `dateRangeText` takes a format, and `numeric` is a new date format.
+- Section headings, the document title and language and skill levels are translated (en, es, fr, de, pt). A test now requires every supported language to translate every phrase.
+- A mapping can set `ruleExemptKeys` so content rules don't read identifiers as prose; the résumé view exempts entry ids (`state-u-ms` was matching the forbidden "MS").
+- `examples/out/*.resume.json` are generated and checked in CI.
+
+### Review file
 
 - **`review <profile | bundle> [--on] [--locale] [--out review.md]`** writes the whole profile as one Markdown file for checking: a summary (consent, counts, open items, rule hits), every entry with its status, confidence, visibility, sources, codes, notes and **which outputs show it**, claims beside the profile's own value, other people's data with consent per item, and audiences and releases.
 - "Which outputs show it" uses each mapping's own filter and gives the reason an entry is hidden ("priority 40 is below 80").

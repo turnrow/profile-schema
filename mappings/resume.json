@@ -1,0 +1,879 @@
+{
+  "target": "resume",
+  "description": "A neutral view of the profile as a résumé, for templates to lay out: the PDF (templates/resume) and the plain-text ATS résumé read this and nothing else. Everything that needs a decision is decided here: which entries appear (approved, public, high or medium confidence), their order, how employers are named, dates in the reader's language (dates) and as MM/YYYY (datesNumeric), headings in the output's language, and which photo to show. A template holds layout only. Each entry carries its priority, so a one-page layout knows what to drop first. Pass --visibility public,network for a version that also carries network-level entries.",
+  "include": {
+    "visibility": [
+      "public"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high",
+      "medium"
+    ]
+  },
+  "orgNameStyle": "both",
+  "ruleExemptKeys": [
+    "id"
+  ],
+  "output": {
+    "view": "resume",
+    "viewVersion": 1,
+    "locale": {
+      "$fn": "locale",
+      "args": []
+    },
+    "direction": {
+      "$fn": "direction",
+      "args": []
+    },
+    "madeFor": {
+      "$fn": "onDate",
+      "args": []
+    },
+    "title": {
+      "$fn": "label",
+      "args": [
+        "resumeTitle",
+        {
+          "name": "$.person.name"
+        }
+      ]
+    },
+    "person": {
+      "name": "$.person.name",
+      "pronunciation": {
+        "$fn": "pronunciation",
+        "args": []
+      },
+      "pronouns": "$.person.pronouns",
+      "headline": {
+        "$fn": "text",
+        "args": [
+          "$.person.headline"
+        ]
+      },
+      "location": {
+        "$fn": "place",
+        "args": [
+          "$.person.location"
+        ]
+      },
+      "email": {
+        "$fn": "visible",
+        "args": [
+          "$.person.contact.email",
+          "$.person.contact.emailVisibility"
+        ]
+      },
+      "phone": {
+        "$fn": "visible",
+        "args": [
+          "$.person.contact.phone",
+          "$.person.contact.phoneVisibility"
+        ]
+      },
+      "website": "$.person.contact.website",
+      "links": {
+        "$each": "$$.person.profiles",
+        "$map": {
+          "label": {
+            "$fn": "coalesce",
+            "args": [
+              {
+                "$fn": "text",
+                "args": [
+                  "$.label"
+                ]
+              },
+              "$.network"
+            ]
+          },
+          "url": "$.url"
+        }
+      },
+      "photo": {
+        "url": {
+          "$fn": "imageFor",
+          "args": [
+            "url",
+            "square"
+          ]
+        },
+        "alt": {
+          "$fn": "imageFor",
+          "args": [
+            "alt"
+          ]
+        },
+        "width": {
+          "$fn": "imageFor",
+          "args": [
+            "width"
+          ]
+        },
+        "height": {
+          "$fn": "imageFor",
+          "args": [
+            "height"
+          ]
+        }
+      }
+    },
+    "summary": {
+      "heading": {
+        "$fn": "label",
+        "args": [
+          "hSummary"
+        ]
+      },
+      "text": {
+        "$fn": "coalesce",
+        "args": [
+          {
+            "$fn": "text",
+            "args": [
+              "$.person.summary"
+            ]
+          },
+          {
+            "$fn": "text",
+            "args": [
+              "$.person.shortBio"
+            ]
+          }
+        ]
+      }
+    },
+    "sections": [
+      {
+        "$fn": "section",
+        "args": [
+          "experience",
+          "hExperience",
+          {
+            "$each": "$$.work",
+            "$sort": "-startDate",
+            "$map": {
+              "id": "$.id",
+              "priority": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.priority",
+                  50
+                ]
+              },
+              "title": {
+                "$fn": "text",
+                "args": [
+                  "$.title"
+                ]
+              },
+              "organization": {
+                "$fn": "employer",
+                "args": [
+                  "$.organization",
+                  "$.startDate",
+                  "$.endDate"
+                ]
+              },
+              "location": {
+                "$fn": "place",
+                "args": [
+                  "$.location"
+                ]
+              },
+              "dates": {
+                "$fn": "dateRangeText",
+                "args": [
+                  "$.startDate",
+                  "$.endDate",
+                  "$.current"
+                ]
+              },
+              "datesNumeric": {
+                "$fn": "dateRangeText",
+                "args": [
+                  "$.startDate",
+                  "$.endDate",
+                  "$.current",
+                  "numeric"
+                ]
+              },
+              "positions": {
+                "$each": {
+                  "$fn": "positions",
+                  "args": [
+                    "$"
+                  ]
+                },
+                "$sort": "-startDate",
+                "$map": {
+                  "id": "$.id",
+                  "title": "$.title",
+                  "dates": {
+                    "$fn": "dateRangeText",
+                    "args": [
+                      "$.startDate",
+                      "$.endDate",
+                      "$.current"
+                    ]
+                  },
+                  "datesNumeric": {
+                    "$fn": "dateRangeText",
+                    "args": [
+                      "$.startDate",
+                      "$.endDate",
+                      "$.current",
+                      "numeric"
+                    ]
+                  },
+                  "summary": "$.summary",
+                  "bullets": {
+                    "$fn": "concatLists",
+                    "args": [
+                      {
+                        "$fn": "responsibilityLines",
+                        "args": [
+                          "$"
+                        ]
+                      },
+                      "$.jobMetrics"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "$fn": "section",
+        "args": [
+          "education",
+          "hEducation",
+          {
+            "$each": "$$.education",
+            "$sort": "-endDate,-startDate",
+            "$map": {
+              "id": "$.id",
+              "priority": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.priority",
+                  50
+                ]
+              },
+              "title": {
+                "$if": "$.completed",
+                "$then": {
+                  "$fn": "join",
+                  "args": [
+                    [
+                      "$.credential",
+                      {
+                        "$fn": "text",
+                        "args": [
+                          "$.area"
+                        ]
+                      }
+                    ],
+                    ", "
+                  ]
+                },
+                "$else": {
+                  "$if": "$.credential",
+                  "$then": {
+                    "$fn": "label",
+                    "args": [
+                      "notCompleted",
+                      {
+                        "x": {
+                          "$fn": "join",
+                          "args": [
+                            [
+                              "$.credential",
+                              {
+                                "$fn": "text",
+                                "args": [
+                                  "$.area"
+                                ]
+                              }
+                            ],
+                            ", "
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "$else": {
+                    "$fn": "text",
+                    "args": [
+                      "$.area"
+                    ]
+                  }
+                }
+              },
+              "organization": {
+                "$fn": "org",
+                "args": [
+                  "$.institution"
+                ]
+              },
+              "location": {
+                "$fn": "place",
+                "args": [
+                  "$.location"
+                ]
+              },
+              "dates": {
+                "$fn": "dateRangeText",
+                "args": [
+                  "$.startDate",
+                  "$.endDate",
+                  null
+                ]
+              },
+              "datesNumeric": {
+                "$fn": "dateRangeText",
+                "args": [
+                  "$.startDate",
+                  "$.endDate",
+                  null,
+                  "numeric"
+                ]
+              },
+              "summary": {
+                "$fn": "text",
+                "args": [
+                  "$.summary"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "$fn": "section",
+        "args": [
+          "credentials",
+          "hCredentials",
+          {
+            "$fn": "concatLists",
+            "args": [
+              {
+                "$each": "$$.credentials",
+                "$where": {
+                  "active": [
+                    true,
+                    null
+                  ]
+                },
+                "$sort": "-priority",
+                "$map": {
+                  "id": "$.id",
+                  "priority": {
+                    "$fn": "coalesce",
+                    "args": [
+                      "$.priority",
+                      50
+                    ]
+                  },
+                  "title": {
+                    "$fn": "concat",
+                    "args": [
+                      {
+                        "$fn": "text",
+                        "args": [
+                          "$.name"
+                        ]
+                      },
+                      {
+                        "$if": "$.ratings",
+                        "$then": {
+                          "$fn": "concat",
+                          "args": [
+                            " (",
+                            {
+                              "$fn": "join",
+                              "args": [
+                                "$.ratings"
+                              ]
+                            },
+                            ")"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "organization": {
+                    "$fn": "org",
+                    "args": [
+                      "$.issuer"
+                    ]
+                  },
+                  "dates": {
+                    "$fn": "dateText",
+                    "args": [
+                      "$.issued"
+                    ]
+                  },
+                  "datesNumeric": {
+                    "$fn": "dateText",
+                    "args": [
+                      "$.issued",
+                      "numeric"
+                    ]
+                  },
+                  "url": "$.url"
+                }
+              },
+              {
+                "$each": {
+                  "$fn": "badgesNotListed",
+                  "args": [
+                    "$$.badges"
+                  ]
+                },
+                "$sort": "-validFrom",
+                "$map": {
+                  "id": "$.id",
+                  "priority": {
+                    "$fn": "coalesce",
+                    "args": [
+                      "$.priority",
+                      50
+                    ]
+                  },
+                  "title": {
+                    "$fn": "text",
+                    "args": [
+                      "$.achievement.name"
+                    ]
+                  },
+                  "organization": {
+                    "$fn": "org",
+                    "args": [
+                      "$.issuer"
+                    ]
+                  },
+                  "dates": {
+                    "$fn": "dateText",
+                    "args": [
+                      "$.validFrom"
+                    ]
+                  },
+                  "datesNumeric": {
+                    "$fn": "dateText",
+                    "args": [
+                      "$.validFrom",
+                      "numeric"
+                    ]
+                  },
+                  "url": "$.credential.url"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$fn": "section",
+        "args": [
+          "skills",
+          "hSkills",
+          {
+            "$each": "$$.skills",
+            "$sort": "-pinned,-priority",
+            "$map": {
+              "id": "$.id",
+              "priority": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.priority",
+                  50
+                ]
+              },
+              "title": {
+                "$fn": "text",
+                "args": [
+                  "$.name"
+                ]
+              },
+              "detail": {
+                "$fn": "labelFor",
+                "args": [
+                  "level_",
+                  "$.level"
+                ]
+              },
+              "keywords": "$.keywords"
+            }
+          }
+        ]
+      },
+      {
+        "$fn": "section",
+        "args": [
+          "languages",
+          "hLanguages",
+          {
+            "$each": "$$.languages",
+            "$map": {
+              "id": "$.id",
+              "priority": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.priority",
+                  50
+                ]
+              },
+              "title": {
+                "$fn": "text",
+                "args": [
+                  "$.name"
+                ]
+              },
+              "detail": {
+                "$fn": "join",
+                "args": [
+                  [
+                    {
+                      "$fn": "labelFor",
+                      "args": [
+                        "fluency_",
+                        "$.fluency"
+                      ]
+                    },
+                    "$.cefr"
+                  ],
+                  ", "
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "$fn": "section",
+        "args": [
+          "projects",
+          "hProjects",
+          {
+            "$each": "$$.projects",
+            "$sort": "-startDate",
+            "$map": {
+              "id": "$.id",
+              "priority": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.priority",
+                  50
+                ]
+              },
+              "title": {
+                "$fn": "text",
+                "args": [
+                  "$.name"
+                ]
+              },
+              "organization": {
+                "$fn": "org",
+                "args": [
+                  "$.organization"
+                ]
+              },
+              "detail": {
+                "$fn": "text",
+                "args": [
+                  "$.role"
+                ]
+              },
+              "dates": {
+                "$fn": "dateRangeText",
+                "args": [
+                  "$.startDate",
+                  "$.endDate",
+                  "$.current"
+                ]
+              },
+              "datesNumeric": {
+                "$fn": "dateRangeText",
+                "args": [
+                  "$.startDate",
+                  "$.endDate",
+                  "$.current",
+                  "numeric"
+                ]
+              },
+              "summary": {
+                "$fn": "text",
+                "args": [
+                  "$.summary"
+                ]
+              },
+              "bullets": {
+                "$fn": "concatLists",
+                "args": [
+                  "$.highlights",
+                  {
+                    "$fn": "metricText",
+                    "args": [
+                      "$.metrics",
+                      "$"
+                    ]
+                  }
+                ]
+              },
+              "url": "$.url"
+            }
+          }
+        ]
+      },
+      {
+        "$fn": "section",
+        "args": [
+          "service",
+          "hService",
+          {
+            "$each": "$$.service",
+            "$sort": "-startDate",
+            "$map": {
+              "id": "$.id",
+              "priority": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.priority",
+                  50
+                ]
+              },
+              "title": {
+                "$fn": "coalesce",
+                "args": [
+                  {
+                    "$fn": "text",
+                    "args": [
+                      "$.role"
+                    ]
+                  },
+                  "$.rank"
+                ]
+              },
+              "organization": {
+                "$fn": "org",
+                "args": [
+                  "$.organization"
+                ]
+              },
+              "location": {
+                "$fn": "place",
+                "args": [
+                  "$.location"
+                ]
+              },
+              "dates": {
+                "$fn": "dateRangeText",
+                "args": [
+                  "$.startDate",
+                  "$.endDate",
+                  "$.current"
+                ]
+              },
+              "datesNumeric": {
+                "$fn": "dateRangeText",
+                "args": [
+                  "$.startDate",
+                  "$.endDate",
+                  "$.current",
+                  "numeric"
+                ]
+              },
+              "summary": {
+                "$fn": "text",
+                "args": [
+                  "$.summary"
+                ]
+              },
+              "bullets": {
+                "$fn": "concatLists",
+                "args": [
+                  "$.highlights",
+                  {
+                    "$fn": "metricText",
+                    "args": [
+                      "$.metrics",
+                      "$"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "$fn": "section",
+        "args": [
+          "awards",
+          "hAwards",
+          {
+            "$each": "$$.awards",
+            "$sort": "-date",
+            "$map": {
+              "id": "$.id",
+              "priority": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.priority",
+                  50
+                ]
+              },
+              "title": {
+                "$fn": "text",
+                "args": [
+                  "$.title"
+                ]
+              },
+              "organization": {
+                "$fn": "org",
+                "args": [
+                  "$.awarder"
+                ]
+              },
+              "dates": {
+                "$fn": "dateText",
+                "args": [
+                  "$.date"
+                ]
+              },
+              "datesNumeric": {
+                "$fn": "dateText",
+                "args": [
+                  "$.date",
+                  "numeric"
+                ]
+              },
+              "summary": {
+                "$fn": "text",
+                "args": [
+                  "$.summary"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "$fn": "section",
+        "args": [
+          "publications",
+          "hPublications",
+          {
+            "$each": "$$.publications",
+            "$where": {
+              "aboutPerson": [
+                null,
+                false
+              ]
+            },
+            "$sort": "-date",
+            "$map": {
+              "id": "$.id",
+              "priority": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.priority",
+                  50
+                ]
+              },
+              "title": {
+                "$fn": "text",
+                "args": [
+                  "$.title"
+                ]
+              },
+              "organization": {
+                "$fn": "org",
+                "args": [
+                  "$.publisher"
+                ]
+              },
+              "dates": {
+                "$fn": "dateText",
+                "args": [
+                  "$.date"
+                ]
+              },
+              "datesNumeric": {
+                "$fn": "dateText",
+                "args": [
+                  "$.date",
+                  "numeric"
+                ]
+              },
+              "summary": {
+                "$fn": "text",
+                "args": [
+                  "$.summary"
+                ]
+              },
+              "url": "$.url"
+            }
+          }
+        ]
+      },
+      {
+        "$fn": "section",
+        "args": [
+          "recommendations",
+          "hRecommendations",
+          {
+            "$each": {
+              "$fn": "consented",
+              "args": [
+                "$$.recommendations"
+              ]
+            },
+            "$sort": "-date",
+            "$map": {
+              "id": "$.id",
+              "priority": {
+                "$fn": "coalesce",
+                "args": [
+                  "$.priority",
+                  50
+                ]
+              },
+              "title": {
+                "$fn": "authorLabel",
+                "args": [
+                  "$"
+                ]
+              },
+              "dates": {
+                "$fn": "dateText",
+                "args": [
+                  "$.date"
+                ]
+              },
+              "datesNumeric": {
+                "$fn": "dateText",
+                "args": [
+                  "$.date",
+                  "numeric"
+                ]
+              },
+              "summary": {
+                "$fn": "recommendationText",
+                "args": [
+                  "$"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "view": "resume",
+  "viewVersion": 1,
+  "locale": "en-US",
+  "direction": "ltr",
+  "madeFor": "2026-11-07",
+  "title": "Ines Ortega: résumé",
+  "person": {
+    "name": "Ines Ortega",
+    "pronouns": "she/her",
+    "headline": "Port operations planner | Berth and yard scheduling",
+    "location": "Long Beach, California",
+    "photo": {
+      "url": "https://ines-ortega.example/files/media/headshot.png",
+      "alt": "Illustrated placeholder portrait of Ines Ortega",
+      "width": 64,
+      "height": 64
+    }
+  },
+  "summary": {
+    "heading": "Summary",
+    "text": "Plans the moves that keep a container terminal running: berths, cranes and yard space."
+  },
+  "sections": [
+    {
+      "id": "experience",
+      "heading": "Experience",
+      "entries": [
+        {
+          "id": "port-planning",
+          "priority": 90,
+          "title": "Senior Operations Planner",
+          "organization": "Port of Example",
+          "dates": "Mar 2019 – Present",
+          "datesNumeric": "03/2019 – Present",
+          "positions": [
+            {
+              "id": "port-planning-role",
+              "title": "Senior Operations Planner",
+              "dates": "Mar 2019 – Present",
+              "datesNumeric": "03/2019 – Present",
+              "summary": "Plans berth, crane and yard operations for the container terminal.",
+              "bullets": [
+                "33% less crane idle time (Jan 2020–Dec 2020)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "credentials",
+      "heading": "Licenses and certifications",
+      "entries": [
+        {
+          "id": "harbor-ops-badge",
+          "priority": 80,
+          "title": "Harbor Operations Planner",
+          "organization": "Example Maritime Academy",
+          "dates": "Mar 2024",
+          "datesNumeric": "03/2024",
+          "url": "https://badges.example/credentials/harbor-ops-118"
+        },
+        {
+          "id": "site-safety-badge",
+          "priority": 50,
+          "title": "Site Safety Lead",
+          "organization": "Example Builders Guild",
+          "dates": "Jun 2021",
+          "datesNumeric": "06/2021"
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "heading": "Skills",
+      "entries": [
+        {
+          "id": "berth-planning",
+          "priority": 90,
+          "title": "Berth planning"
+        },
+        {
+          "id": "yard-scheduling",
+          "priority": 80,
+          "title": "Yard scheduling"
+        }
+      ]
+    },
+    {
+      "id": "recommendations",
+      "heading": "Recommendations",
+      "entries": [
+        {
+          "id": "rec-sam",
+          "priority": 50,
+          "title": "Sam Okafor, Shift Lead at Port of Example",
+          "dates": "Feb 2024",
+          "datesNumeric": "02/2024",
+          "summary": "Every shift lead now plans with the tool she built"
+        },
+        {
+          "id": "rec-maria",
+          "priority": 85,
+          "title": "Maria Chen, Director of Terminal Operations at Port of Example",
+          "dates": "May 2023",
+          "datesNumeric": "05/2023",
+          "summary": "Ines rebuilt our harbor planning program from nothing. She is the most careful planner I know, and the crews trusted her completely."
+        }
+      ]
+    }
+  ]
+}
