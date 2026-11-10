@@ -1,0 +1,141 @@
+{
+  "uri": "https://ines-ortega.example/",
+  "person": {
+    "name": {
+      "formattedName": "Ines Ortega",
+      "given": "Ines",
+      "family": "Ortega"
+    },
+    "communication": {
+      "address": [
+        {
+          "city": "Long Beach",
+          "countrySubDivisions": [
+            {
+              "type": "region",
+              "value": "CA"
+            }
+          ],
+          "countryCode": "US",
+          "formattedAddress": "Long Beach, California"
+        }
+      ]
+    }
+  },
+  "profiles": [
+    {
+      "languageCode": "en-US",
+      "profileName": "Port operations planner | Berth and yard scheduling",
+      "executiveSummary": "Plans the moves that keep a container terminal running: berths, cranes and yard space.",
+      "employment": [
+        {
+          "id": {
+            "value": "port-planning"
+          },
+          "organization": {
+            "name": "Port of Example",
+            "domainName": "https://port.example"
+          },
+          "start": "2019-03",
+          "current": true,
+          "positionHistories": [
+            {
+              "id": {
+                "value": "port-planning-role"
+              },
+              "title": "Senior Operations Planner",
+              "start": "2019-03",
+              "current": true,
+              "jobCategories": [
+                {
+                  "code": "13-1081",
+                  "id": {
+                    "value": "13-1081",
+                    "schemeId": "soc"
+                  }
+                },
+                {
+                  "code": "13-1081.00",
+                  "id": {
+                    "value": "13-1081.00",
+                    "schemeId": "onetSoc"
+                  }
+                }
+              ],
+              "descriptions": [
+                "Plans berth, crane and yard operations for the container terminal.",
+                "33% less crane idle time (Jan 2020–Dec 2020)"
+              ]
+            }
+          ]
+        }
+      ],
+      "certifications": [
+        {
+          "id": {
+            "value": "harbor-ops-badge"
+          },
+          "name": "Harbor Operations Planner",
+          "type": {
+            "name": "Open Badge"
+          },
+          "issued": "2024-03-01",
+          "issuingAuthority": {
+            "name": "Example Maritime Academy"
+          },
+          "descriptions": [
+            "Plans berth, crane and yard operations for a container terminal."
+          ]
+        },
+        {
+          "id": {
+            "value": "site-safety-badge"
+          },
+          "name": "Site Safety Lead",
+          "type": {
+            "name": "Open Badge"
+          },
+          "issued": "2021-06-01",
+          "issuingAuthority": {
+            "name": "Example Builders Guild"
+          },
+          "descriptions": [
+            "Leads site safety on a working port."
+          ]
+        }
+      ],
+      "qualifications": [
+        {
+          "competencyName": "Berth planning"
+        },
+        {
+          "competencyName": "Yard scheduling"
+        }
+      ],
+      "references": [
+        {
+          "personName": {
+            "formattedName": "Sam Okafor, Shift Lead at Port of Example"
+          },
+          "relationship": "Professional",
+          "comments": [
+            {
+              "note": "Every shift lead now plans with the tool she built"
+            }
+          ]
+        },
+        {
+          "personName": {
+            "formattedName": "Maria Chen, Director of Terminal Operations at Port of Example"
+          },
+          "relationship": "Professional",
+          "comments": [
+            {
+              "note": "Ines rebuilt our harbor planning program from nothing. She is the most careful planner I know, and the crews trusted her completely."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

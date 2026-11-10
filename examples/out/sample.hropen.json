@@ -1,0 +1,253 @@
+{
+  "uri": "https://example.com/team/ines-calloway",
+  "person": {
+    "name": {
+      "formattedName": "Ines Calloway",
+      "given": "Ines",
+      "family": "Calloway"
+    },
+    "communication": {
+      "address": [
+        {
+          "city": "New York",
+          "countrySubDivisions": [
+            {
+              "type": "region",
+              "value": "NY"
+            }
+          ],
+          "countryCode": "US",
+          "formattedAddress": "New York, NY"
+        }
+      ],
+      "web": [
+        {
+          "name": "Website",
+          "url": "https://example.com"
+        },
+        {
+          "name": "LinkedIn",
+          "url": "https://www.linkedin.com/in/example-ines-calloway/"
+        },
+        {
+          "name": "ORCID",
+          "url": "https://orcid.org/0000-0000-0000-0000"
+        }
+      ]
+    }
+  },
+  "profiles": [
+    {
+      "languageCode": "en-US",
+      "profileName": "Founder & CEO, Tidewater Trails | Marine biologist | 30 years building coastal travel",
+      "executiveSummary": "I started on research boats and ended up building the places those boats sail to. Tidewater Trails is what I learned along the way: trips planned around the people taking them.",
+      "employment": [
+        {
+          "id": {
+            "value": "tidewater-ceo"
+          },
+          "organization": {
+            "name": "Tidewater Trails",
+            "domainName": "https://example.com"
+          },
+          "start": "2024-03",
+          "current": true,
+          "positionHistories": [
+            {
+              "id": {
+                "value": "tidewater-ceo-role"
+              },
+              "title": "Founder & CEO",
+              "start": "2024-03",
+              "current": true,
+              "descriptions": [
+                "Building a trip-planning service for coastal and marine travel."
+              ]
+            }
+          ]
+        },
+        {
+          "id": {
+            "value": "harborline-director"
+          },
+          "organization": {
+            "name": "Harborline Resorts"
+          },
+          "start": "2009-06",
+          "end": "2023-12",
+          "positionHistories": [
+            {
+              "id": {
+                "value": "harborline-director-role"
+              },
+              "title": "Director of Development",
+              "start": "2009-06",
+              "end": "2023-12",
+              "descriptions": [
+                "Led development of three waterfront resorts from site selection through opening.",
+                "3 resorts opened",
+                "~$240M development portfolio"
+              ]
+            }
+          ]
+        },
+        {
+          "id": {
+            "value": "coastal-lab-researcher"
+          },
+          "organization": {
+            "name": "Coastal Ecology Lab"
+          },
+          "end": "2009-05",
+          "descriptions": [
+            "c. 1996 – May 2009"
+          ],
+          "positionHistories": [
+            {
+              "id": {
+                "value": "coastal-lab-researcher-role"
+              },
+              "title": "Research Biologist",
+              "end": "2009-05",
+              "descriptions": [
+                "c. 1996 – May 2009",
+                "Field research on reef recovery; led survey dives and small-boat operations."
+              ]
+            }
+          ]
+        }
+      ],
+      "education": [
+        {
+          "id": {
+            "value": "state-u-bs"
+          },
+          "institution": {
+            "name": "State University (fictional)"
+          },
+          "start": "1987",
+          "end": "1991",
+          "programs": [
+            "Marine Biology"
+          ],
+          "educationDegrees": [
+            {
+              "name": "BS, Marine Biology",
+              "date": "1991",
+              "degreeGrantedStatus": "Granted"
+            }
+          ]
+        }
+      ],
+      "licenses": [
+        {
+          "name": "Master Mariner licence (100 GT) (Near Coastal, Auxiliary Sail)",
+          "issued": "2005-04",
+          "issuingAuthority": {
+            "name": "Example Maritime Authority"
+          }
+        }
+      ],
+      "certifications": [
+        {
+          "name": "Divemaster",
+          "issuingAuthority": {
+            "name": "Example Diving Association"
+          }
+        }
+      ],
+      "militaryService": [
+        {
+          "id": {
+            "value": "coast-guard-aux"
+          },
+          "branch": "Coast Guard Auxiliary (fictional unit)",
+          "end": "1995",
+          "descriptions": [
+            "between 1990 and 1991 – 1995",
+            "Boat crew member",
+            "Search-and-rescue boat crew on weekends."
+          ]
+        }
+      ],
+      "qualifications": [
+        {
+          "competencyName": "Entrepreneurship"
+        },
+        {
+          "competencyName": "Travel & Tourism"
+        },
+        {
+          "competencyName": "Resort Development"
+        },
+        {
+          "competencyName": "Marine Biology",
+          "experienceMeasure": {
+            "value": 13,
+            "unitCode": "ANN"
+          }
+        },
+        {
+          "competencyName": "English",
+          "competencyIds": [
+            {
+              "value": "en",
+              "schemeId": "BCP47"
+            }
+          ],
+          "proficiencyLevel": {
+            "scoresText": [
+              {
+                "value": "C2",
+                "scoreTextCode": "CEFR"
+              },
+              {
+                "value": "native"
+              }
+            ]
+          }
+        },
+        {
+          "competencyName": "Spanish",
+          "competencyIds": [
+            {
+              "value": "es",
+              "schemeId": "BCP47"
+            }
+          ],
+          "proficiencyLevel": {
+            "scoresText": [
+              {
+                "value": "C2",
+                "scoreTextCode": "CEFR"
+              },
+              {
+                "value": "native"
+              }
+            ]
+          }
+        },
+        {
+          "competencyName": "Portuguese",
+          "competencyIds": [
+            {
+              "value": "pt",
+              "schemeId": "BCP47"
+            }
+          ],
+          "proficiencyLevel": {
+            "scoresText": [
+              {
+                "value": "B2",
+                "scoreTextCode": "CEFR"
+              },
+              {
+                "value": "professionalWorking"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1298 @@
+{
+  "target": "hropen",
+  "description": "HR Open Standards 4.5 (HR-JSON) Candidate: the recruiting document applicant tracking and HR systems exchange. Approved, public entries of high or medium confidence. A job's positions become positionHistories; licenses, certifications, clearances and memberships go to their own lists; skills and languages become qualifications; volunteer and civic service become affiliations. Dates this format can only state exactly are left out when they are qualified (about, before, between) and said in words in the entry's descriptions instead. Awards, projects and interests have no place in a Candidate and are left out. Use through a release to share more than public data.",
+  "include": {
+    "visibility": [
+      "public"
+    ],
+    "status": [
+      "approved"
+    ],
+    "confidence": [
+      "high",
+      "medium"
+    ]
+  },
+  "orgNameStyle": "both",
+  "ruleExemptKeys": [
+    "id",
+    "schemeId",
+    "unitCode",
+    "languageCode",
+    "countryCode",
+    "degreeGrantedStatus",
+    "type",
+    "resourceRelationshipCode",
+    "workRelationshipTypeCode",
+    "affiliationTypeCode",
+    "status",
+    "relationship"
+  ],
+  "output": {
+    "uri": "$.meta.canonicalUrl",
+    "person": {
+      "name": {
+        "formattedName": "$.person.name",
+        "given": {
+          "$fn": "name",
+          "args": [
+            "preferred",
+            "given"
+          ]
+        },
+        "family": {
+          "$fn": "name",
+          "args": [
+            "preferred",
+            "family"
+          ]
+        }
+      },
+      "communication": {
+        "address": [
+          {
+            "city": {
+              "$fn": "place",
+              "args": [
+                "$.person.location",
+                "locality"
+              ]
+            },
+            "countrySubDivisions": [
+              {
+                "$if": {
+                  "$fn": "place",
+                  "args": [
+                    "$.person.location",
+                    "region"
+                  ]
+                },
+                "$then": {
+                  "type": "region",
+                  "value": {
+                    "$fn": "place",
+                    "args": [
+                      "$.person.location",
+                      "region"
+                    ]
+                  }
+                }
+              }
+            ],
+            "countryCode": {
+              "$fn": "place",
+              "args": [
+                "$.person.location",
+                "countryCode"
+              ]
+            },
+            "formattedAddress": {
+              "$fn": "place",
+              "args": [
+                "$.person.location"
+              ]
+            }
+          }
+        ],
+        "phone": [
+          {
+            "formattedNumber": {
+              "$fn": "visible",
+              "args": [
+                "$.person.contact.phone",
+                "$.person.contact.phoneVisibility"
+              ]
+            }
+          }
+        ],
+        "email": [
+          {
+            "address": {
+              "$fn": "visible",
+              "args": [
+                "$.person.contact.email",
+                "$.person.contact.emailVisibility"
+              ]
+            }
+          }
+        ],
+        "web": {
+          "$fn": "concatLists",
+          "args": [
+            [
+              {
+                "$if": "$.person.contact.website",
+                "$then": {
+                  "name": "Website",
+                  "url": "$.person.contact.website"
+                }
+              }
+            ],
+            {
+              "$each": "$$.person.profiles",
+              "$map": {
+                "name": "$.network",
+                "url": "$.url"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "profiles": [
+      {
+        "languageCode": {
+          "$fn": "locale",
+          "args": []
+        },
+        "profileName": {
+          "$fn": "text",
+          "args": [
+            "$.person.headline"
+          ]
+        },
+        "executiveSummary": {
+          "$fn": "coalesce",
+          "args": [
+            {
+              "$fn": "text",
+              "args": [
+                "$.person.summary"
+              ]
+            },
+            {
+              "$fn": "text",
+              "args": [
+                "$.person.shortBio"
+              ]
+            }
+          ]
+        },
+        "employment": {
+          "$each": "$$.work",
+          "$sort": "-startDate",
+          "$map": {
+            "id": {
+              "value": "$.id"
+            },
+            "organization": {
+              "name": {
+                "$fn": "employer",
+                "args": [
+                  "$.organization",
+                  "$.startDate",
+                  "$.endDate"
+                ]
+              },
+              "domainName": {
+                "$fn": "org",
+                "args": [
+                  "$.organization",
+                  "url"
+                ]
+              }
+            },
+            "start": {
+              "$fn": "isoExact",
+              "args": [
+                "$.startDate"
+              ]
+            },
+            "end": {
+              "$if": "$.current",
+              "$then": null,
+              "$else": {
+                "$fn": "isoExact",
+                "args": [
+                  "$.endDate"
+                ]
+              }
+            },
+            "current": "$.current",
+            "descriptions": {
+              "$fn": "concatLists",
+              "args": [
+                [
+                  {
+                    "$if": {
+                      "$fn": "isoExact",
+                      "args": [
+                        "$.startDate"
+                      ]
+                    },
+                    "$then": null,
+                    "$else": {
+                      "$fn": "dateRangeText",
+                      "args": [
+                        "$.startDate",
+                        "$.endDate",
+                        "$.current"
+                      ]
+                    }
+                  }
+                ]
+              ]
+            },
+            "positionHistories": {
+              "$each": {
+                "$fn": "positions",
+                "args": [
+                  "$"
+                ]
+              },
+              "$sort": "-startDate",
+              "$map": {
+                "id": {
+                  "value": "$.id"
+                },
+                "title": "$.title",
+                "start": {
+                  "$fn": "isoExact",
+                  "args": [
+                    "$.startDate"
+                  ]
+                },
+                "end": {
+                  "$if": "$.current",
+                  "$then": null,
+                  "$else": {
+                    "$fn": "isoExact",
+                    "args": [
+                      "$.endDate"
+                    ]
+                  }
+                },
+                "current": "$.current",
+                "jobCategories": {
+                  "$each": {
+                    "$fn": "positionOccupations",
+                    "args": [
+                      "$"
+                    ]
+                  },
+                  "$map": {
+                    "name": "$.title",
+                    "code": "$.code",
+                    "id": {
+                      "value": "$.code",
+                      "schemeId": "$.system"
+                    }
+                  }
+                },
+                "descriptions": {
+                  "$fn": "concatLists",
+                  "args": [
+                    [
+                      {
+                        "$if": {
+                          "$fn": "isoExact",
+                          "args": [
+                            "$.startDate"
+                          ]
+                        },
+                        "$then": null,
+                        "$else": {
+                          "$fn": "dateRangeText",
+                          "args": [
+                            "$.startDate",
+                            "$.endDate",
+                            "$.current"
+                          ]
+                        }
+                      }
+                    ],
+                    [
+                      "$.summary"
+                    ],
+                    {
+                      "$fn": "responsibilityLines",
+                      "args": [
+                        "$"
+                      ]
+                    },
+                    "$.jobMetrics"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "education": {
+          "$each": "$$.education",
+          "$sort": "-endDate,-startDate",
+          "$map": {
+            "id": {
+              "value": "$.id"
+            },
+            "institution": {
+              "name": {
+                "$fn": "org",
+                "args": [
+                  "$.institution"
+                ]
+              },
+              "domainName": {
+                "$fn": "org",
+                "args": [
+                  "$.institution",
+                  "url"
+                ]
+              }
+            },
+            "start": {
+              "$fn": "isoExact",
+              "args": [
+                "$.startDate"
+              ]
+            },
+            "end": {
+              "$fn": "isoExact",
+              "args": [
+                "$.endDate"
+              ]
+            },
+            "programs": [
+              {
+                "$fn": "text",
+                "args": [
+                  "$.area"
+                ]
+              }
+            ],
+            "educationDegrees": [
+              {
+                "$if": "$.credential",
+                "$then": {
+                  "name": {
+                    "$fn": "join",
+                    "args": [
+                      [
+                        "$.credential",
+                        {
+                          "$fn": "text",
+                          "args": [
+                            "$.area"
+                          ]
+                        }
+                      ],
+                      ", "
+                    ]
+                  },
+                  "date": {
+                    "$if": "$.completed",
+                    "$then": {
+                      "$fn": "isoExact",
+                      "args": [
+                        "$.endDate"
+                      ]
+                    }
+                  },
+                  "degreeGrantedStatus": {
+                    "$if": "$.completed",
+                    "$then": "Granted",
+                    "$else": {
+                      "$if": {
+                        "$fn": "oneOf",
+                        "args": [
+                          "$.completed",
+                          false
+                        ]
+                      },
+                      "$then": {
+                        "$if": "$.endDate",
+                        "$then": "NotGranted",
+                        "$else": "InProgress"
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "descriptions": {
+              "$fn": "concatLists",
+              "args": [
+                [
+                  {
+                    "$if": {
+                      "$fn": "isoExact",
+                      "args": [
+                        "$.endDate"
+                      ]
+                    },
+                    "$then": null,
+                    "$else": {
+                      "$fn": "dateRangeText",
+                      "args": [
+                        "$.startDate",
+                        "$.endDate",
+                        null
+                      ]
+                    }
+                  }
+                ],
+                [
+                  {
+                    "$fn": "text",
+                    "args": [
+                      "$.summary"
+                    ]
+                  }
+                ]
+              ]
+            }
+          }
+        },
+        "licenses": {
+          "$each": "$$.credentials",
+          "$where": {
+            "kind": [
+              "license"
+            ],
+            "active": [
+              true,
+              null
+            ]
+          },
+          "$sort": "-priority",
+          "$map": {
+            "id": {
+              "$if": {
+                "$fn": "visible",
+                "args": [
+                  "$.credentialId",
+                  "$.credentialIdVisibility"
+                ]
+              },
+              "$then": {
+                "value": {
+                  "$fn": "visible",
+                  "args": [
+                    "$.credentialId",
+                    "$.credentialIdVisibility"
+                  ]
+                }
+              }
+            },
+            "name": {
+              "$fn": "concat",
+              "args": [
+                {
+                  "$fn": "text",
+                  "args": [
+                    "$.name"
+                  ]
+                },
+                {
+                  "$if": "$.ratings",
+                  "$then": {
+                    "$fn": "concat",
+                    "args": [
+                      " (",
+                      {
+                        "$fn": "join",
+                        "args": [
+                          "$.ratings"
+                        ]
+                      },
+                      ")"
+                    ]
+                  }
+                }
+              ]
+            },
+            "issued": {
+              "$fn": "isoExact",
+              "args": [
+                "$.issued"
+              ]
+            },
+            "issuingAuthority": {
+              "name": {
+                "$fn": "org",
+                "args": [
+                  "$.issuer"
+                ]
+              }
+            },
+            "descriptions": [
+              {
+                "$fn": "text",
+                "args": [
+                  "$.summary"
+                ]
+              }
+            ]
+          }
+        },
+        "certifications": {
+          "$fn": "concatLists",
+          "args": [
+            {
+              "$each": "$$.credentials",
+              "$where": {
+                "kind": [
+                  "certification",
+                  "rating"
+                ],
+                "active": [
+                  true,
+                  null
+                ]
+              },
+              "$sort": "-priority",
+              "$map": {
+                "id": {
+                  "$if": {
+                    "$fn": "visible",
+                    "args": [
+                      "$.credentialId",
+                      "$.credentialIdVisibility"
+                    ]
+                  },
+                  "$then": {
+                    "value": {
+                      "$fn": "visible",
+                      "args": [
+                        "$.credentialId",
+                        "$.credentialIdVisibility"
+                      ]
+                    }
+                  }
+                },
+                "name": {
+                  "$fn": "concat",
+                  "args": [
+                    {
+                      "$fn": "text",
+                      "args": [
+                        "$.name"
+                      ]
+                    },
+                    {
+                      "$if": "$.ratings",
+                      "$then": {
+                        "$fn": "concat",
+                        "args": [
+                          " (",
+                          {
+                            "$fn": "join",
+                            "args": [
+                              "$.ratings"
+                            ]
+                          },
+                          ")"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "issued": {
+                  "$fn": "isoExact",
+                  "args": [
+                    "$.issued"
+                  ]
+                },
+                "issuingAuthority": {
+                  "name": {
+                    "$fn": "org",
+                    "args": [
+                      "$.issuer"
+                    ]
+                  }
+                },
+                "descriptions": [
+                  {
+                    "$fn": "text",
+                    "args": [
+                      "$.summary"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "$each": {
+                "$fn": "badgesNotListed",
+                "args": [
+                  "$$.badges"
+                ]
+              },
+              "$sort": "-validFrom",
+              "$map": {
+                "id": {
+                  "value": "$.id"
+                },
+                "name": {
+                  "$fn": "text",
+                  "args": [
+                    "$.achievement.name"
+                  ]
+                },
+                "type": {
+                  "name": "Open Badge"
+                },
+                "issued": {
+                  "$fn": "date",
+                  "args": [
+                    "$.validFrom",
+                    "full"
+                  ]
+                },
+                "issuingAuthority": {
+                  "name": {
+                    "$fn": "org",
+                    "args": [
+                      "$.issuer"
+                    ]
+                  }
+                },
+                "descriptions": [
+                  {
+                    "$fn": "text",
+                    "args": [
+                      "$.achievement.description"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "securityCredentials": {
+          "$each": "$$.credentials",
+          "$where": {
+            "kind": [
+              "clearance"
+            ],
+            "active": [
+              true,
+              null
+            ]
+          },
+          "$map": {
+            "id": {
+              "$if": {
+                "$fn": "visible",
+                "args": [
+                  "$.credentialId",
+                  "$.credentialIdVisibility"
+                ]
+              },
+              "$then": {
+                "value": {
+                  "$fn": "visible",
+                  "args": [
+                    "$.credentialId",
+                    "$.credentialIdVisibility"
+                  ]
+                }
+              }
+            },
+            "name": {
+              "$fn": "concat",
+              "args": [
+                {
+                  "$fn": "text",
+                  "args": [
+                    "$.name"
+                  ]
+                },
+                {
+                  "$if": "$.ratings",
+                  "$then": {
+                    "$fn": "concat",
+                    "args": [
+                      " (",
+                      {
+                        "$fn": "join",
+                        "args": [
+                          "$.ratings"
+                        ]
+                      },
+                      ")"
+                    ]
+                  }
+                }
+              ]
+            },
+            "issued": {
+              "$fn": "isoExact",
+              "args": [
+                "$.issued"
+              ]
+            },
+            "issuingAuthority": {
+              "name": {
+                "$fn": "org",
+                "args": [
+                  "$.issuer"
+                ]
+              }
+            },
+            "descriptions": [
+              {
+                "$fn": "text",
+                "args": [
+                  "$.summary"
+                ]
+              }
+            ]
+          }
+        },
+        "affiliations": {
+          "$fn": "concatLists",
+          "args": [
+            {
+              "$each": "$$.credentials",
+              "$where": {
+                "kind": [
+                  "membership"
+                ],
+                "active": [
+                  true,
+                  null
+                ]
+              },
+              "$map": {
+                "organization": {
+                  "name": {
+                    "$fn": "org",
+                    "args": [
+                      "$.issuer"
+                    ]
+                  }
+                },
+                "affiliationTypeCode": "Professional",
+                "role": {
+                  "$fn": "text",
+                  "args": [
+                    "$.name"
+                  ]
+                },
+                "startDate": {
+                  "$fn": "isoExact",
+                  "args": [
+                    "$.issued"
+                  ]
+                },
+                "descriptions": [
+                  {
+                    "$fn": "text",
+                    "args": [
+                      "$.summary"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "$each": "$$.service",
+              "$where": {
+                "kind": [
+                  "scouting",
+                  "volunteer",
+                  "civic",
+                  "board"
+                ]
+              },
+              "$sort": "-startDate",
+              "$map": {
+                "organization": {
+                  "name": {
+                    "$fn": "org",
+                    "args": [
+                      "$.organization"
+                    ]
+                  }
+                },
+                "affiliationTypeCode": {
+                  "$fn": "enumMap",
+                  "args": [
+                    "$.kind",
+                    {
+                      "$literal": {
+                        "scouting": "Community",
+                        "volunteer": "Community",
+                        "civic": "Community",
+                        "board": "Non-profit"
+                      }
+                    }
+                  ]
+                },
+                "role": {
+                  "$fn": "coalesce",
+                  "args": [
+                    {
+                      "$fn": "text",
+                      "args": [
+                        "$.role"
+                      ]
+                    },
+                    "$.rank"
+                  ]
+                },
+                "startDate": {
+                  "$fn": "isoExact",
+                  "args": [
+                    "$.startDate"
+                  ]
+                },
+                "endDate": {
+                  "$fn": "isoExact",
+                  "args": [
+                    "$.endDate"
+                  ]
+                },
+                "descriptions": {
+                  "$fn": "concatLists",
+                  "args": [
+                    [
+                      {
+                        "$if": {
+                          "$fn": "isoExact",
+                          "args": [
+                            "$.startDate"
+                          ]
+                        },
+                        "$then": null,
+                        "$else": {
+                          "$fn": "dateRangeText",
+                          "args": [
+                            "$.startDate",
+                            "$.endDate",
+                            "$.current"
+                          ]
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "$fn": "text",
+                        "args": [
+                          "$.summary"
+                        ]
+                      }
+                    ],
+                    "$.highlights"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "militaryService": {
+          "$each": "$$.service",
+          "$where": {
+            "kind": [
+              "military",
+              "reserve"
+            ]
+          },
+          "$sort": "-startDate",
+          "$map": {
+            "id": {
+              "value": "$.id"
+            },
+            "branch": {
+              "$fn": "coalesce",
+              "args": [
+                "$.branch",
+                {
+                  "$fn": "org",
+                  "args": [
+                    "$.organization"
+                  ]
+                }
+              ]
+            },
+            "endingRank": "$.rank",
+            "start": {
+              "$fn": "isoExact",
+              "args": [
+                "$.startDate"
+              ]
+            },
+            "end": {
+              "$fn": "isoExact",
+              "args": [
+                "$.endDate"
+              ]
+            },
+            "descriptions": {
+              "$fn": "concatLists",
+              "args": [
+                [
+                  {
+                    "$if": {
+                      "$fn": "isoExact",
+                      "args": [
+                        "$.startDate"
+                      ]
+                    },
+                    "$then": null,
+                    "$else": {
+                      "$fn": "dateRangeText",
+                      "args": [
+                        "$.startDate",
+                        "$.endDate",
+                        "$.current"
+                      ]
+                    }
+                  }
+                ],
+                [
+                  {
+                    "$fn": "text",
+                    "args": [
+                      "$.role"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "$fn": "text",
+                    "args": [
+                      "$.summary"
+                    ]
+                  }
+                ],
+                "$.highlights"
+              ]
+            }
+          }
+        },
+        "publications": {
+          "$each": "$$.publications",
+          "$where": {
+            "kind": [
+              "article",
+              "book",
+              "paper",
+              "talk",
+              "podcast",
+              "post",
+              "dataset",
+              "software",
+              "thesis",
+              "report",
+              null
+            ],
+            "aboutPerson": [
+              false,
+              null
+            ]
+          },
+          "$sort": "-date",
+          "$map": {
+            "type": {
+              "$fn": "coalesce",
+              "args": [
+                {
+                  "$fn": "enumMap",
+                  "args": [
+                    "$.kind",
+                    {
+                      "$literal": {
+                        "article": "Article",
+                        "book": "Book",
+                        "paper": "Paper",
+                        "talk": "Conference",
+                        "thesis": "Thesis",
+                        "report": "Report"
+                      }
+                    }
+                  ]
+                },
+                "OtherPublication"
+              ]
+            },
+            "title": {
+              "$fn": "text",
+              "args": [
+                "$.title"
+              ]
+            },
+            "date": {
+              "$fn": "isoExact",
+              "args": [
+                "$.date"
+              ]
+            },
+            "abstract": {
+              "$fn": "text",
+              "args": [
+                "$.summary"
+              ]
+            },
+            "publisher": {
+              "$fn": "org",
+              "args": [
+                "$.publisher"
+              ]
+            },
+            "isbn": "$.isbn",
+            "contributors": {
+              "$each": "$.authors",
+              "$map": {
+                "name": "$"
+              }
+            }
+          }
+        },
+        "patents": {
+          "$each": "$$.publications",
+          "$where": {
+            "kind": [
+              "patent",
+              "patentApplication"
+            ]
+          },
+          "$sort": "-date",
+          "$map": {
+            "ids": [
+              {
+                "$if": "$.number",
+                "$then": {
+                  "value": "$.number"
+                }
+              }
+            ],
+            "title": {
+              "$fn": "text",
+              "args": [
+                "$.title"
+              ]
+            },
+            "inventorNames": "$.authors",
+            "status": {
+              "$fn": "enumMap",
+              "args": [
+                "$.kind",
+                {
+                  "$literal": {
+                    "patent": "Issued",
+                    "patentApplication": "Filed"
+                  }
+                }
+              ]
+            },
+            "descriptions": [
+              {
+                "$fn": "text",
+                "args": [
+                  "$.summary"
+                ]
+              }
+            ]
+          }
+        },
+        "qualifications": {
+          "$fn": "concatLists",
+          "args": [
+            {
+              "$each": "$$.skills",
+              "$sort": "-pinned,-priority",
+              "$map": {
+                "competencyName": {
+                  "$fn": "text",
+                  "args": [
+                    "$.name"
+                  ]
+                },
+                "competencyIds": {
+                  "$each": {
+                    "$fn": "skillCodes",
+                    "args": [
+                      "$"
+                    ]
+                  },
+                  "$map": {
+                    "value": "$.code",
+                    "schemeId": "$.system",
+                    "description": "$.title"
+                  }
+                },
+                "proficiencyLevel": {
+                  "$if": "$.level",
+                  "$then": {
+                    "scoresText": [
+                      {
+                        "value": "$.level"
+                      }
+                    ]
+                  }
+                },
+                "experienceMeasure": {
+                  "$if": "$.years",
+                  "$then": {
+                    "value": "$.years",
+                    "unitCode": "ANN"
+                  }
+                }
+              }
+            },
+            {
+              "$each": "$$.languages",
+              "$map": {
+                "competencyName": {
+                  "$fn": "coalesce",
+                  "args": [
+                    {
+                      "$fn": "text",
+                      "args": [
+                        "$.name"
+                      ]
+                    },
+                    "$.language"
+                  ]
+                },
+                "competencyIds": [
+                  {
+                    "value": "$.language",
+                    "schemeId": "BCP47"
+                  }
+                ],
+                "proficiencyLevel": {
+                  "$if": {
+                    "$fn": "coalesce",
+                    "args": [
+                      "$.cefr",
+                      "$.fluency"
+                    ]
+                  },
+                  "$then": {
+                    "scoresText": [
+                      {
+                        "$if": "$.cefr",
+                        "$then": {
+                          "value": "$.cefr",
+                          "scoreTextCode": "CEFR"
+                        }
+                      },
+                      {
+                        "$if": "$.fluency",
+                        "$then": {
+                          "value": "$.fluency"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "references": {
+          "$fn": "concatLists",
+          "args": [
+            {
+              "$each": "$$.references",
+              "$where": {
+                "consentToPublish": true
+              },
+              "$map": {
+                "personName": {
+                  "formattedName": "$.name"
+                },
+                "organizationName": {
+                  "$fn": "org",
+                  "args": [
+                    "$.organization"
+                  ]
+                },
+                "relationship": "Professional",
+                "comments": [
+                  {
+                    "$if": "$.quote",
+                    "$then": {
+                      "note": {
+                        "$fn": "text",
+                        "args": [
+                          "$.quote"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "$each": {
+                "$fn": "consented",
+                "args": [
+                  "$$.recommendations"
+                ]
+              },
+              "$sort": "-date",
+              "$map": {
+                "personName": {
+                  "formattedName": {
+                    "$fn": "authorLabel",
+                    "args": [
+                      "$"
+                    ]
+                  }
+                },
+                "relationship": "Professional",
+                "comments": [
+                  {
+                    "$if": {
+                      "$fn": "coalesce",
+                      "args": [
+                        {
+                          "$fn": "recommendationText",
+                          "args": [
+                            "$"
+                          ]
+                        },
+                        {
+                          "$fn": "join",
+                          "args": [
+                            {
+                              "$fn": "recommendationText",
+                              "args": [
+                                "$",
+                                "highlights"
+                              ]
+                            },
+                            " … "
+                          ]
+                        }
+                      ]
+                    },
+                    "$then": {
+                      "note": {
+                        "$fn": "coalesce",
+                        "args": [
+                          {
+                            "$fn": "recommendationText",
+                            "args": [
+                              "$"
+                            ]
+                          },
+                          {
+                            "$fn": "join",
+                            "args": [
+                              {
+                                "$fn": "recommendationText",
+                                "args": [
+                                  "$",
+                                  "highlights"
+                                ]
+                              },
+                              " … "
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
