@@ -1,5 +1,38 @@
 # Changelog
 
+## Unreleased: fixes from a review of the tools and of the 2.5 and 2.6 work
+
+No schema changes; every existing file remains valid.
+
+### Privacy
+- **Photos that can't be checked for location are no longer treated as clean.** WebP, HEIC, AVIF and TIFF files were read as "no GPS", so a phone photo kept its coordinates. `media add` now refuses them and asks for a JPEG or PNG. In a bundle they are an error for a 2.6.0 file and a warning for an older one.
+- **A release holds only what a recommender agreed to.** The released profile used to carry the full text and the author's record whatever the consent scope, so a custom mapping could print them. Now `highlights` drops the full text, `nameOnly` drops every word, and `anonymous` drops the name, employer, source and identifiers, keeping only dated titles.
+- **Endorsement counts** leave out endorsements the output may not show.
+
+### Command line
+- **`help`, `--help`, `-h` and `version`.** Help lists every command, option and exit code. It used to be one line that left out `media add` and `badges import`.
+- **`validate` checks every file it is given.** `validate profiles/*.json` used to check the first file and report success. `--json` prints the result for scripts and CI.
+- **Misspelled options are refused.** `--recrod` used to be ignored, so a release went unrecorded without a word. An option missing its value is refused too. `--name=value` is accepted.
+- **`--on` and `--locale` are checked.** `--on tomorrow` used to be compared as text and give wrong answers quietly.
+- **Files from Windows editors load.** A leading byte-order mark no longer makes a profile "not valid JSON".
+- **Plain explanations** for a zip passed as a bundle, a missing file, an unknown mapping name (the bundled ones are listed) and an `import` of something that isn't a JSON Resume.
+- **`--out` and `--receipt` create the folder they need.**
+- **A forgotten value is caught.** `--out --record` used to write a file named `--record`.
+- **`--media-base` works without its closing slash** (it used to produce `…/memedia/photo.jpg`) and must be an http(s) URL.
+- **`badges import --fetch`** stops after 30 seconds or 10 MB.
+
+### Messages
+- **Schema errors say what is wrong.** An unexpected field is named (`"organisation" is not a known field here`) and a bad value lists the allowed ones. Repeated errors are reported once.
+- **Spanish, French, German and Portuguese** gain the two phrases they lacked ("{title} at {org}", "A colleague"), which were falling back to English inside translated outputs.
+
+### Fixes
+- **The schema's `$id`** pointed at a `master` branch that doesn't exist; it now points at `main`, so the URL resolves for editors.
+- **`loadMapping`** accepts only the mappings in `mappings/` (listed in `BUNDLED_MAPPINGS`) and says which they are.
+- **A photo dated by month is found for a job dated by year.** A portrait from `2019-03` was skipped for a job that started in `2019`.
+
+### Docs
+- README: a command reference with exit codes, editor and CI setup, and a table of common messages. It no longer says the tools read zipped bundles; they read folders.
+
 ## 2.6.0 (2026-11-09): photos, other people, recommendations, endorsements and badges
 
 Earlier files remain valid. A file that declares 2.6.0 is held to stricter checks, listed under each heading below.
