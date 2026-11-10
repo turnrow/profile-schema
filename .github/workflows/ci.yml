@@ -65,6 +65,10 @@ jobs:
           # veraPDF's exit code is not documented, so the report decides; "|| true" keeps a non-zero exit from hiding it.
           docker run --rm -v "$PWD/pdf-out:/data:ro" "$VERAPDF_IMAGE" -f ua1 /data > verapdf-report.xml || true
           node scripts/check-pdfua.mjs verapdf-report.xml --expect "$count"
+      - name: The text of each PDF is in reading order
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+          node scripts/check-reading-order.mjs pdf-out
       - name: Keep the PDFs and the report for the manual checks
         if: always()
         uses: actions/upload-artifact@v4

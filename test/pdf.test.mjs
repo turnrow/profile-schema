@@ -8,6 +8,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { renderResumePdf, resumeViewForPdf, dropCandidates, PdfError } from "../index.mjs";
+import { readingOrder } from "../scripts/render-example-pdfs.mjs";
+import { inOrder } from "../scripts/check-reading-order.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const load = (rel) => JSON.parse(readFileSync(join(root, rel), "utf8"));
@@ -116,7 +118,47 @@ test("the academic layout leads with education and publications, and is titled a
   assert.equal(academic.layout, "academic");
 });
 
+test("the two-column layout puts the short lists in a side column, read after the main one", () => {
+  const { view } = resumeViewForPdf(sample(), { on: ON, layout: "two-column" });
+  const side = view.sections.filter((s) => s.column === "side").map((s) => s.id);
+  assert.deepEqual(side, ["skills", "languages", "credentials"]);
+  const firstSide = view.sections.findIndex((s) => s.column === "side");
+  assert.ok(view.sections.slice(0, firstSide).every((s) => !s.column), "every main section comes before the side column");
+  assert.ok(view.sections.slice(firstSide).every((s) => s.column === "side"));
+  // The reading order a person should meet: main sections, then the side column.
+  const order = readingOrder(view);
+  assert.ok(order.indexOf("Awards") < order.indexOf("Skills"));
+  assert.ok(order.indexOf("Skills") < order.indexOf("Languages"));
+  assert.equal(order[0], "Ines Calloway");
+  // With nothing for the side column, or nothing beside it, there is one column.
+  assert.ok(resumeViewForPdf(load("examples/history.profile.json"), { on: ON, layout: "two-column" }).view.sections.every((s) => !s.column));
+  const onlyLists = sample();
+  for (const k of ["work", "education", "projects", "service", "awards", "publications"]) onlyLists[k] = [];
+  delete onlyLists.person.summary; delete onlyLists.person.shortBio;
+  assert.ok(resumeViewForPdf(onlyLists, { on: ON, layout: "two-column" }).view.sections.every((s) => !s.column));
+  assert.ok(resumeViewForPdf(sample(), { on: ON }).view.sections.every((s) => !s.column), "classic has no side column");
+});
+
+test("text is in reading order when each expected string follows the one before", () => {
+  assert.deepEqual(inOrder("Ines Calloway\nSummary\nExperience\nLicenses and\ncertifications\nSkills", ["Ines Calloway", "Experience", "Licenses and certifications", "Skills"]), { ok: true });
+  assert.deepEqual(inOrder("Name Skills Experience", ["Name", "Experience", "Skills"]), { ok: false, missing: "Skills", after: "Experience" });
+  assert.deepEqual(inOrder("", ["Name"]), { ok: false, missing: "Name", after: undefined });
+  // The same title twice must be found twice, in turn.
+  assert.equal(inOrder("Senior Associate x Senior Associate", ["Senior Associate", "Senior Associate"]).ok, true);
+  assert.equal(inOrder("Senior Associate", ["Senior Associate", "Senior Associate"]).ok, false);
+});
+
 // ---------- rendering (needs Typst) ----------
+
+test("renders the two-column layout, on one page and across pages", { skip: noTypst }, () => {
+  const out = join(tmp(), "two.pdf");
+  renderResumePdf(sample(), { out, on: ON, layout: "two-column", pages: "1" });
+  assert.ok(readFileSync(out).length > 5000);
+  // A long main column runs onto later pages beside a short side column.
+  renderResumePdf(long(), { out: join(tmp(), "two-long.pdf"), on: ON, layout: "two-column" });
+  assert.throws(() => renderResumePdf(long(), { out: join(tmp(), "x.pdf"), on: ON, layout: "two-column", pages: "1" }), /runs to \d+ pages/);
+});
+
 
 test("renders the academic layout", { skip: noTypst }, () => {
   const out = join(tmp(), "cv.pdf");

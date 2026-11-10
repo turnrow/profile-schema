@@ -9,6 +9,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readReport, judge } from "../scripts/check-pdfua.mjs";
 import { VARIANTS } from "../scripts/render-example-pdfs.mjs";
+import { PDF_LAYOUTS } from "../index.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const job = (name, body) => `<job><item size="1"><name>${name}</name></item>${body}<duration start="1" finish="2">00:00:00.100</duration></job>`;
@@ -69,6 +70,6 @@ test("the rendered variants cover a photo, another language, A4, one page, netwo
   assert.ok(all.some((o) => o.locale && o.paper === "a4"));
   assert.ok(all.some((o) => o.pages === "1"));
   assert.ok(all.some((o) => o.visibility?.includes("network")));
-  assert.ok(all.some((o) => o.layout === "academic"));
-  assert.ok(Object.keys(VARIANTS).length >= 9);
+  for (const layout of PDF_LAYOUTS.filter((l) => l !== "classic")) assert.ok(all.some((o) => o.layout === layout), `a ${layout} variant is rendered`);
+  assert.ok(Object.keys(VARIANTS).length >= 11);
 });

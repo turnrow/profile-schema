@@ -1,4 +1,8 @@
-// Classic résumé: one column, one reading order. Layout only.
+// The résumé template: one column, or a main column with a narrower one beside it. Layout only.
+// Either way there is one reading order: the header, the main column from top to bottom, then
+// the side column. Content is never read row by row across the columns. (Past one page, the page's
+// own text order puts the side column after the first page's part of the main column; a two-column
+// résumé is best kept to one page.)
 // Everything it prints comes from the résumé view (mappings/resume.json): which entries appear,
 // their order, wording, dates and headings are decided there, not here.
 //
@@ -8,6 +12,7 @@
 //   density  "comfortable" (default) or "compact"
 //   paper    "us-letter" (default) or "a4"
 // The photo is shown when the view's person.photo has a "path" (a local file under --root).
+// A section whose "column" is "side" goes in the side column; when none is, there is one column.
 
 #let view = json(sys.inputs.at("view", default: "view.json"))
 #let one-page = sys.inputs.at("pages", default: "auto") == "1"
@@ -49,9 +54,13 @@
 #show heading.where(level: 3): it => block(above: gap * 1.3, below: 0.4em, text(size: base * 1.05, weight: 700, it.body))
 
 // Text on the start side, dates on the end side of the same line: read in that order.
-#let with-dates(body, d) = block(above: 0.4em, below: 0.4em, {
+// In the narrow column there is no room beside the text, so the dates go on the next line.
+#let with-dates(body, d, narrow: false) = block(above: 0.4em, below: 0.4em, {
   body
-  if has(d, "dates") { h(1fr); text(fill: ink-muted, d.dates) }
+  if has(d, "dates") {
+    if narrow { if body != [] { linebreak() } } else { h(1fr) }
+    text(fill: ink-muted, d.dates)
+  }
 })
 #let bullets(d) = if has(d, "bullets") { list(..d.bullets.map(b => [#b])) }
 #let join-nonempty(parts, sep) = parts.filter(p => p != none and p != "").join(sep)
@@ -78,12 +87,6 @@
   )
 } else { header }
 
-// ---------- summary ----------
-#if "summary" in view and has(view.summary, "text") {
-  heading(level: 2, view.summary.heading)
-  par(view.summary.text)
-}
-
 // ---------- sections ----------
 // An entry with nothing but a name (a skill, a language) is set inline; the rest get a block each.
 #let is-brief(e) = not (has(e, "dates") or has(e, "organization") or has(e, "summary") or has(e, "bullets") or has(e, "positions") or has(e, "url"))
@@ -91,22 +94,22 @@
   let extra = join-nonempty((e.at("detail", default: none), if has(e, "keywords") { e.keywords.join(", ") }), "; ")
   if extra != none { [#e.title (#extra)] } else { [#e.title] }
 }
-#let entry(e) = {
+#let entry(e, narrow: false) = {
   let positions = e.at("positions", default: ())
   let place = e.at("location", default: none)
   if positions.len() > 1 {
     // Several titles at one employer: the employer heads the entry, and each title follows with its dates.
     heading(level: 3, e.at("organization", default: e.title))
-    with-dates(if place != none { [#place] } else { [] }, e)
+    with-dates(if place != none { [#place] } else { [] }, e, narrow: narrow)
     for p in positions {
-      block(above: gap, with-dates(text(weight: 600, p.title), p))
+      block(above: gap, with-dates(text(weight: 600, p.title), p, narrow: narrow))
       if has(p, "summary") { par(p.summary) }
       bullets(p)
     }
   } else {
     heading(level: 3, if has(e, "url") { link(e.url)[#e.title] } else { e.title })
     let line2 = join-nonempty((e.at("organization", default: none), e.at("detail", default: none), place), ", ")
-    if line2 != none { with-dates([#line2], e) }
+    if line2 != none { with-dates([#line2], e, narrow: narrow) }
     // With nothing else on the line, the date sits at the start, under the title.
     else if has(e, "dates") { block(above: 0.4em, below: 0.4em, text(fill: ink-muted, e.dates)) }
     let only = if positions.len() == 1 { positions.first() } else { e }
@@ -116,13 +119,33 @@
   }
 }
 
-#for s in view.at("sections", default: ()) {
+// In the narrow column, names are a real list (one per line); in the wide one they run on a line.
+#let sections-of(sections, narrow: false) = for s in sections {
   heading(level: 2, s.heading)
   if s.entries.all(is-brief) {
-    par(s.entries.map(brief).join("; "))
+    if narrow { list(marker: none, indent: 0pt, body-indent: 0pt, ..s.entries.map(brief)) } else { par(s.entries.map(brief).join("; ")) }
   } else {
-    for e in s.entries { entry(e) }
+    for e in s.entries { entry(e, narrow: narrow) }
   }
+}
+
+#let all-sections = view.at("sections", default: ())
+#let side = all-sections.filter(s => s.at("column", default: "main") == "side")
+#let main = all-sections.filter(s => s.at("column", default: "main") != "side")
+#let summary = if "summary" in view and has(view.summary, "text") {
+  heading(level: 2, view.summary.heading)
+  par(view.summary.text)
+}
+
+#if side.len() == 0 {
+  summary
+  sections-of(main)
+} else {
+  // Two cells in one row: the whole main column comes first in the document, then the side column.
+  block(above: 1.1em, grid(columns: (1fr, 31%), column-gutter: 1.8em,
+    { summary; sections-of(main) },
+    sections-of(side, narrow: true),
+  ))
 }
 
 // One page is a hard limit when asked for: fail with a marker the pdf command turns into advice.
