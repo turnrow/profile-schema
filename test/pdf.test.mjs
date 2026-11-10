@@ -148,7 +148,30 @@ test("text is in reading order when each expected string follows the one before"
   assert.equal(inOrder("Senior Associate", ["Senior Associate", "Senior Associate"]).ok, false);
 });
 
+test("right-to-left text is found whichever way an extractor turned the line", () => {
+  // As written, with the words in reverse order, or letter by letter in reverse.
+  assert.equal(inOrder("ليلى حداد\nنبذة", ["ليلى حداد", "نبذة"]).ok, true);
+  assert.equal(inOrder("حداد ليلى\nنبذة", ["ليلى حداد", "نبذة"]).ok, true);
+  assert.equal(inOrder("יתקוסעת ןויסינ", ["ניסיון תעסוקתי"]).ok, true);
+  // A comma that moved to the next word is not a difference; a missing word is.
+  assert.equal(inOrder("الحاسوب علوم ،بكالوريوس", ["بكالوريوس، علوم الحاسوب"]).ok, true);
+  assert.equal(inOrder("علوم بكالوريوس", ["بكالوريوس، علوم الحاسوب"]).ok, false);
+  // Order still matters between strings.
+  assert.equal(inOrder("نبذة\nحداد ليلى", ["ليلى حداد", "نبذة"]).ok, false);
+});
+
 // ---------- rendering (needs Typst) ----------
+
+test("renders Arabic and Hebrew with fonts that have the letters", { skip: noTypst }, () => {
+  const out = join(tmp(), "ar.pdf");
+  renderResumePdf(load("examples/rtl.profile.json"), { out, on: ON });
+  const pdf = readFileSync(out).toString("latin1");
+  assert.match(pdf, /Vazirmatn/, "the Arabic font is embedded");
+  const he = join(tmp(), "he.pdf");
+  renderResumePdf(sample(), { out: he, on: ON, locale: "he" });
+  assert.match(readFileSync(he).toString("latin1"), /NotoSansHebrew/, "the Hebrew font is embedded");
+  renderResumePdf(load("examples/rtl.profile.json"), { out: join(tmp(), "ar2.pdf"), on: ON, layout: "two-column", pages: "1" });
+});
 
 test("renders the two-column layout, on one page and across pages", { skip: noTypst }, () => {
   const out = join(tmp(), "two.pdf");

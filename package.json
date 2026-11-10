@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "test": "node --test test/*.test.mjs",
-    "validate:examples": "node bin/profile.mjs validate examples/sample.profile.json && node bin/profile.mjs validate examples/employee.profile.json && node bin/profile.mjs validate examples/history.profile.json && node bin/profile.mjs validate examples/recommended",
+    "validate:examples": "node bin/profile.mjs validate examples/sample.profile.json && node bin/profile.mjs validate examples/employee.profile.json && node bin/profile.mjs validate examples/history.profile.json && node bin/profile.mjs validate examples/rtl.profile.json && node bin/profile.mjs validate examples/recommended",
     "fixtures": "node scripts/make-fixtures.mjs"
   },
   "repository": {

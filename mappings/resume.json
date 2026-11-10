@@ -32,6 +32,20 @@
       "$fn": "onDate",
       "args": []
     },
+    "separators": {
+      "list": {
+        "$fn": "label",
+        "args": [
+          "listSep"
+        ]
+      },
+      "item": {
+        "$fn": "label",
+        "args": [
+          "itemSep"
+        ]
+      }
+    },
     "title": {
       "$fn": "label",
       "args": [
@@ -279,7 +293,12 @@
                         ]
                       }
                     ],
-                    ", "
+                    {
+                      "$fn": "label",
+                      "args": [
+                        "listSep"
+                      ]
+                    }
                   ]
                 },
                 "$else": {
@@ -301,7 +320,12 @@
                                 ]
                               }
                             ],
-                            ", "
+                            {
+                              "$fn": "label",
+                              "args": [
+                                "listSep"
+                              ]
+                            }
                           ]
                         }
                       }
@@ -398,7 +422,13 @@
                             {
                               "$fn": "join",
                               "args": [
-                                "$.ratings"
+                                "$.ratings",
+                                {
+                                  "$fn": "label",
+                                  "args": [
+                                    "listSep"
+                                  ]
+                                }
                               ]
                             },
                             ")"
@@ -548,7 +578,12 @@
                     },
                     "$.cefr"
                   ],
-                  ", "
+                  {
+                    "$fn": "label",
+                    "args": [
+                      "listSep"
+                    ]
+                  }
                 ]
               }
             }
@@ -834,7 +869,13 @@
                             "x": {
                               "$fn": "join",
                               "args": [
-                                "$.authors"
+                                "$.authors",
+                                {
+                                  "$fn": "label",
+                                  "args": [
+                                    "listSep"
+                                  ]
+                                }
                               ]
                             }
                           }
@@ -848,7 +889,13 @@
                             "x": {
                               "$fn": "join",
                               "args": [
-                                "$.authors"
+                                "$.authors",
+                                {
+                                  "$fn": "label",
+                                  "args": [
+                                    "listSep"
+                                  ]
+                                }
                               ]
                             }
                           }

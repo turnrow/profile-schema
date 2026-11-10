@@ -13,7 +13,11 @@ const typst = typstAt >= 0 ? args.splice(typstAt, 2)[1] : undefined;
 const outDir = resolve(args[0] ?? "pdf-out");
 const ON = "2026-11-07"; // the date the committed example outputs are made for
 
-// name: [profile, options]. Each variant exercises something a validator or a reader could trip on.
+// Why the Arabic variants are left out of the text-order check (they are still rendered and validated).
+const ARABIC_TEXT = "Arabic text does not come back out of the PDF intact: lam-alef pairs come out reversed and vowel marks doubled (issue #60), so its order can't be read from extracted text";
+
+// name: [profile, options, why the text-order check is skipped (rarely)]. Each variant exercises
+// something a validator or a reader could trip on.
 export const VARIANTS = {
   "sample": ["examples/sample.profile.json", {}],
   "sample-one-page-compact": ["examples/sample.profile.json", { pages: "1", density: "compact" }],
@@ -24,6 +28,9 @@ export const VARIANTS = {
   "employee-academic": ["examples/employee.profile.json", { layout: "academic" }],
   "sample-two-column": ["examples/sample.profile.json", { layout: "two-column" }],
   "employee-two-column": ["examples/employee.profile.json", { layout: "two-column" }],
+  "rtl-arabic": ["examples/rtl.profile.json", {}, ARABIC_TEXT],
+  "rtl-arabic-two-column": ["examples/rtl.profile.json", { layout: "two-column" }, ARABIC_TEXT],
+  "sample-hebrew-headings": ["examples/sample.profile.json", { locale: "he" }],
   "recommended": ["examples/recommended", {}],
   "recommended-photo": ["examples/recommended", { photo: true }],
 };
@@ -42,7 +49,7 @@ export function readingOrder(view) {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   mkdirSync(outDir, { recursive: true });
-  for (const [name, [src, options]] of Object.entries(VARIANTS)) {
+  for (const [name, [src, options, skipOrder]] of Object.entries(VARIANTS)) {
     const isBundle = !src.endsWith(".json");
     const profile = JSON.parse(readFileSync(join(root, src, isBundle ? "profile.json" : ""), "utf8"));
     const out = join(outDir, `${name}.pdf`);
@@ -50,7 +57,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     // What a reader should meet, in order; scripts/check-reading-order.mjs holds the PDF's text to it.
     // Kept in a subfolder so the folder of PDFs holds nothing but PDFs for the validator.
     mkdirSync(join(outDir, "order"), { recursive: true });
-    writeFileSync(join(outDir, "order", `${name}.json`), JSON.stringify(readingOrder(view), null, 2) + "\n");
+    writeFileSync(join(outDir, "order", `${name}.json`), JSON.stringify(skipOrder ? { skip: skipOrder, order: readingOrder(view) } : readingOrder(view), null, 2) + "\n");
     console.log(`wrote ${out}`);
   }
 }

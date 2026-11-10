@@ -1,0 +1,148 @@
+{
+  "$schema": "../schema/profile.schema.json",
+  "schemaVersion": "2.6.0",
+  "meta": {
+    "defaultLocale": "ar",
+    "locales": [
+      "ar"
+    ],
+    "updated": "2026-11-10T00:00:00Z",
+    "subjectConsent": {
+      "given": true,
+      "on": "2026-11-10",
+      "note": "Fictional person; no real consent is needed."
+    },
+    "notes": "A fictional person, written to exercise right-to-left output. The Arabic was written by an AI and has not been checked by a fluent reader (issue #60). Company names are kept in Latin letters on purpose, to test lines that mix directions."
+  },
+  "person": {
+    "name": "ليلى حداد",
+    "headline": "مهندسة برمجيات | منصات البيانات | قيادة الفرق",
+    "summary": "مهندسة برمجيات تبني منصات بيانات موثوقة وتقود فرقًا صغيرة. عملت في شركات ناشئة وفي مؤسسات كبيرة، وأهتم بالكتابة الواضحة وبإتاحة المنتجات للجميع.",
+    "location": "amman",
+    "contact": {
+      "website": "https://layla-haddad.example"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "url": "https://www.linkedin.com/in/example-layla-haddad/"
+      }
+    ]
+  },
+  "places": {
+    "amman": {
+      "label": "عمّان، الأردن"
+    },
+    "dubai": {
+      "label": "دبي، الإمارات"
+    }
+  },
+  "organizations": {
+    "northwind": {
+      "name": "Northwind Example Ltd"
+    },
+    "tidewater": {
+      "name": "Tidewater Trails"
+    },
+    "uni": {
+      "name": "الجامعة الأهلية (خيالية)"
+    }
+  },
+  "work": [
+    {
+      "id": "northwind-lead",
+      "status": "approved",
+      "confidence": "medium",
+      "priority": 90,
+      "organization": "northwind",
+      "title": "قائدة فريق هندسة البيانات",
+      "location": "amman",
+      "startDate": "2022-03",
+      "current": true,
+      "summary": "تقود فريقًا من ستة مهندسين يبني منصة البيانات في Northwind.",
+      "metrics": [
+        {
+          "id": "team",
+          "label": "مهندسين في الفريق",
+          "value": 6
+        },
+        {
+          "id": "pipelines",
+          "label": "مسار بيانات يوميًا",
+          "value": 120,
+          "qualifier": "approx"
+        }
+      ]
+    },
+    {
+      "id": "tidewater-engineer",
+      "status": "approved",
+      "confidence": "medium",
+      "priority": 70,
+      "organization": "tidewater",
+      "title": "مهندسة برمجيات",
+      "location": "dubai",
+      "startDate": "2018-09",
+      "endDate": "2022-02",
+      "summary": "بنت خدمات الحجز والدفع وعملت مع فريق التصميم على إتاحة الواجهات."
+    }
+  ],
+  "education": [
+    {
+      "id": "bsc",
+      "status": "approved",
+      "confidence": "medium",
+      "institution": "uni",
+      "credential": "بكالوريوس",
+      "area": "علوم الحاسوب",
+      "completed": true,
+      "startDate": "2014",
+      "endDate": "2018"
+    }
+  ],
+  "skills": [
+    {
+      "id": "data-platforms",
+      "status": "approved",
+      "confidence": "medium",
+      "priority": 90,
+      "name": "منصات البيانات",
+      "level": "expert"
+    },
+    {
+      "id": "python",
+      "status": "approved",
+      "confidence": "medium",
+      "priority": 80,
+      "name": "Python",
+      "level": "advanced"
+    },
+    {
+      "id": "accessibility",
+      "status": "approved",
+      "confidence": "medium",
+      "priority": 70,
+      "name": "إتاحة الوصول",
+      "level": "proficient"
+    }
+  ],
+  "languages": [
+    {
+      "id": "lang-ar",
+      "status": "approved",
+      "confidence": "medium",
+      "language": "ar",
+      "name": "العربية",
+      "fluency": "native"
+    },
+    {
+      "id": "lang-en",
+      "status": "approved",
+      "confidence": "medium",
+      "language": "en",
+      "name": "الإنجليزية",
+      "fluency": "fullProfessional",
+      "cefr": "C1"
+    }
+  ]
+}

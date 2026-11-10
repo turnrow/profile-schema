@@ -29,12 +29,15 @@
 #let gap = if compact { 0.5em } else { 0.7em }
 #let has(d, key) = key in d and d.at(key) != none and d.at(key) != ""
 #let person = view.person
+// Punctuation between parts comes from the view, in the output's language (Arabic has its own comma).
+#let sep = view.at("separators", default: (list: ", ", item: "; "))
 #let locale = view.at("locale", default: "en").split("-")
 
 #set document(title: view.title, author: person.name)
 #set page(paper: paper, margin: if compact { (x: 0.65in, y: 0.6in) } else { (x: 0.8in, y: 0.75in) })
 #set text(
-  font: "Atkinson Hyperlegible Next", size: base, fill: ink,
+  // Atkinson Hyperlegible Next has no Arabic or Hebrew letters; Vazirmatn and Noto Sans Hebrew supply them.
+  font: ("Atkinson Hyperlegible Next", "Vazirmatn", "Noto Sans Hebrew"), size: base, fill: ink,
   lang: locale.at(0), region: if locale.len() > 1 and locale.at(1).len() == 2 { locale.at(1) } else { none },
   dir: if view.at("direction", default: "ltr") == "rtl" { rtl } else { ltr },
   // No line of a paragraph is left alone at the top or bottom of a page.
@@ -91,7 +94,7 @@
 // An entry with nothing but a name (a skill, a language) is set inline; the rest get a block each.
 #let is-brief(e) = not (has(e, "dates") or has(e, "organization") or has(e, "summary") or has(e, "bullets") or has(e, "positions") or has(e, "url"))
 #let brief(e) = {
-  let extra = join-nonempty((e.at("detail", default: none), if has(e, "keywords") { e.keywords.join(", ") }), "; ")
+  let extra = join-nonempty((e.at("detail", default: none), if has(e, "keywords") { e.keywords.join(sep.list) }), sep.item)
   if extra != none { [#e.title (#extra)] } else { [#e.title] }
 }
 #let entry(e, narrow: false) = {
@@ -108,14 +111,14 @@
     }
   } else {
     heading(level: 3, if has(e, "url") { link(e.url)[#e.title] } else { e.title })
-    let line2 = join-nonempty((e.at("organization", default: none), e.at("detail", default: none), place), ", ")
+    let line2 = join-nonempty((e.at("organization", default: none), e.at("detail", default: none), place), sep.list)
     if line2 != none { with-dates([#line2], e, narrow: narrow) }
     // With nothing else on the line, the date sits at the start, under the title.
     else if has(e, "dates") { block(above: 0.4em, below: 0.4em, text(fill: ink-muted, e.dates)) }
     let only = if positions.len() == 1 { positions.first() } else { e }
     if has(only, "summary") { par(only.summary) }
     bullets(only)
-    if has(e, "keywords") { par(text(fill: ink-muted, e.keywords.join(", "))) }
+    if has(e, "keywords") { par(text(fill: ink-muted, e.keywords.join(sep.list))) }
   }
 }
 
@@ -123,7 +126,7 @@
 #let sections-of(sections, narrow: false) = for s in sections {
   heading(level: 2, s.heading)
   if s.entries.all(is-brief) {
-    if narrow { list(marker: none, indent: 0pt, body-indent: 0pt, ..s.entries.map(brief)) } else { par(s.entries.map(brief).join("; ")) }
+    if narrow { list(marker: none, indent: 0pt, body-indent: 0pt, ..s.entries.map(brief)) } else { par(s.entries.map(brief).join(sep.item)) }
   } else {
     for e in s.entries { entry(e, narrow: narrow) }
   }

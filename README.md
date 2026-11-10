@@ -305,7 +305,9 @@ Every entry has the same shape, whatever its section: `id`, `priority`, `title`,
 - **Study that didn't end in a degree** reads "… (not completed)", or names the subject alone.
 - **Publications** name their authors (or inventors, for a patent) in published order, carry a patent or report number, and link a DOI. Press coverage about the person is left out: it is not their work.
 - **Other people's words** appear only with their consent, and only to its scope.
-- Headings and levels are translated in English, Spanish, French, German and Portuguese; other locales fall back to English words with their own date formats.
+- Headings and levels are translated in English, Spanish, French, German and Portuguese, and (unchecked by a fluent reader) Arabic and Hebrew; other locales fall back to English words with their own date formats.
+- `separators` gives the punctuation between parts in the output's language (Arabic has its own comma and semicolon).
+- Dates are always in the Gregorian calendar, whatever calendar the locale prefers.
 
 ## The résumé PDF
 
@@ -329,10 +331,14 @@ node bin/profile.mjs pdf my-bundle/ --out resume.pdf --pages 1 --photo --locale 
 | `--locale`, `--on` | The language of headings and dates, and the date the résumé is made for. |
 
 - **Accessible by construction.** The document title and language are set; the name, sections and entries are real headings in order; reading order is visual order (one column); links are underlined and named; the photo carries its alt text; decorative rules are marked as decoration; no line is stranded at the top or bottom of a page. Text is Atkinson Hyperlegible Next in the brand colors, each at WCAG AAA contrast (7:1).
-- **Validated in CI.** Every example is rendered in eleven variants (with a photo, in Spanish on A4, on one page, and so on) and checked against PDF/UA-1 by [veraPDF](https://verapdf.org), the reference validator. A violation fails the build. Typst and veraPDF are pinned to exact versions. To run it yourself: `node scripts/render-example-pdfs.mjs pdf-out`, then `verapdf -f ua1 pdf-out > report.xml` and `node scripts/check-pdfua.mjs report.xml`. `node scripts/check-reading-order.mjs pdf-out` checks the text order (it needs `pdftotext`).
+- **Validated in CI.** Every example is rendered in fourteen variants (with a photo, in Spanish on A4, on one page, and so on) and checked against PDF/UA-1 by [veraPDF](https://verapdf.org), the reference validator. A violation fails the build. Typst and veraPDF are pinned to exact versions. To run it yourself: `node scripts/render-example-pdfs.mjs pdf-out`, then `verapdf -f ua1 pdf-out > report.xml` and `node scripts/check-pdfua.mjs report.xml`. `node scripts/check-reading-order.mjs pdf-out` checks the text order (it needs `pdftotext`).
 - **Still check it.** A validator can't judge reading order, what a description says, or plain language. The [pull request template](.github/pull_request_template.md) lists those checks, and CI keeps the rendered PDFs (the `resume-pdfs` artifact) to do them on. Listen to your own résumé with a screen reader before sending it widely.
 - **Layouts:** `classic`, `academic` and `two-column`. All use one template ([`templates/resume/classic.typ`](templates/resume/classic.typ)); a layout arranges the same view (section order, which sections sit in the side column) before the template sees it.
 - **Two columns, one reading order.** The header is read first, then the main column from top to bottom, then the side column, never row by row across the two. CI checks the order of every rendered PDF's text against its view. **Keep a two-column résumé to one page** (`--pages 1`): on a longer one the side column sits on the first page, so text copied out page by page gives the first page's main column, then the side column, then the rest of the main column, while the document's own structure reads the whole main column first. Both are coherent, but they no longer agree. A template holds layout only; to make your own, copy it and read the same view.
+- **Right-to-left (experimental).** A profile written in Arabic or Hebrew is laid out right to left: headings and text start on the right, dates sit on the left, and punctuation follows the language. Fonts with those letters are bundled (Vazirmatn and Noto Sans Hebrew). See [`examples/rtl.profile.json`](examples/rtl.profile.json). Three limits, tracked in [#60](https://github.com/turnrow/profile-schema/issues/60):
+  - **Arabic text does not come back out of the PDF intact.** The page looks right and passes PDF/UA-1 validation, but copied or extracted text has the letters of lam-alef pairs (as in الآن) reversed and vowel marks doubled. A screen reader may misread those words. Until that is fixed, don't rely on an Arabic PDF for accessibility. Hebrew extracts correctly.
+  - **The Arabic and Hebrew wording was written by an AI** and has not been checked by a fluent reader.
+  - **Translate the profile, not just the headings.** `--locale he` on an English profile gives Hebrew headings over English text set right to left, where punctuation and numbers land on the wrong side.
 - **Copying text out.** Dates sit at the end of their line. The PDF's own text order keeps each date with its entry, and that is what a screen reader follows, but tools that guess columns from position can move the dates. For applicant tracking systems, the plain-text résumé on the [roadmap](ROADMAP.md) is the safer file.
 
 When one page isn't enough:
@@ -390,7 +396,7 @@ From code: `reviewMarkdown(profile, { on, locale, mappings })`. Pass your own `m
 | [`templates/`](templates/) | Typst templates for the résumé PDF. Layout only. |
 | [`lib/review.mjs`](lib/review.mjs) | Writes the review file: every entry with its status, sources and which outputs show it. |
 | [`bin/profile.mjs`](bin/profile.mjs) | Command line: `validate`, `open`, `review`, `convert`, `pdf`, `import`, `release`, `writeback`, `media add`, `badges import`. |
-| [`examples/`](examples/) | Three fictional people: a founder; a new employee with audiences; and someone whose employers (EDS, Coopers & Lybrand, Buchanan) changed around them, with real company histories cited to public sources. Plus a sample SCIM write-back and every generated output. |
+| [`examples/`](examples/) | Fictional people, including one written in Arabic for right-to-left output ([`rtl.profile.json`](examples/rtl.profile.json)). The first three: a founder; a new employee with audiences; and someone whose employers (EDS, Coopers & Lybrand, Buchanan) changed around them, with real company histories cited to public sources. Plus a sample SCIM write-back and every generated output. |
 | [`upstream/jsonresume/`](upstream/jsonresume/) | An unmodified copy of the current JSON Resume schema (1.7.1). The tests validate our JSON Resume export against it. |
 | [`test/`](test/) | `node --test`: schema, validator, converter, rules and import round trip. |
 | [`brand/`](brand/) | Logos, icons, favicons, design tokens (light and dark), fonts and the scripts that generate them. See [Brand and design system](#brand-and-design-system). |

@@ -71,5 +71,7 @@ test("the rendered variants cover a photo, another language, A4, one page, netwo
   assert.ok(all.some((o) => o.pages === "1"));
   assert.ok(all.some((o) => o.visibility?.includes("network")));
   for (const layout of PDF_LAYOUTS.filter((l) => l !== "classic")) assert.ok(all.some((o) => o.layout === layout), `a ${layout} variant is rendered`);
-  assert.ok(Object.keys(VARIANTS).length >= 11);
+  assert.ok(Object.keys(VARIANTS).length >= 14);
+  // A variant left out of the text-order check must say why.
+  for (const [name, [, , skip]] of Object.entries(VARIANTS)) if (skip !== undefined) assert.ok(skip.length > 40 && /#\d+/.test(skip), `${name} gives a reason and an issue`);
 });

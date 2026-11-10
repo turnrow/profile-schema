@@ -4,6 +4,10 @@
   "locale": "en-US",
   "direction": "ltr",
   "madeFor": "2026-11-07",
+  "separators": {
+    "list": ", ",
+    "item": "; "
+  },
   "title": "Ines Ortega: résumé",
   "person": {
     "name": "Ines Ortega",
