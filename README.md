@@ -262,7 +262,8 @@ Run the tool as `node bin/profile.mjs <command>`, or as `turnrow-profile <comman
 | Add an Open Badge to a bundle | `badges import <bundle> <file \| url>` |
 | Send an approved change set to a directory's API | `directory apply <change-set.json> --apply --approved <sha256> --out <folder>` |
 | Build an org chart from a directory and a folder of profiles | `orgchart build <folder> --against <export> --target … --domain … --method … --name … --out acme.org.json` |
-| See the organization on a date, and what changed since another | `orgchart show acme.org.json --on 2026-11-07 --compare 2026-01-05` |
+| See the organization on a date, and what changed since another | `orgchart show acme.org.json --on 2026-11-07 --compare 2026-01-05` (add `--format html`, `pdf` or `csv`) |
+| Count headcount, vacancies, span of control and layers | `orgchart stats acme.org.json --from 2026-01-05 --to 2026-11-07` |
 | See what a folder of profiles would change in a directory | `directory diff <folder> --against <export> --target scim --domain … --method … --out <folder>` |
 
 Bundled mappings: `jsonresume`, `schemaorg`, `linkedin`, `brief`, `timeline`, `resume`, `ats`, `gedcom7`, `gedcom551`, `ob3`, `clr`, `hropen`, `europass`, `scim`, `verification`. Pass a path ending in `.json` to use your own.
@@ -600,7 +601,8 @@ Whether a post is filled, vacant or planned is worked out from the dates and nev
 |---|---|
 | `orgchart validate <file>` | Checks the file: every reference resolves, nothing ends before it starts, one line manager at a time, holders add up to no more than the seat, no loop in the reporting lines on any date. |
 | `orgchart build <folder> --against <export> --target <connector> …` | Builds the file from a directory export and a folder of profiles, or carries an existing one forward with `--base`. |
-| `orgchart show <file> [--on <date>] [--compare <date>] [--format table\|csv] [--budget]` | The organization on a date, one row per post in reporting order, and what changed since another date. |
+| `orgchart show <file> [--on <date>] [--compare <date>] [--format table\|csv\|html\|pdf] [--budget]` | The organization on a date, one row per post in reporting order, and what changed since another date. |
+| `orgchart stats <file> [--on <date>] [--from <date> --to <date>] [--format table\|json] [--budget]` | Posts, people and FTE; filled, vacant and planned per unit; span of control; layers. With a range: headcount at the start of each month and what changed. |
 
 **People and privacy.**
 
@@ -609,7 +611,21 @@ Whether a post is filled, vacant or planned is worked out from the dates and nev
 
 **Building and keeping history.** The export gives the seats (title, department, manager); the profiles give the names. With `--base`, nothing is deleted: a seat the directory no longer has is **ended** the day before the run, a seat whose title or department changed is replaced by a new post that `succeeds` it (so a comparison reads as a change, not as one seat closing and another opening), and posts you wrote by hand are left alone. Run it each month and the history accumulates. Vacancies, planned roles, budgets and the units above departments are written by hand: no directory knows about a seat nobody holds.
 
-The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-org-chart-design.md`](docs/superpowers/specs/2026-11-10-org-chart-design.md). An interactive view, a PDF and the analysis (span of control, layers, headcount over time) are next.
+**The web page** (`--format html`, see [`examples/out/orgchart/acme.html`](examples/out/orgchart/acme.html)) is one file that fetches nothing.
+
+- The chart is a nested list. With scripting it becomes a tree: Up and Down move between posts, Right opens a post's reports, Left closes them or goes to the manager, Home and End jump to the ends. A screen reader hears each post's level and its place among its siblings. Without scripting it is still the full list.
+- A vacant post says "Vacant" and has a dashed border; a planned post says "Planned" and has a dotted one. Color is never the only sign. The colors are the brand tokens, which pass 7:1 in light and dark.
+- The same rows follow as a table with a caption and header cells, then what changed between the two dates.
+- It reflows at 320 pixels wide with no sideways scrolling, and prints with everything open.
+- It is a tree you move through, not a drawing of boxes and lines. That is a decision to confirm (see the design).
+
+**The PDF** (`--format pdf --out chart.pdf`, needs [Typst](#the-résumé-pdf)) is the same table as a tagged PDF/UA-1 document, landscape, with the header row repeated on each page and the level in figures. CI validates it with veraPDF alongside the résumés.
+
+**The numbers** (`orgchart stats`, see [`examples/out/orgchart/acme.stats.md`](examples/out/orgchart/acme.stats.md)) are counted from the same state as the chart, so they can't disagree with it. Span of control counts line reports that exist on the date: dotted lines and planned posts are not counted. With `--budget`, each unit also shows budgeted FTE and cost against the cost of its filled posts.
+
+**Checked, and not.** A test drives nothing but text; I also drove the example page in a browser (Chromium) to check the keyboard, the tree roles, both themes, reflow and the no-script list. **Nobody has used it with a screen reader**, and no automated accessibility scanner has been run on it. Treat "WCAG AAA" as the aim the page was built to, not as an audit result.
+
+The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-org-chart-design.md`](docs/superpowers/specs/2026-11-10-org-chart-design.md).
 
 ## The review file
 

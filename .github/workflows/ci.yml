@@ -67,6 +67,8 @@ jobs:
           node bin/profile.mjs orgchart validate examples/orgchart/acme.org.json
           node bin/profile.mjs orgchart show examples/orgchart/acme.org.json --on 2026-11-07 --compare 2026-01-05 --out examples/out/orgchart/acme.md
           node bin/profile.mjs orgchart show examples/orgchart/acme.org.json --on 2026-11-07 --format csv --out examples/out/orgchart/acme.csv
+          node bin/profile.mjs orgchart show examples/orgchart/acme.org.json --on 2026-11-07 --compare 2026-01-05 --format html --out examples/out/orgchart/acme.html
+          node bin/profile.mjs orgchart stats examples/orgchart/acme.org.json --on 2026-11-07 --from 2026-01-05 --to 2026-11-07 --out examples/out/orgchart/acme.stats.md
           git diff --exit-code -- examples/recommended examples/directory examples/orgchart examples/out ':!examples/out/imported-from-jsonresume.profile.json' ':!examples/out/employee.*'
 
   pdf:

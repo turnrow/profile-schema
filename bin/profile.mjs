@@ -29,6 +29,9 @@ import { withMap, planRequests, applyChangeSet, ApplyRefusedError } from "../lib
 import { validateOrganization } from "../lib/orgchart/index.mjs";
 import { buildOrganization } from "../lib/orgchart/build.mjs";
 import { orgMarkdown, orgCsv } from "../lib/orgchart/views.mjs";
+import { orgHtml } from "../lib/orgchart/html.mjs";
+import { renderOrgPdf } from "../lib/orgchart/pdf.mjs";
+import { statsMarkdown, orgStats, orgSeries } from "../lib/orgchart/stats.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS, resolveMapping } from "../index.mjs";
 
 const HELP = `turnrow-profile: validate, convert and share Turnrow Profiles.
@@ -55,7 +58,9 @@ Commands
   orgchart build <folder> --against <export> --target <connector> --out <file.org.json>
                                            build or carry forward an organization file from a directory export
                                            and a folder of profiles; people are named only as they have released
-  orgchart show <file.org.json>            the organization on a date, as a table
+  orgchart show <file.org.json>            the organization on a date: a table, CSV, a web page or a PDF
+  orgchart stats <file.org.json>           headcount, vacancies, span of control and layers; with --from and --to,
+                                           headcount month by month and what changed
   help, version
 
 A profile is a .json file; a bundle is a folder holding profile.json and its media/ and badges/.
@@ -79,7 +84,8 @@ Options
               The access token is read from an environment variable (GOOGLE_DIRECTORY_TOKEN, ENTRA_GRAPH_TOKEN, OKTA_TOKEN,
               ONELOGIN_TOKEN), never from the command line. Okta and OneLogin also need OKTA_ORG_URL or ONELOGIN_URL.
   orgchart build: --method <…> --domain <domain>   --name <organization> | --base <existing.org.json>   --audience <id>
-  orgchart show:  --on <date>   --compare <date>   --format <table|csv>   --budget (include budget figures: internal)
+  orgchart show:  --on <date>   --compare <date>   --format <table|csv|html|pdf>   --budget (include budget figures: internal)
+  orgchart stats: --on <date>   --from <date> --to <date>   --format <table|json>   --budget
   pdf:        --pages <1|auto>   --photo | --no-photo (default: no photo)   --density <comfortable|compact>
               --paper <us-letter|a4>   --min-priority <0-100>   --layout <classic|academic|two-column>   --typst <path to typst>
 
@@ -95,7 +101,7 @@ function fail(message, code = 1) { console.error(`error: ${message}`); process.e
 // Flags are declared here so that a misspelled one is refused instead of silently ignored.
 const VALUE_FLAGS = ["--locale", "--out", "--format", "--domain", "--method", "--application", "--receipt", "--on", "--recipient",
   "--visibility", "--media-base", "--id", "--alt", "--kind", "--purpose", "--from",
-  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst", "--against", "--target", "--audience", "--approved", "--max-age", "--map", "--base", "--name", "--compare"];
+  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst", "--against", "--target", "--audience", "--approved", "--max-age", "--map", "--base", "--name", "--compare", "--to"];
 const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version", "--photo", "--no-photo", "--gedzip", "--apply", "--budget"];
 const flags = {};
 const argv = [];
@@ -151,6 +157,7 @@ const baseFlag = takeFlag("--base");
 const nameFlag = takeFlag("--name");
 const compareFlag = takeFlag("--compare");
 const budgetFlag = takeBool("--budget");
+const toDate = takeFlag("--to");
 const visibility = visibilityFlag ? visibilityFlag.split(",").map((v) => v.trim()) : undefined;
 if (visibility && visibility.some((v) => !["public", "network", "private"].includes(v))) {
   fail(`--visibility takes public, network and/or private (got ${visibilityFlag})`, 2);
@@ -195,7 +202,7 @@ function writeNew(path, bytes, what) {
 function writeOut(path, text) { mkdirSync(dirname(resolve(path)), { recursive: true }); writeFileSync(path, text); }
 function emit(text) { if (out) writeOut(out, text); else process.stdout.write(text); }
 function usage() {
-  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import|directory diff|directory apply|orgchart validate|orgchart build|orgchart show> …\nRun "turnrow-profile help" for the commands and options.`);
+  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import|directory diff|directory apply|orgchart validate|orgchart build|orgchart show|orgchart stats> …\nRun "turnrow-profile help" for the commands and options.`);
   process.exit(2);
 }
 if (flags["--version"] || command === "version") {
@@ -411,12 +418,33 @@ try {
       if (sub === "show") {
         if (!rest[1]) usage();
         const fmt = flags["--format"] === undefined ? "table" : format;
-        if (!["table", "csv"].includes(fmt)) fail(`orgchart show --format takes table or csv (got ${fmt})`, 2);
+        if (!["table", "csv", "html", "pdf"].includes(fmt)) fail(`orgchart show --format takes table, csv, html or pdf (got ${fmt})`, 2);
         if (compareFlag !== undefined && !isDate(compareFlag)) fail(`--compare takes a date as yyyy-mm-dd (got ${compareFlag})`, 2);
         const { org, v } = loadOrg(rest[1]);
         if (!v.valid) { console.error(`${rest[1]} is not a valid organization file; run orgchart validate first.\n  ${v.errors.join("\n  ")}`); process.exit(1); }
         const opts = { on, compare: compareFlag, budget: budgetFlag };
-        emit(fmt === "csv" ? orgCsv(org, opts) : orgMarkdown(org, opts));
+        if (fmt === "pdf") {
+          if (!out) fail("orgchart show --format pdf needs --out <file.pdf>", 2);
+          try { renderOrgPdf(org, { ...opts, out, paper: flags["--paper"], typst: flags["--typst"] }); }
+          catch (err) { if (err instanceof PdfError) fail(err.message); throw err; }
+          console.error(`Wrote ${out}`);
+          break;
+        }
+        emit(fmt === "csv" ? orgCsv(org, opts) : fmt === "html" ? orgHtml(org, opts) : orgMarkdown(org, opts));
+        if (budgetFlag && out) console.error(`${out} includes budget figures: keep it internal.`);
+        break;
+      }
+      if (sub === "stats") {
+        if (!rest[1]) usage();
+        const fmt = flags["--format"] === undefined ? "table" : format;
+        if (!["table", "json"].includes(fmt)) fail(`orgchart stats --format takes table or json (got ${fmt})`, 2);
+        if ((fromDate === undefined) !== (toDate === undefined)) fail("orgchart stats takes --from and --to together", 2);
+        for (const [flag, d] of [["--from", fromDate], ["--to", toDate]]) if (d !== undefined && !isDate(d)) fail(`${flag} takes a date as yyyy-mm-dd (got ${d})`, 2);
+        if (fromDate && !(fromDate < toDate)) fail("--from must be before --to", 2);
+        const { org, v } = loadOrg(rest[1]);
+        if (!v.valid) { console.error(`${rest[1]} is not a valid organization file; run orgchart validate first.\n  ${v.errors.join("\n  ")}`); process.exit(1); }
+        const opts = { on: on ?? toDate, budget: budgetFlag, from: fromDate, to: toDate };
+        emit(fmt === "json" ? JSON.stringify({ ...orgStats(org, opts), ...(fromDate ? { series: orgSeries(org, opts) } : {}) }, null, 2) + "\n" : statsMarkdown(org, opts));
         break;
       }
       if (sub !== "build" || !rest[1]) usage();

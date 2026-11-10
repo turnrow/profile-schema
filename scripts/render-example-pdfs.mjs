@@ -4,7 +4,7 @@
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { renderResumePdf } from "../index.mjs";
+import { renderResumePdf, renderOrgPdf } from "../index.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const args = process.argv.slice(2);
@@ -60,4 +60,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     writeFileSync(join(outDir, "order", `${name}.json`), JSON.stringify(skipOrder ? { skip: skipOrder, order: readingOrder(view) } : readingOrder(view), null, 2) + "\n");
     console.log(`wrote ${out}`);
   }
+  // The org chart's PDF goes through the same validator and the same text-order check.
+  const org = JSON.parse(readFileSync(join(root, "examples/orgchart/acme.org.json"), "utf8"));
+  const chart = join(outDir, "orgchart-acme.pdf");
+  const { view } = renderOrgPdf(org, { out: chart, on: ON, compare: "2026-01-05", typst });
+  writeFileSync(join(outDir, "order", "orgchart-acme.json"), JSON.stringify([view.title, ...view.rows.map((r) => r[1]), view.changes.heading], null, 2) + "\n");
+  console.log(`wrote ${chart}`);
 }
