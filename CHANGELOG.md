@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased: fixes from a review of the tools and of the 2.5 and 2.6 work
+## 2.6.1 (2026-11-10): fixes from a review of the tools and of the 2.5 and 2.6 work
 
-No schema changes; every existing file remains valid.
+No schema changes: files keep `schemaVersion` 2.6.0, and every existing file remains valid, with one exception noted under Privacy.
 
 ### Privacy
 - **Photos that can't be checked for location are no longer treated as clean.** WebP, HEIC, AVIF and TIFF files were read as "no GPS", so a phone photo kept its coordinates. `media add` now refuses them and asks for a JPEG or PNG. In a bundle they are an error for a 2.6.0 file and a warning for an older one.
