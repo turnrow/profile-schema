@@ -552,7 +552,7 @@ Profiles are read-only unless you pass `--record`, which adds each release to it
 A connector that can read a field but not write it says so in the report, so the report never promises a change that is not made.
 
 - **Google Workspace.** The file has only the rows and columns that change. Each row repeats what Google requires on every row (the names, the organizational unit, and `****`, which keeps the password); no column that renames, suspends or licenses a user is ever written. Google's file has no column for pronouns, a nickname or a photo: those need the Directory API, which is planned. Format source: Google's help page [Add or update multiple users from a CSV file](https://knowledge.workspace.google.com/admin/users/add-or-update-multiple-users-from-a-csv-file) (updated 2026-10-26). That page names the required columns; the optional ones read here (Work Phone, Employee ID, Employee Title, Department, Cost Center) are spelled as the console's template spells them, and headers are matched without regard to case. **Not checked against a real export or upload**: the example export is written by hand.
-- **LDAP and Active Directory.** The tool writes LDIF and opens no connection: apply the file with `ldapmodify` (try `ldapmodify -n` first) or `ldifde -i`. It reads `employeeNumber` or `employeeID`, `department` or `departmentNumber`, `mail` and `proxyAddresses`. A released JPEG photo is written as `jpegPhoto`; a PNG is not (the attribute holds a JPEG), and the report says so. **Not checked against a real directory.**
+- **LDAP and Active Directory.** The tool writes LDIF and opens no connection: apply the file with `ldapmodify` (try `ldapmodify -n` first) or `ldifde -i`. It reads `employeeNumber` or `employeeID`, `department` or `departmentNumber`, `mail` and `proxyAddresses`. A released JPEG photo is written as `jpegPhoto`, or as `thumbnailPhoto` for an Active Directory user when it is 100 kB or less (images are not resized; a larger one is reported). A PNG is not written (the attributes hold a JPEG), and the report says so. **Not checked against a real directory.**
 
 ### Applying through a directory's API
 
@@ -570,6 +570,7 @@ ENTRA_GRAPH_TOKEN=… node bin/profile.mjs directory apply run/change-set.json \
 - **It stops at the first error** from the directory.
 - **It keeps a log and a way back.** `apply-log.jsonl` records every field against its release; `rollback-change-set.json` is the inverse of what was applied, and rolling back is applying that file. A field that was empty before can't be emptied again.
 - **The token** is an access token you obtain with your own tools (`gcloud`, `az`, your identity provider's console). It is read from an environment variable, sent as a header, and written nowhere.
+- **Google can use a service account instead.** Set `GOOGLE_APPLICATION_CREDENTIALS` to the key file and `GOOGLE_DIRECTORY_SUBJECT` to the administrator it acts as (domain-wide delegation, for the scope in the table). The command makes a ten-minute token for the run; the key is read from its file and kept nowhere.
 
 | Connector | Request | Token variable | Narrowest permission | Also set |
 |---|---|---|---|---|
@@ -578,7 +579,7 @@ ENTRA_GRAPH_TOKEN=… node bin/profile.mjs directory apply run/change-set.json \
 | `okta` | `POST {org}/api/v1/users/{id}` (a partial update) | `OKTA_TOKEN` | scope `okta.users.manage` | `OKTA_ORG_URL` |
 | `onelogin` | `PUT {org}/api/2/users/{id}` | `ONELOGIN_TOKEN` | API credentials with "Manage users" | `ONELOGIN_URL` |
 
-- **Fields a directory has no attribute for.** Google keeps pronouns, nickname, preferred title, headline and bio in a custom schema named `TurnrowProfile`, which an administrator creates once (text fields with those names, and `photoSha256` if photos are sent). For Entra, Okta and OneLogin, name your own attributes: `--map pronouns=extensionAttribute1,preferredTitle=extensionAttribute2`. Only a person's own fields can be mapped.
+- **Fields a directory has no attribute for.** Google keeps pronouns, nickname, preferred title, headline and bio in a custom schema named `TurnrowProfile`, which an administrator creates once: `directory setup google` prints the request, and `--apply` sends it (scope `…/auth/admin.directory.userschema`). For Entra, Okta and OneLogin, name your own attributes: `--map pronouns=extensionAttribute1,preferredTitle=extensionAttribute2`. Only a person's own fields can be mapped.
 - **Photos.** A photo is sent only from a bundle, only when the audience grants the image, the image is approved and within the audience's visibility, and the file still matches its recorded hash. It is compared by hash, and the report shows the hash, never the image. Google takes it in a request of its own (`users.photos.update`) and records the hash in a sixth `TurnrowProfile` field, `photoSha256`, so the next run knows it is there. A photo can't be rolled back: the directory's old image is never read.
 - **Not written by any API connector:** phone numbers in Google and Entra (their phone lists are replaced whole by a patch, which could remove other numbers), photos in Entra, Okta and OneLogin, and anything the employer is the authority for.
 - **Entra's inbound provisioning API is not used, on purpose.** It creates and updates users from an HR source. A sync here never creates a user and never writes the employer's fields, so the Graph connector is the way to update Entra.
@@ -604,7 +605,7 @@ Whether a post is filled, vacant or planned is worked out from the dates and nev
 |---|---|
 | `orgchart validate <file>` | Checks the file: every reference resolves, nothing ends before it starts, one line manager at a time, holders add up to no more than the seat, no loop in the reporting lines on any date. |
 | `orgchart build <folder> --against <export> --target <connector> …` | Builds the file from a directory export and a folder of profiles, or carries an existing one forward with `--base`. |
-| `orgchart show <file> [--on <date>] [--compare <date>] [--format table\|csv\|html\|pdf] [--budget]` | The organization on a date, one row per post in reporting order, and what changed since another date. |
+| `orgchart show <file> [--on <date>] [--compare <date>] [--format table\|csv\|html\|pdf\|svg] [--dates …] [--budget]` | The organization on a date, one row per post in reporting order, and what changed since another date. |
 | `orgchart stats <file> [--on <date>] [--from <date> --to <date>] [--format table\|json] [--budget]` | Posts, people and FTE; filled, vacant and planned per unit; span of control; layers. With a range: headcount at the start of each month and what changed. |
 
 **People and privacy.**
@@ -620,13 +621,14 @@ Whether a post is filled, vacant or planned is worked out from the dates and nev
 - A vacant post says "Vacant" and has a dashed border; a planned post says "Planned" and has a dotted one. Color is never the only sign. The colors are the brand tokens, which pass 7:1 in light and dark.
 - The same rows follow as a table with a caption and header cells, then what changed between the two dates.
 - It reflows at 320 pixels wide with no sideways scrolling, and prints with everything open.
-- It is a tree you move through, not a drawing of boxes and lines. That is a decision to confirm (see the design).
+- **A drawing** of boxes and lines follows the table: each post under the one it reports to, dashed for vacant, dotted for planned. It is a picture with a text alternative, in a region you can scroll with the keyboard, and it says nothing the list and table do not. `--format svg` writes it as a file of its own.
+- **Several dates in one page:** `--dates 2026-01-05,2026-11-07,2027-02-01` adds a row of dates to switch between, each compared with the one before. Only the dates you name are in the page; without scripting they follow one another.
 
 **The PDF** (`--format pdf --out chart.pdf`, needs [Typst](#the-résumé-pdf)) is the same table as a tagged PDF/UA-1 document, landscape, with the header row repeated on each page and the level in figures. CI validates it with veraPDF alongside the résumés.
 
 **The numbers** (`orgchart stats`, see [`examples/out/orgchart/acme.stats.md`](examples/out/orgchart/acme.stats.md)) are counted from the same state as the chart, so they can't disagree with it. Span of control counts line reports that exist on the date: dotted lines and planned posts are not counted. With `--budget`, each unit also shows budgeted FTE and cost against the cost of its filled posts.
 
-**Checked, and not.** A test drives nothing but text; I also drove the example page in a browser (Chromium) to check the keyboard, the tree roles, both themes, reflow and the no-script list. **Nobody has used it with a screen reader**, and no automated accessibility scanner has been run on it. Treat "WCAG AAA" as the aim the page was built to, not as an audit result.
+**Checked, and not.** A test drives nothing but text; I also drove the example page in a browser (Chromium) to check the keyboard, the tree roles, both themes, reflow and the no-script list. An automated scan (axe-core 4.10.2: WCAG 2.0 to 2.2 at A, AA and AAA, plus best practices, in light and dark) found no violations on the one-date and several-date pages; it was run by hand, not in CI. **Nobody has used it with a screen reader**, which a scanner does not replace. Treat "WCAG AAA" as the aim the page was built to, not as an audit result.
 
 The design, and the decisions still to confirm, are in [`docs/superpowers/specs/2026-11-10-org-chart-design.md`](docs/superpowers/specs/2026-11-10-org-chart-design.md).
 

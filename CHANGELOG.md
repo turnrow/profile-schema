@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- **Org chart page:** a drawing of boxes and lines under the list and table (`orgSvg`, `orgchart show --format svg`); `--dates a,b,c` for several dates in one page with a switcher. An axe-core scan (WCAG A to AAA, light and dark) finds no violations.
+- **Google Workspace:** a service account can sign in (`GOOGLE_APPLICATION_CREDENTIALS` and `GOOGLE_DIRECTORY_SUBJECT`); `directory setup google` creates the custom schema the connector uses.
+- **Active Directory:** a released photo goes to `thumbnailPhoto` when it is 100 kB or less.
+- The plan documents now separate what is done from what needs a person.
+
 ## 3.0.0 (2026-11-10): org chart, directory sync, exports, review file and accessible PDF
 
 Everything planned as 2.7, 2.8, 2.9 and 3.0, released together. **Profile files do not change:** `schemaVersion` stays 2.6.0 and every existing file remains valid. The organization file is new and has its own version (`orgSchemaVersion` 1.0.0).

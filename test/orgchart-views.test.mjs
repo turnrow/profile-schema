@@ -7,7 +7,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { orgStats, orgSeries, statsMarkdown, monthStarts, orgHtml, orgPdfView, renderOrgPdf, orgRows } from "../index.mjs";
+import { orgStats, orgSeries, statsMarkdown, monthStarts, orgHtml, orgSvg, orgPdfView, renderOrgPdf, orgRows } from "../index.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const FILE = join(root, "examples/orgchart/acme.org.json");
@@ -62,7 +62,7 @@ test("the web page is one file: nothing fetched, nothing outside it", () => {
   const html = page();
   assert.match(html, /^<!doctype html>\n<html lang="en">/);
   assert.match(html, /<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">/);
-  assert.doesNotMatch(html, /<(img|link|iframe|object|embed|audio|video|form)\b/i);
+  assert.doesNotMatch(html, /<(img|link|iframe|object|embed|audio|video|form|image|use)\b/i);
   assert.doesNotMatch(html, /\b(src|href|action)\s*=/i, "no address of any kind");
   assert.doesNotMatch(html, /https?:\/\//, "not even in text: a photo's address is not written");
   assert.equal(html, readFileSync(join(root, "examples/out/orgchart/acme.html"), "utf8"), "the committed example is current");
@@ -76,7 +76,7 @@ test("without scripting the chart is a nested list of every post, in the table's
   assert.doesNotMatch(list, /role=/, "roles are added by the script, so a page without it is not a broken tree");
   assert.equal((list.match(/<ul>/g) ?? []).length, 1, "one nested list: the director's reports");
   assert.match(html, /<div class="bar" hidden>/);
-  assert.match(html, /id="keys" class="muted" hidden/);
+  assert.match(html, /<p class="keys muted" hidden>/);
 });
 
 test("vacant and planned are said in words and drawn with their own border, never by color alone", () => {
@@ -148,4 +148,60 @@ test("the commands: stats, and show as a web page", () => {
   const html = cli("orgchart", "show", FILE, "--on", NOV, "--compare", JAN, "--format", "html");
   assert.equal(html.stdout, readFileSync(join(root, "examples/out/orgchart/acme.html"), "utf8"));
   assert.equal(cli("orgchart", "show", FILE, "--format", "pdf").status, 2, "a PDF needs --out");
+});
+
+test("the drawing: every post in a box under its manager, patterns for vacant and planned, and a text alternative", () => {
+  const svg = orgSvg(acme(), { on: NOV, standalone: true });
+  assert.match(svg, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" role="img" aria-label="Acme Example Corp on 2026-11-07: 6 posts, each drawn under the post it reports to\. A dashed box is vacant; a dotted box is planned\."/);
+  assert.equal((svg.match(/<rect class="box/g) ?? []).length, 6);
+  assert.equal((svg.match(/class="box vacant"/g) ?? []).length, 1);
+  assert.equal((svg.match(/class="box planned"/g) ?? []).length, 1);
+  assert.equal((svg.match(/<path class="line"/g) ?? []).length, 3, "one line per report");
+  assert.match(svg, />Vacant</);
+  assert.match(svg, />Planned, from 2027-01-01</);
+  assert.doesNotMatch(svg, /<script|href|<image|<use|foreignObject/);
+  // A manager is drawn above its reports, and no two boxes overlap.
+  const boxes = [...svg.matchAll(/<rect class="box[^"]*" x="([\d.]+)" y="([\d.]+)" width="(\d+)" height="(\d+)"/g)].map((m) => m.slice(1).map(Number));
+  for (let a = 0; a < boxes.length; a++) for (let b = a + 1; b < boxes.length; b++) {
+    const [ax, ay, w, hgt] = boxes[a], [bx, by] = boxes[b];
+    assert.ok(Math.abs(ax - bx) >= w || Math.abs(ay - by) >= hgt, "boxes do not overlap");
+  }
+  const hostile = acme();
+  hostile.posts.find((p) => p.title === "Data Analyst I").title = "<script>x</script> a very long title that would never fit in a box";
+  const out = orgSvg(hostile, { on: NOV });
+  assert.doesNotMatch(out, /<script>/);
+  assert.match(out, /…<\/text>/, "a long title is cut with an ellipsis; the list and table have it whole");
+  // In the page it is a picture in a region a keyboard can scroll, after the list and the table.
+  const html = page();
+  assert.match(html, /<div class="wrap" tabindex="0" role="group" aria-label="Drawing of the chart; scroll sideways to see all of it"><svg class="drawing" role="img"/);
+  assert.ok(html.indexOf("The same, as a table") < html.indexOf("The same, as a drawing"));
+  assert.match(html, /svg\.drawing \.box\.vacant\{[^}]*stroke-dasharray/);
+});
+
+test("several dates in one page: a section each, compared with the one before, and ids that never repeat", () => {
+  const html = orgHtml(acme(), { dates: ["2026-11-07", JAN, "2027-02-01", JAN] });
+  assert.match(html, /<h1>Acme Example Corp: organization from 2026-01-05 to 2027-02-01<\/h1>/);
+  assert.match(html, /<nav aria-label="Dates"><ul class="dates"><li><a href="#d-2026-01-05">2026-01-05<\/a><\/li><li><a href="#d-2026-11-07">/);
+  assert.equal((html.match(/<section id="d-/g) ?? []).length, 3, "sorted, without repeats");
+  assert.doesNotMatch(html, /<section[^>]*hidden/, "without scripting every date is shown, one after another");
+  const first = html.slice(html.indexOf('<section id="d-2026-01-05">'), html.indexOf('<section id="d-2026-11-07">'));
+  assert.doesNotMatch(first, /What changed/);
+  assert.match(html, /<h3>What changed from 2026-01-05 to 2026-11-07<\/h3>/);
+  assert.match(html, /<h3>What changed from 2026-11-07 to 2027-02-01<\/h3>/);
+  const ids = [...html.matchAll(/ id="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(new Set(ids).size, ids.length);
+  const levels = [...html.matchAll(/<h([1-6])/g)].map((m) => Number(m[1]));
+  for (let i = 1; i < levels.length; i++) assert.ok(levels[i] - levels[i - 1] <= 1, "no heading level is skipped");
+  assert.equal((html.match(/<ul class="chart"/g) ?? []).length, 3);
+});
+
+test("the commands: --dates and --format svg", () => {
+  const multi = cli("orgchart", "show", FILE, "--format", "html", "--dates", `${JAN},${NOV}`);
+  assert.equal(multi.status, 0, multi.stderr);
+  assert.equal(multi.stdout, orgHtml(acme(), { dates: [JAN, NOV] }));
+  assert.equal(cli("orgchart", "show", FILE, "--dates", `${JAN},${NOV}`).status, 2, "--dates is for the page");
+  assert.equal(cli("orgchart", "show", FILE, "--format", "html", "--dates", JAN).status, 2);
+  assert.equal(cli("orgchart", "show", FILE, "--format", "html", "--dates", `${JAN},soon`).status, 2);
+  const svg = cli("orgchart", "show", FILE, "--on", NOV, "--format", "svg");
+  assert.equal(svg.stdout, orgSvg(acme(), { on: NOV, standalone: true }));
 });

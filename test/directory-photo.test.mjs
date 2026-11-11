@@ -62,29 +62,42 @@ test("a photo is released only when the audience grants the image, it is approve
   assert.equal(releasedPhoto(plain, plain.profile.audiences["current-employer"], ON), undefined, "a profile that is one file has no image to send");
 });
 
-test("LDIF: the photo is a jpegPhoto in base64, compared with the directory's by hash", () => {
+// The example export is Active Directory's (objectClass user); the same people as an OpenLDAP directory has them.
+const OPEN = LDIF.replace(/objectClass: user/g, "objectClass: inetOrgPerson").replace(/employeeID:/g, "employeeNumber:");
+
+test("LDIF: the photo is base64 in jpegPhoto, or thumbnailPhoto for Active Directory, compared by hash", () => {
   const { dir } = folder();
-  const r = run(ldif, ldif.readExport(LDIF), dir);
-  const f = photoOf(r);
-  assert.deepEqual([f.attribute, f.from, f.to, f.mediaType], ["jpegPhoto", null, `sha256:${sha(JPEG)}`, "image/jpeg"]);
-  const [file] = ldif.render(r.changeSet);
-  assert.match(file.data, new RegExp(`replace: jpegPhoto\\njpegPhoto:: ${JPEG.toString("base64").slice(0, 40)}`));
-  assert.ok(file.data.split("\n").every((l) => l.length <= 76));
-  const written = file.data.replace(/\n /g, "").match(/jpegPhoto:: (\S+)/)[1];
-  assert.deepEqual(Buffer.from(written, "base64"), JPEG, "the bytes are the bundle's, unchanged");
-  assert.equal(parseLdif(file.data)[0].attrs.jpegphoto[0], `sha256:${sha(JPEG)}`);
-  // The directory already holds this photo: nothing to change.
-  const withPhoto = LDIF.replace("mail: sam.rivera@acme.example", `mail: sam.rivera@acme.example\njpegPhoto:: ${JPEG.toString("base64")}`);
-  assert.equal(photoOf(run(ldif, ldif.readExport(withPhoto), dir)), undefined);
-  // The report shows the hash, never the image.
-  const md = changeReport(r.changeSet, { sha256: r.sha256 });
-  assert.match(md, /\| photo \| jpegPhoto \| \(empty\) \| sha256:[0-9a-f]{64} \|/);
-  assert.equal(md.includes(JPEG.toString("base64").slice(0, 30)), false);
+  for (const [text, attribute] of [[OPEN, "jpegPhoto"], [LDIF, "thumbnailPhoto"]]) {
+    const r = run(ldif, ldif.readExport(text), dir);
+    const f = photoOf(r);
+    assert.deepEqual([f.attribute, f.from, f.to, f.mediaType], [attribute, null, `sha256:${sha(JPEG)}`, "image/jpeg"]);
+    const [file] = ldif.render(r.changeSet);
+    assert.match(file.data, new RegExp(`replace: ${attribute}\\n${attribute}:: ${JPEG.toString("base64").slice(0, 40)}`));
+    assert.ok(file.data.split("\n").every((l) => l.length <= 76));
+    const written = file.data.replace(/\n /g, "").match(new RegExp(`${attribute}:: (\\S+)`))[1];
+    assert.deepEqual(Buffer.from(written, "base64"), JPEG, "the bytes are the bundle's, unchanged");
+    // The directory already holds this photo: nothing to change.
+    const withPhoto = text.replace("mail: sam.rivera@acme.example", `mail: sam.rivera@acme.example\n${attribute}:: ${JPEG.toString("base64")}`);
+    assert.equal(photoOf(run(ldif, ldif.readExport(withPhoto), dir)), undefined, attribute);
+    // The report shows the hash, never the image.
+    const md = changeReport(r.changeSet, { sha256: r.sha256 });
+    assert.match(md, new RegExp(`\\| photo \\| ${attribute} \\| \\(empty\\) \\| sha256:[0-9a-f]{64} \\|`));
+    assert.equal(md.includes(JPEG.toString("base64").slice(0, 30)), false);
+  }
+});
+
+test("LDIF: Active Directory's thumbnailPhoto takes 100 kB at most, and images are not resized", () => {
+  const big = Buffer.concat([JPEG.subarray(0, JPEG.length - 2), Buffer.alloc(101 * 1024, 0x20), JPEG.subarray(JPEG.length - 2)]);
+  const { dir } = folder(big);
+  const ad = run(ldif, ldif.readExport(LDIF), dir);
+  assert.equal(photoOf(ad), undefined);
+  assert.match(sam(ad).notes.find((n) => n.field === "photo").reason, /thumbnailPhoto holds 100 kB at most, and this photo is 102 kB/);
+  assert.equal(photoOf(run(ldif, ldif.readExport(OPEN), dir)).attribute, "jpegPhoto", "jpegPhoto has no such limit");
 });
 
 test("LDIF: a PNG is not written to jpegPhoto, and the report says why", () => {
   const { dir } = folder(PNG, "image/png");
-  const r = run(ldif, ldif.readExport(LDIF), dir);
+  const r = run(ldif, ldif.readExport(OPEN), dir);
   assert.equal(photoOf(r), undefined);
   assert.match(sam(r).notes.find((n) => n.field === "photo").reason, /takes image\/jpeg here, and this photo is image\/png/);
   assert.doesNotMatch(ldif.render(r.changeSet)[0].data, /jpegPhoto/);
