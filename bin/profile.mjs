@@ -26,10 +26,11 @@ import { gedzip, gedzipMedia, readBundleMedia, GEDZIP_MEDIA } from "../lib/gedco
 import { bundleFileReader } from "../lib/ob3.mjs";
 import { CONNECTORS, readProfileFolder, diffDirectory, changeReport, userFileName } from "../lib/directory/index.mjs";
 import { withMap, planRequests, applyChangeSet, ApplyRefusedError } from "../lib/directory/api.mjs";
+import { googleAccessToken, schemaRequest, SCOPE_USER, SCOPE_SCHEMA } from "../lib/directory/google-auth.mjs";
 import { validateOrganization } from "../lib/orgchart/index.mjs";
 import { buildOrganization } from "../lib/orgchart/build.mjs";
 import { orgMarkdown, orgCsv } from "../lib/orgchart/views.mjs";
-import { orgHtml } from "../lib/orgchart/html.mjs";
+import { orgHtml, orgSvg } from "../lib/orgchart/html.mjs";
 import { renderOrgPdf } from "../lib/orgchart/pdf.mjs";
 import { statsMarkdown, orgStats, orgSeries } from "../lib/orgchart/stats.mjs";
 import { validateProfile, convert, fromJsonResume, loadMapping, RuleViolationError, buildRelease, applyWriteBack, ReleaseRefusedError, BUNDLED_MAPPINGS, resolveMapping } from "../index.mjs";
@@ -83,8 +84,12 @@ Options
   directory apply: --approved <the sha256 of the change set, from the report>   --apply   --out <folder>   --max-age <days> (default 7)
               The access token is read from an environment variable (GOOGLE_DIRECTORY_TOKEN, ENTRA_GRAPH_TOKEN, OKTA_TOKEN,
               ONELOGIN_TOKEN), never from the command line. Okta and OneLogin also need OKTA_ORG_URL or ONELOGIN_URL.
+              Google can instead use a service account: GOOGLE_APPLICATION_CREDENTIALS (the key file) and
+              GOOGLE_DIRECTORY_SUBJECT (the administrator it acts as).
+  directory setup google: prints the request that creates the custom schema; --apply sends it
   orgchart build: --method <…> --domain <domain>   --name <organization> | --base <existing.org.json>   --audience <id>
-  orgchart show:  --on <date>   --compare <date>   --format <table|csv|html|pdf>   --budget (include budget figures: internal)
+  orgchart show:  --on <date>   --compare <date>   --format <table|csv|html|pdf|svg>   --budget (include budget figures: internal)
+              --dates <date,date,…> (html: several dates in one page, each compared with the one before)
   orgchart stats: --on <date>   --from <date> --to <date>   --format <table|json>   --budget
   pdf:        --pages <1|auto>   --photo | --no-photo (default: no photo)   --density <comfortable|compact>
               --paper <us-letter|a4>   --min-priority <0-100>   --layout <classic|academic|two-column>   --typst <path to typst>
@@ -101,7 +106,7 @@ function fail(message, code = 1) { console.error(`error: ${message}`); process.e
 // Flags are declared here so that a misspelled one is refused instead of silently ignored.
 const VALUE_FLAGS = ["--locale", "--out", "--format", "--domain", "--method", "--application", "--receipt", "--on", "--recipient",
   "--visibility", "--media-base", "--id", "--alt", "--kind", "--purpose", "--from",
-  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst", "--against", "--target", "--audience", "--approved", "--max-age", "--map", "--base", "--name", "--compare", "--to"];
+  "--pages", "--density", "--paper", "--min-priority", "--layout", "--typst", "--against", "--target", "--audience", "--approved", "--max-age", "--map", "--base", "--name", "--compare", "--to", "--dates"];
 const BOOL_FLAGS = ["--allow-rule-violations", "--record", "--strip-gps", "--fetch", "--json", "--help", "--version", "--photo", "--no-photo", "--gedzip", "--apply", "--budget"];
 const flags = {};
 const argv = [];
@@ -158,6 +163,7 @@ const nameFlag = takeFlag("--name");
 const compareFlag = takeFlag("--compare");
 const budgetFlag = takeBool("--budget");
 const toDate = takeFlag("--to");
+const datesFlag = takeFlag("--dates");
 const visibility = visibilityFlag ? visibilityFlag.split(",").map((v) => v.trim()) : undefined;
 if (visibility && visibility.some((v) => !["public", "network", "private"].includes(v))) {
   fail(`--visibility takes public, network and/or private (got ${visibilityFlag})`, 2);
@@ -202,7 +208,7 @@ function writeNew(path, bytes, what) {
 function writeOut(path, text) { mkdirSync(dirname(resolve(path)), { recursive: true }); writeFileSync(path, text); }
 function emit(text) { if (out) writeOut(out, text); else process.stdout.write(text); }
 function usage() {
-  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import|directory diff|directory apply|orgchart validate|orgchart build|orgchart show|orgchart stats> …\nRun "turnrow-profile help" for the commands and options.`);
+  console.error(`usage: turnrow-profile <validate|open|review|convert|pdf|import|release|writeback|media add|badges import|directory diff|directory apply|directory setup google|orgchart validate|orgchart build|orgchart show|orgchart stats> …\nRun "turnrow-profile help" for the commands and options.`);
   process.exit(2);
 }
 if (flags["--version"] || command === "version") {
@@ -327,6 +333,34 @@ try {
       break;
     }
     case "directory": {
+      // A token for a connector: the one in its environment variable, or, for Google, one made on the
+      // spot from a service account key (GOOGLE_APPLICATION_CREDENTIALS) acting as an administrator
+      // (GOOGLE_DIRECTORY_SUBJECT). The key is read from its file and kept nowhere.
+      const tokenFor = async (conn, scopes) => {
+        if (process.env[conn.tokenEnv]) return process.env[conn.tokenEnv];
+        const keyFile = process.env.GOOGLE_APPLICATION_CREDENTIALS, subject = process.env.GOOGLE_DIRECTORY_SUBJECT;
+        if (conn.id === "google" && keyFile) {
+          if (!subject) fail("set GOOGLE_DIRECTORY_SUBJECT to the administrator the service account acts as (an e-mail address)", 2);
+          try { return await googleAccessToken({ key: readJson(keyFile, "service account key"), subject, scopes, fetch: (url, init) => fetch(url, { ...init, redirect: "error" }) }); }
+          catch (err) { fail(err.message); }
+        }
+        return fail(`set ${conn.tokenEnv} to an access token for ${conn.label}${conn.id === "google" ? ", or GOOGLE_APPLICATION_CREDENTIALS to a service account key file and GOOGLE_DIRECTORY_SUBJECT to the administrator it acts as" : ""} (read from the environment so that it is never on a command line)`, 2);
+      };
+      if (rest[0] === "setup") {
+        if (rest[1] !== "google") fail("directory setup takes google: it creates the custom schema that connector keeps pronouns, nickname, preferred title, headline, bio and the photo hash in", 2);
+        let req;
+        try { req = schemaRequest(process.env.GOOGLE_CUSTOMER_ID || undefined); } catch (err) { fail(err.message, 2); }
+        if (!applyFlag) {
+          emit(JSON.stringify(req, null, 2) + "\n");
+          console.error("This request would be sent. Nothing was sent. To send it: --apply (once per Google Workspace account).");
+          break;
+        }
+        const token = await tokenFor(CONNECTORS.google, [SCOPE_SCHEMA]);
+        const res = await fetch(req.url, { method: req.method, redirect: "error", headers: { authorization: `Bearer ${token}`, "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(req.body) });
+        if (!res.ok) { let detail = ""; try { detail = (await res.text()).slice(0, 300); } catch { /* no body */ } fail(`Google answered ${res.status}${res.status === 409 ? ": the schema already exists, so there is nothing to do" : ""}${detail ? `\n${detail}` : ""}`); }
+        console.error("Created the TurnrowProfile custom schema.");
+        break;
+      }
       if (rest[0] === "apply") {
         if (!rest[1]) usage();
         if (!existsSync(rest[1]) || statSync(rest[1]).isDirectory()) fail(`no such change set: ${rest[1]}`);
@@ -347,8 +381,7 @@ try {
         }
         if (!approved) fail("directory apply --apply needs --approved <sha256>: the hash of the change set, from the report you read", 2);
         if (!out) fail("directory apply --apply needs --out <folder> for the log and the rollback file", 2);
-        const token = process.env[conn.tokenEnv];
-        if (!token) fail(`set ${conn.tokenEnv} to an access token for ${conn.label} (it is read from the environment so that it is never on a command line)`, 2);
+        const token = await tokenFor(conn, [SCOPE_USER]);
         let result;
         try { result = await applyChangeSet({ text, connector: conn, approved, token, fetch: (url, init) => fetch(url, { ...init, redirect: "error" }), env: process.env, maxAgeDays: maxAge === undefined ? undefined : Number(maxAge), today: on }); }
         catch (err) { if (err instanceof ApplyRefusedError) fail(err.message, 4); throw err; }
@@ -418,11 +451,15 @@ try {
       if (sub === "show") {
         if (!rest[1]) usage();
         const fmt = flags["--format"] === undefined ? "table" : format;
-        if (!["table", "csv", "html", "pdf"].includes(fmt)) fail(`orgchart show --format takes table, csv, html or pdf (got ${fmt})`, 2);
+        if (!["table", "csv", "html", "pdf", "svg"].includes(fmt)) fail(`orgchart show --format takes table, csv, html, pdf or svg (got ${fmt})`, 2);
+        const dates = datesFlag === undefined ? undefined : datesFlag.split(",").map((d) => d.trim());
+        if (dates && fmt !== "html") fail("--dates goes with --format html: several dates in one page, to switch between", 2);
+        if (dates && (dates.length < 2 || !dates.every(isDate))) fail(`--dates takes two or more dates as yyyy-mm-dd, separated by commas (got ${datesFlag})`, 2);
         if (compareFlag !== undefined && !isDate(compareFlag)) fail(`--compare takes a date as yyyy-mm-dd (got ${compareFlag})`, 2);
         const { org, v } = loadOrg(rest[1]);
         if (!v.valid) { console.error(`${rest[1]} is not a valid organization file; run orgchart validate first.\n  ${v.errors.join("\n  ")}`); process.exit(1); }
-        const opts = { on, compare: compareFlag, budget: budgetFlag };
+        const opts = { on, compare: compareFlag, budget: budgetFlag, dates };
+        if (fmt === "svg") { emit(orgSvg(org, { on, standalone: true })); break; }
         if (fmt === "pdf") {
           if (!out) fail("orgchart show --format pdf needs --out <file.pdf>", 2);
           try { renderOrgPdf(org, { ...opts, out, paper: flags["--paper"], typst: flags["--typst"] }); }

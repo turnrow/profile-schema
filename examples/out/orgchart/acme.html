@@ -38,27 +38,44 @@ table{border-collapse:collapse;width:100%;font-size:.95rem}
 caption{text-align:left;font-weight:700;padding:.4rem 0}
 th,td{text-align:left;vertical-align:top;padding:.45rem .6rem;border:1px solid var(--border-control)}
 thead th{background:var(--surface-300)}
-@media print{button,.bar{display:none}li[aria-expanded="false"]>ul{display:block}}
+.dates{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:1rem 0}
+.dates a{display:inline-block;color:var(--link);text-decoration:underline;border:2px solid var(--border-control);border-radius:.4rem;padding:.5rem .9rem;min-height:2.75rem;background:var(--surface-200)}
+.dates a[aria-current="true"]{background:var(--ink);color:var(--surface-100);border-color:var(--ink)}
+section[hidden]{display:none}
+svg.drawing{display:block;max-width:none;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}
+svg.drawing .box{fill:var(--surface-200);stroke:var(--border-control);stroke-width:2}
+svg.drawing .box.vacant{fill:var(--surface-100);stroke-width:3;stroke-dasharray:8 5}
+svg.drawing .box.planned{fill:var(--surface-100);stroke-width:3;stroke-dasharray:2 5}
+svg.drawing .line{fill:none;stroke:var(--border-control);stroke-width:2}
+svg.drawing text{fill:var(--ink)}
+svg.drawing .t{font-weight:700}
+svg.drawing .m{fill:var(--ink-muted)}
+@media print{button,.bar,.dates{display:none}li[aria-expanded="false"]>ul{display:block}section[hidden]{display:block}}
 </style>
 </head>
 <body>
 <main>
 <h1>Acme Example Corp: organization on 2026-11-07</h1>
 
+<div class="part">
 <p>4 filled, 1 vacant, 1 planned. A vacant post has a dashed border and says "Vacant"; a planned post has a dotted border and says "Planned".</p>
 <h2 id="chart-h">Chart</h2>
-<p id="keys" class="muted" hidden>Move with the arrow keys: Up and Down between posts, Right to open a post's reports, Left to close them or go to its manager. Home and End go to the first and last post.</p>
+<p class="keys muted" hidden>Move with the arrow keys: Up and Down between posts, Right to open a post's reports, Left to close them or go to its manager. Home and End go to the first and last post.</p>
 <div class="bar" hidden><button type="button" data-all="open">Open all</button><button type="button" data-all="close">Close all</button></div>
 <ul class="chart" aria-labelledby="chart-h"><li><span class="post filled" id="p-data-analyst-i-e-104377"><span class="t">Data Analyst I</span><span class="sep">: </span><span class="w">Filled (person not shown)</span><span class="sep">. </span><span class="m">Finance</span></span></li><li><span class="post filled" id="p-director-of-engineering-e-100001"><span class="t"><span class="twist" aria-hidden="true"></span>Director of Engineering</span><span class="sep">: </span><span class="w">Filled (person not shown)</span><span class="sep">. </span><span class="m">Engineering · 3 direct reports</span></span><ul><li><span class="post vacant" id="p-engineering-manager-platform"><span class="t">Engineering Manager, Platform</span><span class="sep">: </span><span class="w"><span class="tag">Vacant (open, new post), wanted by 2026-12-15</span></span><span class="sep">. </span><span class="m">Platform Engineering</span></span></li><li><span class="post filled" id="p-senior-software-engineer-ii-e-104233"><span class="t">Senior Software Engineer II</span><span class="sep">: </span><span class="w">Sam Rivera <span class="muted">(she/her)</span></span><span class="sep">. </span><span class="m">Platform Engineering</span></span></li><li><span class="post planned" id="p-staff-platform-engineer"><span class="t">Staff Platform Engineer</span><span class="sep">: </span><span class="w"><span class="tag">Planned (new post), from 2027-01-01</span></span><span class="sep">. </span><span class="m">Platform Engineering · dotted line to Senior Software Engineer II</span></span></li></ul></li><li><span class="post filled" id="p-product-designer-ii-e-104310"><span class="t">Product Designer II</span><span class="sep">: </span><span class="w">Dana Okoye <span class="muted">(they/them)</span></span><span class="sep">. </span><span class="m">Design</span></span></li></ul>
 <h2>The same, as a table</h2>
-<div class="wrap"><table><caption>One row per post, each manager followed by their reports. Level 1 reports to nobody in this chart.</caption>
+<div class="wrap" tabindex="0" role="group" aria-label="Table of posts"><table><caption>One row per post, each manager followed by their reports. Level 1 reports to nobody in this chart.</caption>
 <thead><tr><th scope="col">Level</th><th scope="col">Post</th><th scope="col">Held by</th><th scope="col">Unit</th><th scope="col">Reports to</th><th scope="col">Status</th></tr></thead>
 <tbody><tr><td>1</td><th scope="row">Data Analyst I</th><td>Filled (person not shown)</td><td>Finance</td><td></td><td>Filled</td></tr><tr><td>1</td><th scope="row">Director of Engineering</th><td>Filled (person not shown)</td><td>Engineering</td><td></td><td>Filled</td></tr><tr><td>2</td><th scope="row">Engineering Manager, Platform</th><td>Vacant</td><td>Platform Engineering</td><td>Director of Engineering</td><td>Vacant (open, new post), wanted by 2026-12-15</td></tr><tr><td>2</td><th scope="row">Senior Software Engineer II</th><td>Sam Rivera (she/her)</td><td>Platform Engineering</td><td>Director of Engineering</td><td>Filled</td></tr><tr><td>2</td><th scope="row">Staff Platform Engineer</th><td>Planned</td><td>Platform Engineering</td><td>Director of Engineering (dotted line to Senior Software Engineer II)</td><td>Planned (new post), from 2027-01-01</td></tr><tr><td>1</td><th scope="row">Product Designer II</th><td>Dana Okoye (they/them)</td><td>Design</td><td></td><td>Filled</td></tr></tbody></table></div>
-<h2>What changed from 2026-01-05 to 2026-11-07</h2><div class="wrap"><table><caption>Changes, grouped by kind</caption><thead><tr><th scope="col">Change</th><th scope="col">Post</th><th scope="col">Detail</th></tr></thead><tbody><tr><td>Opened</td><th scope="row">Engineering Manager, Platform</th><td>a new post, vacant</td></tr><tr><td>Closed</td><th scope="row">Support Team Lead</th><td>the post ended (it was filled; the person is not shown)</td></tr><tr><td>Changed hands</td><th scope="row">Product Designer II</th><td>Filled (person not shown) → Dana Okoye</td></tr><tr><td>Changed hands</td><th scope="row">Senior Software Engineer II</th><td>Filled (person not shown) → Sam Rivera</td></tr><tr><td>Renamed</td><th scope="row">Senior Software Engineer II</th><td>was &quot;Senior Software Engineer I&quot;</td></tr></tbody></table></div>
+<h2>The same, as a drawing</h2>
+<p class="muted">A picture of the chart above, for its shape at a glance. It says nothing the chart and the table do not.</p>
+<div class="wrap" tabindex="0" role="group" aria-label="Drawing of the chart; scroll sideways to see all of it"><svg class="drawing" role="img" aria-label="Acme Example Corp on 2026-11-07: 6 posts, each drawn under the post it reports to. A dashed box is vacant; a dotted box is planned." width="1220" height="200" viewBox="0 0 1220 200"><title>Acme Example Corp on 2026-11-07: 6 posts, each drawn under the post it reports to. A dashed box is vacant; a dotted box is planned.</title><path class="line" d="M610 78V100H366V122"/><path class="line" d="M610 78V100H610V122"/><path class="line" d="M610 78V100H854V122"/><g><rect class="box filled" x="12" y="12" width="220" height="66" rx="8"/><text class="t" x="22" y="36">Data Analyst I</text><text x="22" y="55">Filled (person not shown)</text><text class="m" x="22" y="70" font-size="12">Finance</text></g><g><rect class="box filled" x="500" y="12" width="220" height="66" rx="8"/><text class="t" x="510" y="36">Director of Engineering</text><text x="510" y="55">Filled (person not shown)</text><text class="m" x="510" y="70" font-size="12">Engineering</text></g><g><rect class="box vacant" x="256" y="122" width="220" height="66" rx="8"/><text class="t" x="266" y="146">Engineering Manager, Platf…</text><text x="266" y="165">Vacant</text><text class="m" x="266" y="180" font-size="12">Platform Engineering</text></g><g><rect class="box filled" x="500" y="122" width="220" height="66" rx="8"/><text class="t" x="510" y="146">Senior Software Engineer II</text><text x="510" y="165">Sam Rivera</text><text class="m" x="510" y="180" font-size="12">Platform Engineering</text></g><g><rect class="box planned" x="744" y="122" width="220" height="66" rx="8"/><text class="t" x="754" y="146">Staff Platform Engineer</text><text x="754" y="165">Planned, from 2027-01-01</text><text class="m" x="754" y="180" font-size="12">Platform Engineering</text></g><g><rect class="box filled" x="988" y="12" width="220" height="66" rx="8"/><text class="t" x="998" y="36">Product Designer II</text><text x="998" y="55">Dana Okoye</text><text class="m" x="998" y="70" font-size="12">Design</text></g></svg></div>
+<h2>What changed from 2026-01-05 to 2026-11-07</h2><div class="wrap" tabindex="0" role="group" aria-label="Table of changes"><table><caption>Changes, grouped by kind</caption><thead><tr><th scope="col">Change</th><th scope="col">Post</th><th scope="col">Detail</th></tr></thead><tbody><tr><td>Opened</td><th scope="row">Engineering Manager, Platform</th><td>a new post, vacant</td></tr><tr><td>Closed</td><th scope="row">Support Team Lead</th><td>the post ended (it was filled; the person is not shown)</td></tr><tr><td>Changed hands</td><th scope="row">Product Designer II</th><td>Filled (person not shown) → Dana Okoye</td></tr><tr><td>Changed hands</td><th scope="row">Senior Software Engineer II</th><td>Filled (person not shown) → Sam Rivera</td></tr><tr><td>Renamed</td><th scope="row">Senior Software Engineer II</th><td>was &quot;Senior Software Engineer I&quot;</td></tr></tbody></table></div>
+</div>
 </main>
 <script>
 (function(){
-var tree=document.querySelector('ul.chart');if(!tree)return;
+function init(tree){
 var items=[].slice.call(tree.querySelectorAll('li'));
 tree.setAttribute('role','tree');
 items.forEach(function(li){
@@ -96,10 +113,23 @@ tree.addEventListener('keydown',function(e){
 tree.addEventListener('click',function(e){var li=e.target.closest('li');if(!li)return;
   if(e.target.closest('.post')&&li.hasAttribute('aria-expanded')&&li===e.target.closest('.post').parentElement)set(li,li.getAttribute('aria-expanded')==='false');
   items.forEach(function(x){x.tabIndex=-1;});li.tabIndex=0;});
-var bar=document.querySelector('.bar');if(bar){bar.hidden=false;
+var part=tree.closest('.part');
+var bar=part&&part.querySelector('.bar');if(bar){bar.hidden=false;
   bar.querySelector('[data-all="open"]').addEventListener('click',function(){items.forEach(function(x){set(x,true);});});
   bar.querySelector('[data-all="close"]').addEventListener('click',function(){items.forEach(function(x){set(x,false);});});}
-var help=document.getElementById('keys');if(help)help.hidden=false;
+var help=part&&part.querySelector('.keys');if(help)help.hidden=false;
+}
+[].slice.call(document.querySelectorAll('ul.chart')).forEach(init);
+// Several dates in one page: show one at a time. Without this script they follow one another.
+var links=[].slice.call(document.querySelectorAll('.dates a'));
+if(links.length){
+  var sections=links.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});
+  var show=function(i,move){sections.forEach(function(s,k){s.hidden=k!==i;});links.forEach(function(a,k){if(k===i)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current');});
+    if(move){var h=sections[i].querySelector('h2');h.tabIndex=-1;h.focus();}};
+  links.forEach(function(a,i){a.addEventListener('click',function(e){e.preventDefault();show(i,true);});});
+  var start=links.findIndex(function(a){return a.getAttribute('href')===location.hash;});
+  show(start<0?links.length-1:start,false);
+}
 })();
 </script>
 </body>

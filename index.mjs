@@ -13,7 +13,7 @@ export { renderEuropass } from "./lib/europass.mjs";
 export { validateOrganization, stateOn, compareDates, holderText, inEffect } from "./lib/orgchart/index.mjs";
 export { buildOrganization } from "./lib/orgchart/build.mjs";
 export { orgRows, orgMarkdown, orgCsv } from "./lib/orgchart/views.mjs";
-export { orgHtml } from "./lib/orgchart/html.mjs";
+export { orgHtml, orgSvg } from "./lib/orgchart/html.mjs";
 export { renderOrgPdf, orgPdfView } from "./lib/orgchart/pdf.mjs";
 export { orgStats, orgSeries, statsMarkdown, monthStarts } from "./lib/orgchart/stats.mjs";
 export { CONNECTORS as DIRECTORY_CONNECTORS, FIELDS as DIRECTORY_FIELDS, readProfileFolder, matchUser, diffDirectory, changeReport } from "./lib/directory/index.mjs";
