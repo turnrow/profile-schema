@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **`schemaVersion` 3.0.0:** a profile file may now say 3.0.0, to match the release it was written with. No field changes; a 3.0.0 file gets the same checks as a 2.6.0 file, and files at 2.6.0 or earlier stay valid as they are.
 - **Org chart page:** a drawing of boxes and lines under the list and table (`orgSvg`, `orgchart show --format svg`); `--dates a,b,c` for several dates in one page with a switcher. An axe-core scan (WCAG A to AAA, light and dark) finds no violations.
 - **Google Workspace:** a service account can sign in (`GOOGLE_APPLICATION_CREDENTIALS` and `GOOGLE_DIRECTORY_SUBJECT`); `directory setup google` creates the custom schema the connector uses.
 - **Active Directory:** a released photo goes to `thumbnailPhoto` when it is 100 kB or less.

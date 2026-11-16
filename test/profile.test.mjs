@@ -38,6 +38,13 @@ test("a minimal profile is valid", () => {
   assert.equal(validateProfile(minimal()).valid, true);
 });
 
+test("schemaVersion 3.0.0 is accepted and held to the 2.6.0 checks; an unknown version is not", () => {
+  const p = read("../examples/recommended/profile.json");
+  assert.deepEqual(validateProfile({ ...p, schemaVersion: "3.0.0" }), validateProfile({ ...p, schemaVersion: "2.6.0" }));
+  assert.equal(validateProfile(minimal({ schemaVersion: "3.0.0" })).valid, true);
+  assert.equal(validateProfile(minimal({ schemaVersion: "3.1.0" })).valid, false);
+});
+
 test("unknown fields are rejected", () => {
   const p = sample();
   p.work[0].salary = 100;

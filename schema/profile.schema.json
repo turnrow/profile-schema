@@ -22,9 +22,10 @@
         "2.3.0",
         "2.4.0",
         "2.5.0",
-        "2.6.0"
+        "2.6.0",
+        "3.0.0"
       ],
-      "description": "2.6.0 adds media assets (versions, renditions, dated person images), other people, recommendations, endorsements and badges; earlier files remain valid."
+      "description": "2.6.0 adds media assets (versions, renditions, dated person images), other people, recommendations, endorsements and badges. 3.0.0 matches the 3.0.0 release and adds no fields: a 3.0.0 file is held to the same checks as a 2.6.0 file. Earlier files remain valid."
     },
     "meta": {
       "$ref": "#/$defs/meta"
